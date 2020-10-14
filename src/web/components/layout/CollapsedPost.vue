@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import friendlyTime from 'friendly-time';
+
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
 export default {
@@ -51,6 +53,10 @@ export default {
       }
 
       throw new Error(`Unknown post type: ${this.post.content.type}`);
+    },
+
+    age_() {
+      return friendlyTime(new Date(this.post.dateCreated));
     },
   },
 };
