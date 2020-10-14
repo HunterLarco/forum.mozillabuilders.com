@@ -1,15 +1,50 @@
 <template>
-  <div :class="$style.Host" tabindex="0">
+  <div :class="[$style.Host, ...hostModifiers_]" tabindex="0" @click="onClick_">
     <slot>{{ text }}</slot>
+    <ElementIcon :class="$style.LoadingIcon" name="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
+import ElementIcon from '@/vendor/element-ui/Icon';
+
 export default {
+  components: { ElementIcon },
+
   props: {
     text: {
       type: String,
       default: 'Submit',
+    },
+
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    hostModifiers_() {
+      const modifiers = [];
+
+      if (this.loading || this.disabled) {
+        modifiers.push(this.$style.Host_Disabled);
+      }
+
+      return modifiers;
+    },
+  },
+
+  methods: {
+    onClick_() {
+      if (!this.disabled && !this.loading) {
+        this.$emit('click');
+      }
     },
   },
 };
@@ -41,5 +76,15 @@ export default {
   &:active {
     background: lighten(#0060DF, 47%);
   }
+}
+
+.Host_Disabled {
+  background: none !important;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.LoadingIcon {
+  margin-left: 5px;
 }
 </style>

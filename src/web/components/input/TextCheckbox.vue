@@ -1,5 +1,5 @@
 <template>
-  <div :class="[$style.Host, ...hostModifiers_]">
+  <div :class="[$style.Host, ...hostModifiers_]" @click="onClick_">
     <slot>{{ text }}</slot>
   </div>
 </template>
@@ -16,11 +16,34 @@ export default {
       type: String,
       default: null,
     },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
     hostModifiers_() {
-      return this.selected ? [this.$style.Host_Selected] : [];
+      const modifiers = [];
+
+      if (this.selected) {
+        modifiers.push(this.$style.Host_Selected);
+      }
+
+      if (this.disabled) {
+        modifiers.push(this.$style.Host_Disabled);
+      }
+
+      return modifiers;
+    },
+  },
+
+  methods: {
+    onClick_() {
+      if (!this.disabled) {
+        this.$emit('click');
+      }
     },
   },
 };
@@ -43,5 +66,10 @@ export default {
 .Host_Selected {
   background: #000;
   color: #FFF;
+}
+
+.Host_Disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 </style>

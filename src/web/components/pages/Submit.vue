@@ -17,27 +17,34 @@
           <TextCheckbox
             :class="$style.QuestionType"
             :selected="questionType_ == 'question'"
-            @click.native="questionType_ = 'question'"
+            @click="questionType_ = 'question'"
             text="Ask a question"
+            :disabled="loading_"
           />
 
           <TextCheckbox
             :class="$style.QuestionType"
             :selected="questionType_ == 'url'"
-            @click.native="questionType_ = 'url'"
+            @click="questionType_ = 'url'"
             text="Share a URL"
+            :disabled="loading_"
           />
 
           <TextCheckbox
             :class="$style.QuestionType"
             :selected="questionType_ == 'opinion'"
-            @click.native="questionType_ = 'opinion'"
+            @click="questionType_ = 'opinion'"
             text="Post an opinion"
+            :disabled="loading_"
           />
         </div>
 
         <template v-if="questionType_ == 'question'">
-          <ElementInput placeholder="What's on your mind?">
+          <ElementInput
+            placeholder="What's on your mind?"
+            v-model="form_.question.question"
+            :disabled="loading_"
+          >
             <template v-slot:prepend>
               <span :class="$style.InputPrepend">Question</span>
             </template>
@@ -46,32 +53,44 @@
           <ElementInput
             :class="$style.Textarea"
             placeholder="Tell us more about it..."
+            :disabled="loading_"
             type="textarea"
+            v-model="form_.question.details"
             :autosize="{ minRows: 2 }"
           />
           <div :class="$style.Spacer" />
-          <SubmitButton />
+          <SubmitButton @click="submitQuestion_" :loading="loading_" />
         </template>
 
         <template v-if="questionType_ == 'url'">
-          <ElementInput placeholder="What is this URL about?">
+          <ElementInput
+            placeholder="What is this URL about?"
+            v-model="form_.url.summary"
+            :disabled="loading_"
+          >
             <template v-slot:prepend>
               <span :class="$style.InputPrepend">Summary</span>
             </template>
           </ElementInput>
           <div :class="$style.Spacer" />
-          <ElementInput placeholder="https://...">
+          <ElementInput
+            placeholder="https://..."
+            v-model="form_.url.url"
+            :disabled="loading_"
+          >
             <template v-slot:prepend>
               <span :class="$style.InputPrepend">URL</span>
             </template>
           </ElementInput>
           <div :class="$style.Spacer" />
-          <SubmitButton />
+          <SubmitButton @click="submitUrl_" :loading="loading_" />
         </template>
 
         <template v-if="questionType_ == 'opinion'">
           <ElementInput
             placeholder="What's the 80/20 of what you're thinking about?"
+            v-model="form_.opinion.summary"
+            :disabled="loading_"
           >
             <template v-slot:prepend>
               <span :class="$style.InputPrepend">Summary</span>
@@ -82,10 +101,12 @@
             :class="$style.Textarea"
             placeholder="Tell us more about it..."
             type="textarea"
+            :disabled="loading_"
+            v-model="form_.opinion.details"
             :autosize="{ minRows: 2 }"
           />
           <div :class="$style.Spacer" />
-          <SubmitButton />
+          <SubmitButton @click="submitOpinion_" :loading="loading_" />
         </template>
       </div>
     </VerticalRibbon>
@@ -113,7 +134,57 @@ export default {
   data() {
     return {
       questionType_: 'question',
+
+      form_: {
+        question: {
+          question: '',
+          details: '',
+        },
+
+        url: {
+          summary: '',
+          url: '',
+        },
+
+        opinion: {
+          summary: '',
+          details: '',
+        },
+      },
+
+      loading_: false,
     };
+  },
+
+  methods: {
+    submitQuestion_() {
+      this.submit_({
+        type: 'question',
+        question: this.form_.question.question,
+        details: this.form_.question.details,
+      });
+    },
+
+    submitUrl_() {
+      this.submit_({
+        type: 'url',
+        summary: this.form_.url.summary,
+        url: this.form_.url.url,
+      });
+    },
+
+    submitOpinion_() {
+      this.submit_({
+        type: 'opinion',
+        summary: this.form_.opinion.summary,
+        details: this.form_.opinion.details,
+      });
+    },
+
+    submit_(post) {
+      this.loading_ = true;
+      console.log(post);
+    },
   },
 };
 </script>
