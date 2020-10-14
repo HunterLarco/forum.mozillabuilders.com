@@ -17,7 +17,7 @@ async function handler(environment, request) {
   const { post } = await PostTable.get(environment, null, request.id);
 
   return {
-    post: ApiPostSchema.fromFirestorePost(post),
+    post: ApiPostSchema.fromFirestorePost(request.id, post),
   };
 }
 

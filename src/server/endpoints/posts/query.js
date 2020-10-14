@@ -24,7 +24,9 @@ async function handler(environment, request) {
   });
 
   return {
-    posts: posts.map(({ post }) => ApiPostSchema.fromFirestorePost(post)),
+    posts: posts.map(({ id, post }) =>
+      ApiPostSchema.fromFirestorePost(id, post)
+    ),
     cursor: {
       current: cursor.current || request.cursor || null,
       next: cursor.next,
