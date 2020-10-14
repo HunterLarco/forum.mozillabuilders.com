@@ -57,6 +57,7 @@
     "element-ui": "2.13.2",
     "express": "4.17.1",
     "helmet": "4.1.1",
+    "joi": "17.2.1",
     "source-map-support": "0.5.19",
     "vue": "2.6.11",
     "vue-gtag": "1.9.1",
