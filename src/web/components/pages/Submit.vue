@@ -35,6 +35,50 @@
             text="Post an opinion"
           />
         </div>
+
+        <template v-if="questionType_ == 'question'">
+          <ElementInput placeholder="What's on your mind?">
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Question</span>
+            </template>
+          </ElementInput>
+          <ElementInput placeholder="Tell us more about it...">
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Details</span>
+            </template>
+          </ElementInput>
+          <SubmitButton />
+        </template>
+
+        <template v-if="questionType_ == 'url'">
+          <ElementInput placeholder="What is this URL about?">
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Summary</span>
+            </template>
+          </ElementInput>
+          <ElementInput placeholder="https://...">
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">URL</span>
+            </template>
+          </ElementInput>
+          <SubmitButton />
+        </template>
+
+        <template v-if="questionType_ == 'opinion'">
+          <ElementInput
+            placeholder="What's the 80/20 of what you're thinking about?"
+          >
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Summary</span>
+            </template>
+          </ElementInput>
+          <ElementInput placeholder="Tell us more about it...">
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Details</span>
+            </template>
+          </ElementInput>
+          <SubmitButton />
+        </template>
       </div>
     </VerticalRibbon>
   </div>
@@ -44,6 +88,7 @@
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
@@ -52,6 +97,7 @@ export default {
     ElementInput,
     HorizontalLayout,
     PageHeader,
+    SubmitButton,
     TextCheckbox,
     VerticalRibbon,
   },
@@ -77,7 +123,7 @@ export default {
 }
 
 .PageHeader {
-  background: #FFFFFF;
+  background: #FFF;
 }
 
 .Content {
@@ -95,5 +141,10 @@ export default {
   &:last-child {
     margin-right: 0;
   }
+}
+
+.InputPrepend {
+  display: inline-block;
+  min-width: 70px;
 }
 </style>
