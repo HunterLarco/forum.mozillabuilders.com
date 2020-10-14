@@ -11,16 +11,50 @@
           <router-link to="/submit">Post a new topic</router-link>
         </template>
       </PageHeader>
+
+      <Banner
+        >Let's
+        <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
+          >#unfck</a
+        >
+        the internet, together!
+        <router-link to="/submit">Tell us how</router-link>.</Banner
+      >
     </VerticalRibbon>
   </div>
 </template>
 
 <script>
+import Banner from '@/src/web/components/layout/Banner';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
-  components: { PageHeader, VerticalRibbon },
+  components: { Banner, PageHeader, VerticalRibbon },
+
+  data() {
+    return {
+      error_: null,
+    };
+  },
+
+  watch: {
+    '$route.path': {
+      immediate: true,
+      handler() {
+        const index = this.$route.path.slice(1);
+        apiFetch('aurora/posts/query', { index })
+          .then(({ posts }) => {
+            this.error_ = null;
+          })
+          .catch((error) => {
+            this.error_ = error.message;
+          });
+      },
+    },
+  },
 };
 </script>
 

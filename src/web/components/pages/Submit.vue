@@ -13,9 +13,15 @@
       </PageHeader>
 
       <div :class="$style.Content">
-        <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
-
         <div :class="$style.QuestionTypes">
+          <TextCheckbox
+            :class="$style.QuestionType"
+            :selected="questionType_ == 'opinion'"
+            @click="questionType_ = 'opinion'"
+            text="Post an opinion"
+            :disabled="loading_"
+          />
+
           <TextCheckbox
             :class="$style.QuestionType"
             :selected="questionType_ == 'question'"
@@ -31,15 +37,28 @@
             text="Share a URL"
             :disabled="loading_"
           />
-
-          <TextCheckbox
-            :class="$style.QuestionType"
-            :selected="questionType_ == 'opinion'"
-            @click="questionType_ = 'opinion'"
-            text="Post an opinion"
-            :disabled="loading_"
-          />
         </div>
+
+        <template v-if="questionType_ == 'opinion'">
+          <ElementInput
+            placeholder="What's the 80/20 of what you're thinking about?"
+            v-model="form_.opinion.summary"
+            :disabled="loading_"
+          >
+            <template v-slot:prepend>
+              <span :class="$style.InputPrepend">Summary</span>
+            </template>
+          </ElementInput>
+          <div :class="$style.Spacer" />
+          <ElementInput
+            :class="$style.Textarea"
+            placeholder="Tell us more about it..."
+            type="textarea"
+            :disabled="loading_"
+            v-model="form_.opinion.details"
+            :autosize="{ minRows: 2 }"
+          />
+        </template>
 
         <template v-if="questionType_ == 'question'">
           <ElementInput
@@ -60,8 +79,6 @@
             v-model="form_.question.details"
             :autosize="{ minRows: 2 }"
           />
-          <div :class="$style.Spacer" />
-          <SubmitButton @click="submitQuestion_" :loading="loading_" />
         </template>
 
         <template v-if="questionType_ == 'url'">
@@ -84,32 +101,18 @@
               <span :class="$style.InputPrepend">URL</span>
             </template>
           </ElementInput>
-          <div :class="$style.Spacer" />
-          <SubmitButton @click="submitUrl_" :loading="loading_" />
         </template>
 
-        <template v-if="questionType_ == 'opinion'">
-          <ElementInput
-            placeholder="What's the 80/20 of what you're thinking about?"
-            v-model="form_.opinion.summary"
-            :disabled="loading_"
-          >
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Summary</span>
-            </template>
-          </ElementInput>
-          <div :class="$style.Spacer" />
-          <ElementInput
-            :class="$style.Textarea"
-            placeholder="Tell us more about it..."
-            type="textarea"
-            :disabled="loading_"
-            v-model="form_.opinion.details"
-            :autosize="{ minRows: 2 }"
-          />
-          <div :class="$style.Spacer" />
-          <SubmitButton @click="submitOpinion_" :loading="loading_" />
-        </template>
+        <div :class="$style.Spacer" />
+        <div :class="$style.Spacer" />
+
+        <HorizontalLayout vertical-center spacing="10">
+          <template v-slot:left>
+            <SubmitButton @click="submit_" :loading="loading_" />
+          </template>
+
+          <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
+        </HorizontalLayout>
       </div>
     </VerticalRibbon>
   </div>
@@ -137,7 +140,7 @@ export default {
 
   data() {
     return {
-      questionType_: 'question',
+      questionType_: 'opinion',
 
       form_: {
         question: {
@@ -162,34 +165,24 @@ export default {
   },
 
   methods: {
-    submitQuestion_() {
-      this.submit_({
-        type: 'question',
-        question: this.form_.question.question,
-        details: this.form_.question.details,
-      });
-    },
+    submit_() {
+      const request = {};
+      if (this.questionType_ == 'question') {
+        request.type = 'question';
+        request.question = this.form_.question.question;
+        request.details = this.form_.question.details;
+      } else if (this.questionType_ == 'url') {
+        request.type = 'url';
+        request.summary = this.form_.url.summary;
+        request.url = this.form_.url.url;
+      } else if (this.questionType_ == 'opinion') {
+        request.type = 'opinion';
+        request.summary = this.form_.opinion.summary;
+        request.details = this.form_.opinion.details;
+      }
 
-    submitUrl_() {
-      this.submit_({
-        type: 'url',
-        summary: this.form_.url.summary,
-        url: this.form_.url.url,
-      });
-    },
-
-    submitOpinion_() {
-      this.submit_({
-        type: 'opinion',
-        summary: this.form_.opinion.summary,
-        details: this.form_.opinion.details,
-      });
-    },
-
-    submit_(post) {
       this.loading_ = true;
-
-      apiFetch('aurora/posts/create', post)
+      apiFetch('aurora/posts/create', request)
         .then(({ id }) => {
           this.error_ = null;
           this.$router.push(`/posts/${id}`);
@@ -222,14 +215,8 @@ export default {
 }
 
 .Content {
+  background: #FFF;
   padding: 30px;
-}
-
-.Error {
-  @include fonts-body;
-
-  color: #E91E63;
-  margin-bottom: 20px;
 }
 
 .QuestionTypes {
@@ -260,5 +247,11 @@ export default {
     font-size: 14px;
     line-height: 30px;
   }
+}
+
+.Error {
+  @include fonts-body;
+
+  color: #E91E63;
 }
 </style>

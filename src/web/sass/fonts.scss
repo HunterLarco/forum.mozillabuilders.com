@@ -35,3 +35,12 @@
   font-size: 18px;
   line-height: 27px;
 }
+
+@mixin fonts-banner {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+}
