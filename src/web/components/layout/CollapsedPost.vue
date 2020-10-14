@@ -5,36 +5,58 @@
     </template>
 
     <div>
-      <a
-        :href="this.post.content.url"
+      <router-link
+        :to="`/posts/${post.id}`"
         :class="$style.Title"
-        v-if="this.post.content.type == 'url'"
-        >{{ title_ }}</a
+        v-if="linkToPost"
+        >{{ title_ }}</router-link
       >
-      <router-link :to="`/posts/${post.id}`" :class="$style.Title" v-else>{{
-        title_
-      }}</router-link>
+      <div :class="$style.Title" v-else>{{ title_ }}</div>
 
       <div :class="$style.Metadata">
-        posted Anonymously {{ age_ }} |
-        <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+        posted Anonymously {{ age_ }}
+        <span v-if="showComments"
+          >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+        </span>
       </div>
     </div>
+
+    <template v-slot:right>
+      <a
+        :class="$style.LinkIcon"
+        :href="post.content.url"
+        target="blank"
+        v-if="post.content.type == 'url'"
+      >
+        <ElementIcon name="link" />
+      </a>
+    </template>
   </HorizontalLayout>
 </template>
 
 <script>
 import friendlyTime from 'friendly-time';
 
+import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
 export default {
-  components: { HorizontalLayout },
+  components: { ElementIcon, HorizontalLayout },
 
   props: {
     post: {
       type: Object,
       required: true,
+    },
+
+    linkToPost: {
+      type: Boolean,
+      default: true,
+    },
+
+    showComments: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -91,8 +113,14 @@ export default {
 
   color: #828282;
 
-  & > a {
+  & a {
     color: inherit;
   }
+}
+
+.LinkIcon {
+  @include fonts-collapsed-post-likes;
+
+  color: #828282;
 }
 </style>
