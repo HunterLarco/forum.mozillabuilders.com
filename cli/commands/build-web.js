@@ -86,7 +86,12 @@ module.exports = {
     args = argparse.parse(this.arguments, args);
 
     const configTemplate = require('../webpack/web.config.js');
-    const config = configTemplate(args.env, {});
+    const config = configTemplate(args.env, {
+      apiServer: environment.select(args.env, {
+        production: 'https://api.unfck.xyz',
+        local: args['local-api-server'],
+      }),
+    });
 
     const compiler = webpack(config);
     if (args.strict) {

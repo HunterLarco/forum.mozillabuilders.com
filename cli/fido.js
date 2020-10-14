@@ -6,6 +6,7 @@ const argparse = require('./util/argparse.js');
 const logging = require('./util/logging.js');
 
 const COMMANDS = {
+  'build-server': () => require('./commands/build-server.js'),
   'build-web': () => require('./commands/build-web.js'),
   'run-local': () => require('./commands/run-local.js'),
   'deploy-web': () => require('./commands/deploy-web.js'),
