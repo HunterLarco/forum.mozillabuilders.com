@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "hunterlarco-com",
+    "site": "unfck-forum",
     "public": "./",
     "ignore": ["firebase.json"],
     "rewrites": [

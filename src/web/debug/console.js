@@ -1,1 +1,1 @@
-window.__hunterlarco__ = {};
+window.__unfck__ = {};

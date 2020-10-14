@@ -20,7 +20,7 @@ module.exports = (env, flags) =>
     plugins: [
       new HtmlWebpackPlugin({
         template: require('html-webpack-template'),
-        title: 'Hunter Larco',
+        title: '#Unfck #MozForum',
         mobile: true,
         hash: true,
         lang: 'en-US',
@@ -28,7 +28,8 @@ module.exports = (env, flags) =>
         meta: [
           {
             name: 'description',
-            content: "Hunter Larco's personal website.",
+            content:
+              "We love it, we need it, and we can all feel the ways it’s fcked. Together we can unfck it. Let's talk about how.",
           },
         ],
       }),
