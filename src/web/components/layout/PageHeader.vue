@@ -7,7 +7,9 @@
     vertical-center
   >
     <template v-slot:left>
-      <img src="~@/src/web/assets/logos/Mozilla.png" />
+      <router-link to="/">
+        <img src="~@/src/web/assets/logos/Mozilla.png" />
+      </router-link>
     </template>
 
     <slot name="nav"></slot>
@@ -36,7 +38,7 @@ export default {
 }
 
 .Logo {
-  & > img {
+  & img {
     height: 24px;
     margin-right: 24px;
 
