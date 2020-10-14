@@ -8,7 +8,7 @@
         </template>
 
         <template v-slot:buttons>
-          <router-link to="/ask">Post a new topic</router-link>
+          <router-link to="/submit">Post a new topic</router-link>
         </template>
       </PageHeader>
     </VerticalRibbon>

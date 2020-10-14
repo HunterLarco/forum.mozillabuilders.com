@@ -27,3 +27,11 @@
   font-weight: 700;
   line-height: 21px;
 }
+
+@mixin fonts-body {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 18px;
+  line-height: 27px;
+}
