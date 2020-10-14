@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "unfck-forum",
+    "public": "./",
+    "ignore": ["firebase.json"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
