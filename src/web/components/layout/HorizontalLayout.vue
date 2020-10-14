@@ -1,18 +1,32 @@
 <template>
   <div :class="column ? $style.Host_Column : $style.Host">
     <div
-      :class="[$style.Left, leftClass]"
+      :class="[
+        $style.Left,
+        leftClass,
+        verticalCenter ? $style.VerticalCenter : null,
+      ]"
       :style="`margin-right: ${spacing}px`"
     >
       <slot name="left"></slot>
     </div>
 
-    <div :class="$style.Middle">
+    <div
+      :class="[
+        $style.Middle,
+        middleClass,
+        verticalCenter ? $style.VerticalCenter : null,
+      ]"
+    >
       <slot></slot>
     </div>
 
     <div
-      :class="[$style.Right, rightClass]"
+      :class="[
+        $style.Right,
+        rightClass,
+        verticalCenter ? $style.VerticalCenter : null,
+      ]"
       :style="`margin-left: ${spacing}px`"
     >
       <slot name="right"></slot>
@@ -33,12 +47,22 @@ export default {
       default: null,
     },
 
+    middleClass: {
+      type: String,
+      default: null,
+    },
+
     rightClass: {
       type: String,
       default: null,
     },
 
     column: {
+      type: Boolean,
+      default: false,
+    },
+
+    verticalCenter: {
       type: Boolean,
       default: false,
     },
@@ -73,5 +97,9 @@ export default {
   &:empty {
     display: none;
   }
+}
+
+.VerticalCenter {
+  @include layout-vertical-center;
 }
 </style>

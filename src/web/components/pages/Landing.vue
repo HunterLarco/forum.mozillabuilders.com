@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.Host">
     <VerticalRibbon max-width="1200px" centered>
-      <PageHeader>
+      <PageHeader :class="$style.PageHeader">
         <template v-slot:nav>
           <router-link to="/top">Top</router-link>
           <router-link to="/new">New</router-link>
@@ -25,6 +25,17 @@ export default {
 </script>
 
 <style module lang="sass">
+@import '@/src/web/sass/layout';
+
 .Host {
+  @include layout-fill;
+
+  background: #F0F0F0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.PageHeader {
+  background: #FFFFFF;
 }
 </style>

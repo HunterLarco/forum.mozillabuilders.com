@@ -1,14 +1,16 @@
 <template>
-  <HorizontalLayout :class="$style.Host" :right-class="$style.Buttons">
+  <HorizontalLayout
+    :class="$style.Host"
+    :left-class="$style.Logo"
+    :middle-class="$style.Nav"
+    :right-class="$style.Buttons"
+    vertical-center
+  >
     <template v-slot:left>
-      <div :class="$style.Logo">
-        <img src="~@/src/web/assets/logos/Mozilla.png" />
-      </div>
+      <img src="~@/src/web/assets/logos/Mozilla.png" />
     </template>
 
-    <div :class="$style.Nav">
-      <slot name="nav"></slot>
-    </div>
+    <slot name="nav"></slot>
 
     <template v-slot:right>
       <slot name="buttons"></slot>
@@ -26,6 +28,7 @@ export default {
 
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
+@import '@/src/web/sass/layout';
 @import '@/src/web/sass/sizing';
 
 .Host {
@@ -33,19 +36,17 @@ export default {
 }
 
 .Logo {
-  display: inline-block;
-  margin-right: 24px;
-
-  @include sizing-tablet {
-    margin-right: 16px;
-  }
-
-  @include sizing-mobile {
-    margin-right: 8px;
-  }
-
   & > img {
     height: 24px;
+    margin-right: 24px;
+
+    @include sizing-tablet {
+      margin-right: 16px;
+    }
+
+    @include sizing-mobile {
+      margin-right: 8px;
+    }
   }
 }
 
