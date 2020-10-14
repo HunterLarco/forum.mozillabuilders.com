@@ -13,6 +13,8 @@
       </PageHeader>
 
       <div :class="$style.Content">
+        <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
+
         <div :class="$style.QuestionTypes">
           <TextCheckbox
             :class="$style.QuestionType"
@@ -121,6 +123,8 @@ import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
   components: {
     ElementInput,
@@ -153,6 +157,7 @@ export default {
       },
 
       loading_: false,
+      error_: false,
     };
   },
 
@@ -183,7 +188,18 @@ export default {
 
     submit_(post) {
       this.loading_ = true;
-      console.log(post);
+
+      apiFetch('aurora/posts/create', post)
+        .then(({ id }) => {
+          this.error_ = null;
+          this.$router.push(`/posts/${id}`);
+        })
+        .catch((error) => {
+          this.error_ = error.message;
+        })
+        .finally(() => {
+          this.loading_ = false;
+        });
     },
   },
 };
@@ -207,6 +223,13 @@ export default {
 
 .Content {
   padding: 30px;
+}
+
+.Error {
+  @include fonts-body;
+
+  color: #E91E63;
+  margin-bottom: 20px;
 }
 
 .QuestionTypes {

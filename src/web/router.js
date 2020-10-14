@@ -14,6 +14,11 @@ export default new VueRouter({
     },
 
     {
+      path: '/posts/:id',
+      component: () => import('@/src/web/components/pages/Post'),
+    },
+
+    {
       path: '/submit',
       component: () => import('@/src/web/components/pages/Submit'),
     },
