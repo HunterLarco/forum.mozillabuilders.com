@@ -73,7 +73,8 @@ export default {
       handler() {
         const index = this.$route.path.slice(1);
 
-        (this.posts_ = []), (this.loading_ = true);
+        this.posts_ = [];
+        this.loading_ = true;
         this.loadingText_ = {
           new: 'Fetching the lastest posts',
           top: 'Fetching the most popular posts',
