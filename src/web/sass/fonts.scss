@@ -60,3 +60,12 @@
   font-size: 13px;
   line-height: 18px;
 }
+
+@mixin fonts-collapsed-post-likes {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 27px;
+}

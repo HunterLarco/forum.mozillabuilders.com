@@ -1,24 +1,34 @@
 <template>
-  <div :class="$style.Host">
-    <a
-      :href="this.post.content.url"
-      :class="$style.Title"
-      v-if="this.post.content.type == 'url'"
-      >{{ title_ }}</a
-    >
-    <router-link :to="`/posts/${post.id}`" :class="$style.Title" v-else>{{
-      title_
-    }}</router-link>
+  <HorizontalLayout :class="$style.Host" vertical-center>
+    <template v-slot:left>
+      <div :class="$style.Likes">1</div>
+    </template>
 
-    <div :class="$style.Metadata">
-      posted Anonymously {{ age_ }} |
-      <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+    <div>
+      <a
+        :href="this.post.content.url"
+        :class="$style.Title"
+        v-if="this.post.content.type == 'url'"
+        >{{ title_ }}</a
+      >
+      <router-link :to="`/posts/${post.id}`" :class="$style.Title" v-else>{{
+        title_
+      }}</router-link>
+
+      <div :class="$style.Metadata">
+        posted Anonymously {{ age_ }} |
+        <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+      </div>
     </div>
-  </div>
+  </HorizontalLayout>
 </template>
 
 <script>
+import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+
 export default {
+  components: { HorizontalLayout },
+
   props: {
     post: {
       type: Object,
@@ -50,7 +60,16 @@ export default {
 @import '@/src/web/sass/fonts';
 
 .Host {
-  padding: 20px 30px;
+  padding: 20px 30px 20px 0;
+}
+
+.Likes {
+  @include fonts-collapsed-post-likes;
+
+  color: #E91E63;
+  min-width: 40px;
+  padding: 0 20px;
+  text-align: center;
 }
 
 .Title {
