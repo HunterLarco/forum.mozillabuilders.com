@@ -5,13 +5,7 @@
     </template>
 
     <div>
-      <a
-        :href="this.post.content.url"
-        :class="$style.Title"
-        v-if="this.post.content.type == 'url'"
-        >{{ title_ }}</a
-      >
-      <router-link :to="`/posts/${post.id}`" :class="$style.Title" v-else>{{
+      <router-link :to="`/posts/${post.id}`" :class="$style.Title">{{
         title_
       }}</router-link>
 
@@ -20,16 +14,28 @@
         <router-link :to="`/posts/${post.id}`">0 comments</router-link>
       </div>
     </div>
+
+    <template v-slot:right>
+      <a
+        :class="$style.LinkIcon"
+        :href="post.content.url"
+        target="blank"
+        v-if="post.content.type == 'url'"
+      >
+        <ElementIcon name="link" />
+      </a>
+    </template>
   </HorizontalLayout>
 </template>
 
 <script>
 import friendlyTime from 'friendly-time';
 
+import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
 export default {
-  components: { HorizontalLayout },
+  components: { ElementIcon, HorizontalLayout },
 
   props: {
     post: {
@@ -94,5 +100,11 @@ export default {
   & > a {
     color: inherit;
   }
+}
+
+.LinkIcon {
+  @include fonts-collapsed-post-likes;
+
+  color: #828282;
 }
 </style>
