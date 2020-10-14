@@ -42,11 +42,14 @@
               <span :class="$style.InputPrepend">Question</span>
             </template>
           </ElementInput>
-          <ElementInput placeholder="Tell us more about it...">
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Details</span>
-            </template>
-          </ElementInput>
+          <div :class="$style.Spacer" />
+          <ElementInput
+            :class="$style.Textarea"
+            placeholder="Tell us more about it..."
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+          />
+          <div :class="$style.Spacer" />
           <SubmitButton />
         </template>
 
@@ -56,11 +59,13 @@
               <span :class="$style.InputPrepend">Summary</span>
             </template>
           </ElementInput>
+          <div :class="$style.Spacer" />
           <ElementInput placeholder="https://...">
             <template v-slot:prepend>
               <span :class="$style.InputPrepend">URL</span>
             </template>
           </ElementInput>
+          <div :class="$style.Spacer" />
           <SubmitButton />
         </template>
 
@@ -72,11 +77,14 @@
               <span :class="$style.InputPrepend">Summary</span>
             </template>
           </ElementInput>
-          <ElementInput placeholder="Tell us more about it...">
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Details</span>
-            </template>
-          </ElementInput>
+          <div :class="$style.Spacer" />
+          <ElementInput
+            :class="$style.Textarea"
+            placeholder="Tell us more about it..."
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+          />
+          <div :class="$style.Spacer" />
           <SubmitButton />
         </template>
       </div>
@@ -146,5 +154,17 @@ export default {
 .InputPrepend {
   display: inline-block;
   min-width: 70px;
+}
+
+.Spacer {
+  height: 10px;
+}
+
+.Textarea {
+  & > textarea {
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 30px;
+  }
 }
 </style>
