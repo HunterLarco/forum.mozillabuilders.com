@@ -20,22 +20,34 @@
         the internet, together!
         <router-link to="/submit">Tell us how</router-link>.</Banner
       >
+
+      <div :class="$style.Content">
+        <template v-if="loading_">
+          <div :class="$style.LoadingIndicator">
+            {{ loadingText_ }}
+            <ElementIcon name="loading" />
+          </div>
+        </template>
+      </div>
     </VerticalRibbon>
   </div>
 </template>
 
 <script>
 import Banner from '@/src/web/components/layout/Banner';
+import ElementIcon from '@/vendor/element-ui/Icon';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { Banner, PageHeader, VerticalRibbon },
+  components: { Banner, ElementIcon, PageHeader, VerticalRibbon },
 
   data() {
     return {
+      loading_: false,
+      loadingText_: '',
       error_: null,
     };
   },
@@ -45,9 +57,16 @@ export default {
       immediate: true,
       handler() {
         const index = this.$route.path.slice(1);
+
+        this.loading_ = true;
+        this.loadingText_ = {
+          new: 'Fetching the lastest posts',
+          top: 'Fetching the most popular posts',
+        }[index];
         apiFetch('aurora/posts/query', { index })
           .then(({ posts }) => {
             this.error_ = null;
+            this.loading_ = false;
           })
           .catch((error) => {
             this.error_ = error.message;
@@ -59,6 +78,7 @@ export default {
 </script>
 
 <style module lang="sass">
+@import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
 
 .Host {
@@ -71,5 +91,20 @@ export default {
 
 .PageHeader {
   background: #FFFFFF;
+}
+
+.Content {
+  background: #FFF;
+  padding: 30px;
+}
+
+.LoadingIndicator {
+  @include fonts-body;
+
+  text-align: center;
+
+  & > * {
+    vertical-align: middle;
+  }
 }
 </style>
