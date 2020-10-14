@@ -30,11 +30,13 @@ const Content = Joi.alternatives().conditional('.type', {
 });
 
 const Schema = Joi.object({
+  id: Joi.string().required(),
   content: Content.required(),
   dateCreated: Joi.date().required(),
 });
 
-Schema.fromFirestorePost = (post) => ({
+Schema.fromFirestorePost = (id, post) => ({
+  id,
   content: post.content,
   dateCreated: post.dateCreated,
 });

@@ -28,6 +28,13 @@
             <ElementIcon name="loading" />
           </div>
         </template>
+
+        <CollapsedPost
+          :class="$style.Post"
+          v-for="post in posts_"
+          :key="post.id"
+          :post="post"
+        />
       </div>
     </VerticalRibbon>
   </div>
@@ -35,6 +42,7 @@
 
 <script>
 import Banner from '@/src/web/components/layout/Banner';
+import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
@@ -42,13 +50,20 @@ import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { Banner, ElementIcon, PageHeader, VerticalRibbon },
+  components: {
+    Banner,
+    CollapsedPost,
+    ElementIcon,
+    PageHeader,
+    VerticalRibbon,
+  },
 
   data() {
     return {
       loading_: false,
       loadingText_: '',
       error_: null,
+      posts_: [],
     };
   },
 
@@ -58,13 +73,14 @@ export default {
       handler() {
         const index = this.$route.path.slice(1);
 
-        this.loading_ = true;
+        (this.posts_ = []), (this.loading_ = true);
         this.loadingText_ = {
           new: 'Fetching the lastest posts',
           top: 'Fetching the most popular posts',
         }[index];
         apiFetch('aurora/posts/query', { index })
           .then(({ posts }) => {
+            this.posts_ = posts;
             this.error_ = null;
             this.loading_ = false;
           })
@@ -95,16 +111,27 @@ export default {
 
 .Content {
   background: #FFF;
-  padding: 30px;
+  margin-bottom: 40px;
+
+  @media (max-width: 1260px) {
+    margin-bottom: 0;
+  }
 }
 
 .LoadingIndicator {
   @include fonts-body;
 
+  padding: 30px;
   text-align: center;
 
   & > * {
     vertical-align: middle;
+  }
+}
+
+.Post {
+  & ~ .Post {
+    border-top: 1px solid #EEE;
   }
 }
 </style>

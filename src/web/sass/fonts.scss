@@ -44,3 +44,19 @@
   font-weight: 700;
   line-height: 21px;
 }
+
+@mixin fonts-collapsed-post-title {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+@mixin fonts-collapsed-post-metadata {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
