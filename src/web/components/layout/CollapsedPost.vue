@@ -5,13 +5,19 @@
     </template>
 
     <div>
-      <router-link :to="`/posts/${post.id}`" :class="$style.Title">{{
-        title_
-      }}</router-link>
+      <router-link
+        :to="`/posts/${post.id}`"
+        :class="$style.Title"
+        v-if="linkToPost"
+        >{{ title_ }}</router-link
+      >
+      <div :class="$style.Title" v-else>{{ title_ }}</div>
 
       <div :class="$style.Metadata">
-        posted Anonymously {{ age_ }} |
-        <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+        posted Anonymously {{ age_ }}
+        <span v-if="showComments"
+          >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+        </span>
       </div>
     </div>
 
@@ -41,6 +47,16 @@ export default {
     post: {
       type: Object,
       required: true,
+    },
+
+    linkToPost: {
+      type: Boolean,
+      default: true,
+    },
+
+    showComments: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -97,7 +113,7 @@ export default {
 
   color: #828282;
 
-  & > a {
+  & a {
     color: inherit;
   }
 }
