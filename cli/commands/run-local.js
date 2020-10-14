@@ -1,7 +1,23 @@
 const argparse = require('../util/argparse.js');
 const buildServer = require('./build-server.js');
 const buildWeb = require('./build-web.js');
+const firestore = require('../util/firestore.js');
 const logging = require('../util/logging.js');
+
+async function startServices(args) {
+  if (args.firestore) {
+    const firestoreProcess = await firestore.start({
+      port: args['firestore-port'],
+      verbose: args.verbose,
+    });
+    firestoreProcess.on('close', () => {
+      logging.failure('[firestore] died!');
+    });
+    logging.success(
+      `[firestore] Serving on localhost:${args['firestore-port']}`
+    );
+  }
+}
 
 module.exports = {
   arguments: {
@@ -33,6 +49,8 @@ module.exports = {
 
   async run(_, args) {
     args = argparse.parse(this.arguments, args);
+
+    await startServices(args);
 
     buildServer.run([], {
       env: 'local',
