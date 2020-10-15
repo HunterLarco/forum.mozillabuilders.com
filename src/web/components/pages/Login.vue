@@ -24,6 +24,7 @@
               placeholder="Enter your email address..."
               v-model="form_.data.email"
               @input="form_.errors.email = null"
+              @keydown.native.prevent.enter="submit_"
               :readonly="submitting_"
             />
           </ElementFormItem>
@@ -61,6 +62,8 @@ import ElementFormItem from '@/vendor/element-ui/FormItem';
 import ElementInput from '@/vendor/element-ui/Input';
 import ElementMessage from '@/vendor/element-ui/Message';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
   components: {
     ElementButton,
@@ -85,8 +88,9 @@ export default {
             {
               trigger: 'change',
               validator: debounce((rule, value, callback) => {
-                if (value && !emailValidator.validate(value)) {
-                  callback(`${value} is not a valid email address.`);
+                const error = this.validateEmail_(value);
+                if (value && error) {
+                  callback(error);
                 } else if (this.form_.errors.email) {
                   callback(this.form_.errors.email);
                 } else {
@@ -104,7 +108,37 @@ export default {
   },
 
   methods: {
-    submit_() {},
+    validateEmail_(email) {
+      if (!email) {
+        return 'Email is required.';
+      }
+      if (!emailValidator.validate(email)) {
+        return `${email} is not a valid email address.`;
+      }
+      return null;
+    },
+
+    submit_() {
+      const email = this.form_.data.email;
+
+      const emailError = this.validateEmail_(email);
+      this.form_.errors.email = emailError;
+      if (emailError) {
+        return;
+      }
+
+      this.submitting_ = true;
+      apiFetch('aurora/accounts/sendMagicLink', { email })
+        .then(() => {
+          this.submitted_ = true;
+        })
+        .catch((error) => {
+          this.form_.errors.email = error.message;
+        })
+        .finally(() => {
+          this.submitting_ = false;
+        });
+    },
   },
 };
 </script>
@@ -161,7 +195,7 @@ export default {
 }
 
 .Details {
-  @include fonts-body;
+  @include fonts-caption;
 
   color: #606266;
   text-align: center;
