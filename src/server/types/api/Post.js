@@ -31,13 +31,26 @@ const Content = Joi.alternatives().conditional('.type', {
 
 const Schema = Joi.object({
   id: Joi.string().required(),
+
   content: Content.required(),
+
+  stats: Joi.object({
+    likes: Joi.number().min(1).required(),
+  }).required(),
+
   dateCreated: Joi.date().required(),
 });
 
 Schema.fromFirestorePost = (id, post) => ({
   id,
+
   content: post.content,
+
+  stats: {
+    // TODO(hunter): fetch the most recent like count (perhaps with a cache)
+    likes: Math.round(Math.random() * 100),
+  },
+
   dateCreated: post.dateCreated,
 });
 

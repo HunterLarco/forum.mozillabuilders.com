@@ -31,5 +31,10 @@ const Content = Joi.alternatives().conditional('.type', {
 
 export default Joi.object({
   content: Content.required(),
+
+  stats: Joi.object({
+    likes: Joi.number().min(1).default(1),
+  }).required(),
+
   dateCreated: Joi.date().required(),
 });

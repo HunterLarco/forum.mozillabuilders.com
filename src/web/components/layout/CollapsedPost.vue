@@ -3,7 +3,7 @@
     <template v-slot:left>
       <div :class="$style.Likes" @click="like_">
         <ElementIcon :class="$style.LikeIcon" name="caret-top" />
-        {{ 1 }}
+        {{ likes_ }}
       </div>
     </template>
 
@@ -81,7 +81,19 @@ export default {
     },
 
     age_() {
+      if (!this.post) {
+        return null;
+      }
+
       return friendlyTime(new Date(this.post.dateCreated));
+    },
+
+    likes_() {
+      if (!this.post) {
+        return null;
+      }
+
+      return this.post.stats.likes;
     },
   },
 
