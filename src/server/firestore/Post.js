@@ -26,6 +26,15 @@ export async function create(environment, transaction, post) {
   return { id: reference.id, post };
 }
 
+export async function exists(environment, transaction, id) {
+  const reference = environment.firestore.collection('Post').doc(id);
+  const document = transaction
+    ? await transaction.get(reference)
+    : await reference.get();
+
+  return document.exists;
+}
+
 export async function get(environment, transaction, id) {
   const reference = environment.firestore.collection('Post').doc(id);
   const document = transaction

@@ -1,3 +1,5 @@
+import md5 from 'md5';
+
 import * as AccountTable from '@/src/server/firestore/Account';
 
 import AccountIdentitySchema from '@/src/server/types/firestore/AccountIdentity';
@@ -13,14 +15,14 @@ export async function create(environment, transaction, accountIdentity) {
     );
     return Promise.reject({
       httpErrorCode: 500,
-      name: 'InvalidAccountItentitySchema',
+      name: 'InvalidAccountIdentitySchema',
       message: 'Invalid account identity schema.',
     });
   }
 
   const reference = environment.firestore
     .collection('AccountIdentity')
-    .doc(`${accountIdentity.type}-${accountIdentity.identity}`);
+    .doc(md5(`${accountIdentity.type}:${accountIdentity.identity}`));
 
   if (transaction) {
     await transaction.create(reference, value);
@@ -34,7 +36,7 @@ export async function create(environment, transaction, accountIdentity) {
 export async function exists(environment, transaction, type, key) {
   const reference = environment.firestore
     .collection('AccountIdentity')
-    .doc(`${type}-${key}`);
+    .doc(md5(`${type}:${key}`));
   const document = transaction
     ? await transaction.get(reference)
     : await reference.get();
@@ -45,7 +47,7 @@ export async function exists(environment, transaction, type, key) {
 export async function remove(environment, transaction, type, key) {
   const reference = environment.firestore
     .collection('AccountIdentity')
-    .doc(`${type}-${key}`);
+    .doc(md5(`${type}:${key}`));
 
   if (transaction) {
     await transaction.delete(reference);
@@ -57,7 +59,7 @@ export async function remove(environment, transaction, type, key) {
 export async function get(environment, transaction, type, key) {
   const reference = environment.firestore
     .collection('AccountIdentity')
-    .doc(`${type}-${key}`);
+    .doc(md5(`${type}:${key}`));
   const document = transaction
     ? await transaction.get(reference)
     : await reference.get();
