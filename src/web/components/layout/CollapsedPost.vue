@@ -1,8 +1,16 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div :class="$style.Likes" @click="like_">
-        <ElementIcon :class="$style.LikeIcon" name="caret-top" />
+      <div
+        :class="$style.Likes"
+        :style="alreadyLiked_ ? 'cursor: default' : ''"
+        @click="like_"
+      >
+        <ElementIcon
+          :class="$style.LikeIcon"
+          name="caret-top"
+          v-if="!alreadyLiked_"
+        />
         {{ likes_ }}
       </div>
     </template>
@@ -95,10 +103,22 @@ export default {
 
       return this.post.stats.likes;
     },
+
+    alreadyLiked_() {
+      if (!this.post || !this.post.personalization) {
+        return null;
+      }
+
+      return this.post.personalization.liked;
+    },
   },
 
   methods: {
     like_() {
+      if (this.alreadyLiked_) {
+        return;
+      }
+
       this.$router.push('/login');
     },
   },
