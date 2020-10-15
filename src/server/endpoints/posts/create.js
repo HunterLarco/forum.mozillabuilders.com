@@ -40,6 +40,9 @@ const ResponseSchema = Joi.object({
 async function handler(environment, request) {
   const post = {
     content: {},
+    stats: {
+      likes: 1,
+    },
     dateCreated: new Date(),
   };
 

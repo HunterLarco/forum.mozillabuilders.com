@@ -24,6 +24,21 @@ export default new VueRouter({
     },
 
     {
+      path: '/login',
+      component: () => import('@/src/web/components/pages/Login'),
+    },
+
+    {
+      path: '/login/:token',
+      component: () => import('@/src/web/components/pages/LoginWithToken'),
+    },
+
+    {
+      path: '/signup',
+      component: () => import('@/src/web/components/pages/Signup'),
+    },
+
+    {
       path: '*',
       redirect: '/top',
     },

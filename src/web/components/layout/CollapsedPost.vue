@@ -1,7 +1,10 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div :class="$style.Likes">1</div>
+      <div :class="$style.Likes" @click="like_">
+        <ElementIcon :class="$style.LikeIcon" name="caret-top" />
+        {{ likes_ }}
+      </div>
     </template>
 
     <div>
@@ -78,7 +81,25 @@ export default {
     },
 
     age_() {
+      if (!this.post) {
+        return null;
+      }
+
       return friendlyTime(new Date(this.post.dateCreated));
+    },
+
+    likes_() {
+      if (!this.post) {
+        return null;
+      }
+
+      return this.post.stats.likes;
+    },
+  },
+
+  methods: {
+    like_() {
+      this.$router.push('/login');
     },
   },
 };
@@ -95,9 +116,21 @@ export default {
   @include fonts-collapsed-post-likes;
 
   color: #E91E63;
-  min-width: 40px;
-  padding: 0 20px;
+  cursor: pointer;
+  min-width: 46px;
+  padding: 0 24px 0 20px;
   text-align: center;
+
+  &:hover .LikeIcon {
+    color: #E91E63;
+  }
+}
+
+.LikeIcon {
+  color: lighten(#E91E63, 30%);
+  font-size: 14px;
+  position: relative;
+  top: -3px;
 }
 
 .Title {
