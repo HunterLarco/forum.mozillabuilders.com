@@ -55,13 +55,24 @@ const Schema = Joi.object({
 Schema.fromFirestorePost = async (environment, id, post, options) => {
   const { accountId = null } = options || {};
 
+  let personalization;
+  if (accountId) {
+    personalization = {
+      liked: await LikeTable.exists(environment, null, accountId, id),
+      postedByYou: post.author == accountId,
+    };
+  }
+
+  const { account: author } = await AccountTable.get(
+    environment,
+    null,
+    post.author
+  );
+
   return {
     id,
 
-    author: PublicAccount.fromFirestoreAccount(
-      post.author,
-      (await AccountTable.get(environment, null, post.author)).account
-    ),
+    author: PublicAccount.fromFirestoreAccount(post.author, author),
     content: post.content,
 
     stats: {
@@ -69,12 +80,7 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
       likes: Math.round(Math.random() * 100) + 1,
     },
 
-    personalization: accountId
-      ? {
-          liked: await LikeTable.exists(environment, null, accountId, id),
-          postedByYou: accountId == post.author,
-        }
-      : undefined,
+    personalization: personalization,
 
     dateCreated: post.dateCreated,
   };
