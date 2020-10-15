@@ -9,7 +9,6 @@ import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
 
 const RequestSchema = Joi.object({
   email: Joi.string().email().required(),
-  username: Joi.string().required(),
 });
 
 const ResponseSchema = Joi.object({});
@@ -17,31 +16,18 @@ const ResponseSchema = Joi.object({});
 async function handler(environment, request) {
   const email = FirestoreEmailSchema.fromText(request.email);
 
-  if (
-    await AccountIdentityTable.exists(
-      environment,
-      null,
-      'normalizedEmail',
-      email.normalized
-    )
-  ) {
+  const { accountIdentity } = await AccountIdentityTable.get(
+    environment,
+    null,
+    'normalizedEmail',
+    email.normalized
+  );
+
+  if (!accountIdentity) {
     return Promise.reject({
-      httpErrorCode: 412,
-      name: 'EmailAlreadyExists',
-      message: `Account already exists for email ${email.raw}`,
-    });
-  } else if (
-    await AccountIdentityTable.exists(
-      environment,
-      null,
-      'username',
-      request.username
-    )
-  ) {
-    return Promise.reject({
-      httpErrorCode: 412,
-      name: 'UsernameAlreadyExists',
-      message: `Account already exists for username ${request.username}`,
+      httpErrorCode: 404,
+      name: 'AccountNotFound',
+      message: `No account found for email ${email.raw}`,
     });
   }
 
@@ -49,9 +35,8 @@ async function handler(environment, request) {
     dateCreated: new Date(),
     expiration: dateFns.addDays(new Date(), 1),
     scopes: {
-      signup: {
-        email,
-        username: request.username,
+      login: {
+        accountId: accountIdentity.accountId,
       },
     },
   });
