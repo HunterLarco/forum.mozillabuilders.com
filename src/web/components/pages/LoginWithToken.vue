@@ -3,13 +3,12 @@
 </template>
 
 <script>
-import apiFetch from '@/src/web/helpers/net/apiFetch';
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
   mounted() {
-    apiFetch('aurora/accounts/login', { token: this.$route.params.token })
-      .then(({ token }) => {
-        console.log(100, token);
+    CurrentUserStore.dispatch('login', this.$route.params.token)
+      .then(() => {
         this.$router.push('/');
       })
       .catch((error) => {
