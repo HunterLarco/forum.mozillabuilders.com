@@ -38,6 +38,10 @@ const Schema = Joi.object({
     likes: Joi.number().min(1).required(),
   }).required(),
 
+  personalization: Joi.object({
+    liked: Joi.boolean().required(),
+  }),
+
   dateCreated: Joi.date().required(),
 });
 

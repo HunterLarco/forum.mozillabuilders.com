@@ -13,7 +13,7 @@ export default async function getCurrentUser(environment, headers, options) {
       message: 'User auth required',
     });
   } else if (!authTokenId) {
-    return null;
+    return { id: null, account: null };
   }
 
   const { token } = await AuthTokenTable.get(environment, null, authTokenId);
@@ -25,7 +25,7 @@ export default async function getCurrentUser(environment, headers, options) {
       message: 'User auth required',
     });
   } else if (!token) {
-    return null;
+    return { id: null, account: null };
   }
 
   if (!token.scopes.accountAuth) {

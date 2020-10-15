@@ -31,7 +31,7 @@ export async function create(environment, transaction, like) {
   return { id: reference.id, like };
 }
 
-export async function exists(environment, transaction, postId, accountId) {
+export async function exists(environment, transaction, accountId, postId) {
   const reference = environment.firestore
     .collection('Like')
     .doc(md5(`${postId}:${accountId}`));
@@ -42,7 +42,7 @@ export async function exists(environment, transaction, postId, accountId) {
   return document.exists;
 }
 
-export async function get(environment, transaction, postId, accountId) {
+export async function get(environment, transaction, accountId, postId) {
   const reference = environment.firestore
     .collection('Like')
     .doc(md5(`${postId}:${accountId}`));
@@ -58,7 +58,7 @@ export async function get(environment, transaction, postId, accountId) {
   return { id: reference.id, like };
 }
 
-export async function remove(environment, transaction, postId, accountId) {
+export async function remove(environment, transaction, accountId, postId) {
   const reference = environment.firestore
     .collection('Like')
     .doc(md5(`${postId}:${accountId}`));
