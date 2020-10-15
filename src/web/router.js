@@ -26,6 +26,7 @@ const router = new VueRouter({
       meta: {
         auth: {
           required: true,
+          redirect: '/signup',
           message: 'You must be logged in to post.',
         },
       },
@@ -61,7 +62,7 @@ router.beforeEach((to, from, next) => {
     !CurrentUserStore.state.authToken
   ) {
     next({
-      path: '/login',
+      path: to.meta.auth.redirect || '/login',
       query: {
         info: to.meta.auth.message,
       },

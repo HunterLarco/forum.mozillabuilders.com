@@ -137,7 +137,7 @@ export default {
 
       if (!CurrentUserStore.state.authToken) {
         this.$router.push({
-          path: '/login',
+          path: '/signup',
           query: { info: 'You must be logged in to like posts.' },
         });
       }
