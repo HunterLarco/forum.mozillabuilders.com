@@ -25,6 +25,7 @@
               v-model="form_.data.username"
               @input="form_.errors.username = null"
               :readonly="submitting_"
+              @keydown.native.prevent.enter="submit_"
             />
           </ElementFormItem>
 
@@ -38,6 +39,7 @@
               v-model="form_.data.email"
               @input="form_.errors.email = null"
               :readonly="submitting_"
+              @keydown.native.prevent.enter="submit_"
             />
           </ElementFormItem>
 
@@ -74,6 +76,8 @@ import ElementFormItem from '@/vendor/element-ui/FormItem';
 import ElementInput from '@/vendor/element-ui/Input';
 import ElementMessage from '@/vendor/element-ui/Message';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
   components: {
     ElementButton,
@@ -100,14 +104,11 @@ export default {
             {
               trigger: 'change',
               validator: debounce((rule, value, callback) => {
-                if (value && !value.match(/^[a-zA-Z0-9_]+$/)) {
-                  callback(
-                    'May only contain alphanumeric characters and underscores.'
-                  );
-                } else if (value && value.length < 3) {
-                  callback('Usernames must contain at least 3 characters.');
-                } else if (this.form_.errors.email) {
-                  callback(this.form_.errors.email);
+                const error = this.validateUsername_(value);
+                if (value && error) {
+                  callback(error);
+                } else if (this.form_.errors.username) {
+                  callback(this.form_.errors.username);
                 } else {
                   callback();
                 }
@@ -119,8 +120,9 @@ export default {
             {
               trigger: 'change',
               validator: debounce((rule, value, callback) => {
-                if (value && !emailValidator.validate(value)) {
-                  callback(`${value} is not a valid email address.`);
+                const error = this.validateEmail_(value);
+                if (value && error) {
+                  callback(error);
                 } else if (this.form_.errors.email) {
                   callback(this.form_.errors.email);
                 } else {
@@ -138,7 +140,63 @@ export default {
   },
 
   methods: {
-    submit_() {},
+    validateUsername_(username) {
+      if (!username) {
+        return 'Username is required.';
+      }
+      if (username.length < 3) {
+        return 'Usernames must contain at least 3 characters.';
+      }
+      if (!username.match(/^[a-zA-Z0-9_]+$/)) {
+        return 'May only contain alphanumeric characters and underscores.';
+      }
+      return null;
+    },
+
+    validateEmail_(email) {
+      if (!email) {
+        return 'Email is required.';
+      }
+      if (!emailValidator.validate(email)) {
+        return `${email} is not a valid email address.`;
+      }
+      return null;
+    },
+
+    submit_() {
+      const email = this.form_.data.email;
+      const username = this.form_.data.username;
+
+      const emailError = this.validateEmail_(email);
+      const usernameError = this.validateUsername_(username);
+      this.form_.errors.email = emailError;
+      this.form_.errors.username = usernameError;
+      if (emailError || usernameError) {
+        return;
+      }
+
+      this.submitting_ = true;
+      apiFetch('aurora/accounts/create', { email, username })
+        .then(() => {
+          this.submitted_ = true;
+        })
+        .catch((error) => {
+          switch (error.name) {
+            case 'InvalidUsername':
+            case 'UsernameAlreadyExists':
+              this.form_.errors.username = error.message;
+              break;
+            case 'EmailAlreadyExists':
+              this.form_.errors.email = error.message;
+              break;
+            default:
+              this.form_.errors.email = error.message;
+          }
+        })
+        .finally(() => {
+          this.submitting_ = false;
+        });
+    },
   },
 };
 </script>
@@ -195,7 +253,7 @@ export default {
 }
 
 .Details {
-  @include fonts-body;
+  @include fonts-caption;
 
   color: #606266;
   text-align: center;
