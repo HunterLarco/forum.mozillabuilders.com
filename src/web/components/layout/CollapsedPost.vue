@@ -1,7 +1,7 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div :class="$style.Likes">
+      <div :class="$style.Likes" @click="like_">
         <ElementIcon :class="$style.LikeIcon" name="caret-top" />
         {{ 1 }}
       </div>
@@ -82,6 +82,12 @@ export default {
 
     age_() {
       return friendlyTime(new Date(this.post.dateCreated));
+    },
+  },
+
+  methods: {
+    like_() {
+      this.$router.push('/login');
     },
   },
 };

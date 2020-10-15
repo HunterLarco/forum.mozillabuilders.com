@@ -24,6 +24,11 @@ export default new VueRouter({
     },
 
     {
+      path: '/login',
+      component: () => import('@/src/web/components/pages/Login'),
+    },
+
+    {
       path: '*',
       redirect: '/top',
     },
