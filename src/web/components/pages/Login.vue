@@ -52,6 +52,9 @@
 </template>
 
 <script>
+import debounce from 'debounce';
+import emailValidator from 'email-validator';
+
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementForm from '@/vendor/element-ui/Form';
 import ElementFormItem from '@/vendor/element-ui/FormItem';
@@ -75,6 +78,23 @@ export default {
 
         errors: {
           email: null,
+        },
+
+        rules: {
+          email: [
+            {
+              trigger: 'change',
+              validator: debounce((rule, value, callback) => {
+                if (value && !emailValidator.validate(value)) {
+                  callback(`${value} is not a valid email address.`);
+                } else if (this.form_.errors.email) {
+                  callback(this.form_.errors.email);
+                } else {
+                  callback();
+                }
+              }, 300),
+            },
+          ],
         },
       },
 
@@ -149,7 +169,7 @@ export default {
 
 .SubmitButton {
   display: block;
-  margin-bottom: 10px;
+  margin: 30px 0 10px 0;
   width: 100%;
 }
 
