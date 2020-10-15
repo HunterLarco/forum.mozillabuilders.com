@@ -17,13 +17,13 @@
         >
           <ElementFormItem
             label="Screen Name"
-            prop="screenName"
-            :error="form_.errors.screenName"
+            prop="username"
+            :error="form_.errors.username"
           >
             <ElementInput
               placeholder="How do you want to be known?"
-              v-model="form_.data.screenName"
-              @input="form_.errors.screenName = null"
+              v-model="form_.data.username"
+              @input="form_.errors.username = null"
               :readonly="submitting_"
             />
           </ElementFormItem>
@@ -87,15 +87,34 @@ export default {
       form_: {
         data: {
           email: '',
-          screenName: '',
+          username: '',
         },
 
         errors: {
           email: null,
-          screenName: null,
+          username: null,
         },
 
         rules: {
+          username: [
+            {
+              trigger: 'change',
+              validator: debounce((rule, value, callback) => {
+                if (value && !value.match(/^[a-zA-Z0-9_]+$/)) {
+                  callback(
+                    'May only contain alphanumeric characters and underscores.'
+                  );
+                } else if (value && value.length < 3) {
+                  callback('Usernames must contain at least 3 characters');
+                } else if (this.form_.errors.email) {
+                  callback(this.form_.errors.email);
+                } else {
+                  callback();
+                }
+              }, 300),
+            },
+          ],
+
           email: [
             {
               trigger: 'change',
