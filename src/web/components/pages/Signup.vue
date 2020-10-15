@@ -105,7 +105,7 @@ export default {
                     'May only contain alphanumeric characters and underscores.'
                   );
                 } else if (value && value.length < 3) {
-                  callback('Usernames must contain at least 3 characters');
+                  callback('Usernames must contain at least 3 characters.');
                 } else if (this.form_.errors.email) {
                   callback(this.form_.errors.email);
                 } else {

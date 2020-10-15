@@ -15,6 +15,20 @@ const RequestSchema = Joi.object({
 const ResponseSchema = Joi.object({});
 
 async function handler(environment, request) {
+  if (request.username.length < 3) {
+    return Promise.reject({
+      httpErrorCode: 400,
+      name: 'InvalidUsername',
+      message: 'Usernames must contain at least 3 characters',
+    });
+  } else if (!request.username.match(/^[a-zA-Z0-9_]+$/)) {
+    return Promise.reject({
+      httpErrorCode: 400,
+      name: 'InvalidUsername',
+      message: 'May only contain alphanumeric characters and underscores.',
+    });
+  }
+
   const email = FirestoreEmailSchema.fromText(request.email);
 
   if (
