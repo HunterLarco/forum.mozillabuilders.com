@@ -69,3 +69,11 @@
   font-weight: 700;
   line-height: 27px;
 }
+
+@mixin fonts-caption {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+}

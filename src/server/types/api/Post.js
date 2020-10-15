@@ -48,7 +48,7 @@ Schema.fromFirestorePost = (id, post) => ({
 
   stats: {
     // TODO(hunter): fetch the most recent like count (perhaps with a cache)
-    likes: Math.round(Math.random() * 100),
+    likes: Math.round(Math.random() * 100) + 1,
   },
 
   dateCreated: post.dateCreated,

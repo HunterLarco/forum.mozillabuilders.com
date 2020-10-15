@@ -7,7 +7,7 @@
       </router-link>
 
       <div :class="$style.Content">
-        <div :class="$style.Title">Log in</div>
+        <div :class="$style.Title">Sign up</div>
 
         <ElementForm
           :class="$style.Form"
@@ -15,6 +15,19 @@
           :rules="form_.rules"
           @submit.native.prevent="submit_"
         >
+          <ElementFormItem
+            label="Screen Name"
+            prop="screenName"
+            :error="form_.errors.screenName"
+          >
+            <ElementInput
+              placeholder="How do you want to be known?"
+              v-model="form_.data.screenName"
+              @input="form_.errors.screenName = null"
+              :readonly="submitting_"
+            />
+          </ElementFormItem>
+
           <ElementFormItem
             label="Email"
             prop="email"
@@ -44,8 +57,8 @@
         </ElementForm>
       </div>
       <div :class="$style.Redirect">
-        Don't have a account?
-        <router-link to="/signup">Sign up</router-link> instead.
+        Already have a account?
+        <router-link to="/login">Log in</router-link> instead.
       </div>
     </div>
   </div>
@@ -71,10 +84,12 @@ export default {
       form_: {
         data: {
           email: '',
+          screenName: '',
         },
 
         errors: {
           email: null,
+          screenName: null,
         },
       },
 

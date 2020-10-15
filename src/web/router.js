@@ -29,6 +29,11 @@ export default new VueRouter({
     },
 
     {
+      path: '/signup',
+      component: () => import('@/src/web/components/pages/Signup'),
+    },
+
+    {
       path: '*',
       redirect: '/top',
     },
