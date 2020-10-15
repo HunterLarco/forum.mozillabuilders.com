@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import * as LikeTable from '@/src/server/firestore/Like';
+
 const Content = Joi.alternatives().conditional('.type', {
   switch: [
     {
@@ -45,17 +47,27 @@ const Schema = Joi.object({
   dateCreated: Joi.date().required(),
 });
 
-Schema.fromFirestorePost = (id, post) => ({
-  id,
+Schema.fromFirestorePost = async (environment, id, post, options) => {
+  const { accountId = null } = options || {};
 
-  content: post.content,
+  return {
+    id,
 
-  stats: {
-    // TODO(hunter): fetch the most recent like count (perhaps with a cache)
-    likes: Math.round(Math.random() * 100) + 1,
-  },
+    content: post.content,
 
-  dateCreated: post.dateCreated,
-});
+    stats: {
+      // TODO(hunter): fetch the most recent like count (perhaps with a cache)
+      likes: Math.round(Math.random() * 100) + 1,
+    },
+
+    personalization: accountId
+      ? {
+          liked: await LikeTable.exists(environment, null, accountId, id),
+        }
+      : undefined,
+
+    dateCreated: post.dateCreated,
+  };
+};
 
 export default Schema;
