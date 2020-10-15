@@ -1,5 +1,8 @@
 import Joi from 'joi';
 
+import PublicAccount from '@/src/server/types/api/PublicAccount';
+
+import * as AccountTable from '@/src/server/firestore/Account';
 import * as LikeTable from '@/src/server/firestore/Like';
 
 const Content = Joi.alternatives().conditional('.type', {
@@ -34,6 +37,7 @@ const Content = Joi.alternatives().conditional('.type', {
 const Schema = Joi.object({
   id: Joi.string().required(),
 
+  author: PublicAccount.required(),
   content: Content.required(),
 
   stats: Joi.object({
@@ -42,6 +46,7 @@ const Schema = Joi.object({
 
   personalization: Joi.object({
     liked: Joi.boolean().required(),
+    postedByYou: Joi.boolean().required(),
   }),
 
   dateCreated: Joi.date().required(),
@@ -53,6 +58,10 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
   return {
     id,
 
+    author: PublicAccount.fromFirestoreAccount(
+      post.author,
+      (await AccountTable.get(environment, null, post.author)).account
+    ),
     content: post.content,
 
     stats: {
@@ -63,6 +72,7 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     personalization: accountId
       ? {
           liked: await LikeTable.exists(environment, null, accountId, id),
+          postedByYou: accountId == post.author,
         }
       : undefined,
 

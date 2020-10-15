@@ -25,7 +25,7 @@
       <div :class="$style.Title" v-else>{{ title_ }}</div>
 
       <div :class="$style.Metadata">
-        posted Anonymously {{ age_ }}
+        posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
           >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
         </span>
@@ -90,6 +90,18 @@ export default {
       }
 
       throw new Error(`Unknown post type: ${this.post.content.type}`);
+    },
+
+    author_() {
+      if (!this.post) {
+        return null;
+      }
+
+      if (this.post.personalization && this.post.personalization.postedByYou) {
+        return 'by you';
+      }
+
+      return `by ${this.post.author.username}`;
     },
 
     age_() {

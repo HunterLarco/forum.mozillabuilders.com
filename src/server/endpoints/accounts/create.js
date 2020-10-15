@@ -27,6 +27,12 @@ async function handler(environment, request) {
       name: 'InvalidUsername',
       message: 'May only contain alphanumeric characters and underscores.',
     });
+  } else if (request.username.toLowerCase() == 'you') {
+    return Promise.reject({
+      httpErrorCode: 400,
+      name: 'InvalidUsername',
+      message: `${request.username} is unavailable.`,
+    });
   }
 
   const email = FirestoreEmailSchema.fromText(request.email);
@@ -55,7 +61,7 @@ async function handler(environment, request) {
     return Promise.reject({
       httpErrorCode: 412,
       name: 'UsernameAlreadyExists',
-      message: `Account already exists for username ${request.username}`,
+      message: `${request.username} is unavailable.`,
     });
   }
 

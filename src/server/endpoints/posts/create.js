@@ -45,6 +45,7 @@ async function handler(environment, request, headers) {
   });
 
   const post = {
+    author: accountId,
     content: {},
     stats: {
       likes: 1,
