@@ -3,6 +3,7 @@ import accounts_login from '@/src/server/endpoints/accounts/login';
 import accounts_sendMagicLink from '@/src/server/endpoints/accounts/sendMagicLink';
 import posts_create from '@/src/server/endpoints/posts/create';
 import posts_get from '@/src/server/endpoints/posts/get';
+import posts_like from '@/src/server/endpoints/posts/like';
 import posts_query from '@/src/server/endpoints/posts/query';
 
 export function install(environment, app) {
@@ -12,6 +13,7 @@ export function install(environment, app) {
     ['post', '/aurora/accounts/sendMagicLink', accounts_sendMagicLink],
     ['post', '/aurora/posts/create', posts_create],
     ['post', '/aurora/posts/get', posts_get],
+    ['post', '/aurora/posts/like', posts_like],
     ['post', '/aurora/posts/query', posts_query],
   ];
 

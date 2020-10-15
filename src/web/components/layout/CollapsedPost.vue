@@ -1,8 +1,16 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div :class="$style.Likes" @click="like_">
-        <ElementIcon :class="$style.LikeIcon" name="caret-top" />
+      <div
+        :class="$style.Likes"
+        :style="alreadyLiked_ ? 'cursor: default' : ''"
+        @click="like_"
+      >
+        <ElementIcon
+          :class="$style.LikeIcon"
+          name="caret-top"
+          v-if="!alreadyLiked_"
+        />
         {{ likes_ }}
       </div>
     </template>
@@ -17,7 +25,7 @@
       <div :class="$style.Title" v-else>{{ title_ }}</div>
 
       <div :class="$style.Metadata">
-        posted Anonymously {{ age_ }}
+        posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
           >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
         </span>
@@ -42,6 +50,10 @@ import friendlyTime from 'friendly-time';
 
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
   components: { ElementIcon, HorizontalLayout },
@@ -80,6 +92,18 @@ export default {
       throw new Error(`Unknown post type: ${this.post.content.type}`);
     },
 
+    author_() {
+      if (!this.post) {
+        return null;
+      }
+
+      if (this.post.personalization && this.post.personalization.postedByYou) {
+        return 'by you';
+      }
+
+      return `by ${this.post.author.username}`;
+    },
+
     age_() {
       if (!this.post) {
         return null;
@@ -95,11 +119,33 @@ export default {
 
       return this.post.stats.likes;
     },
+
+    alreadyLiked_() {
+      if (!this.post || !this.post.personalization) {
+        return null;
+      }
+
+      return this.post.personalization.liked;
+    },
   },
 
   methods: {
     like_() {
-      this.$router.push('/login');
+      if (this.alreadyLiked_) {
+        return;
+      }
+
+      if (!CurrentUserStore.state.authToken) {
+        this.$router.push({
+          path: '/signup',
+          query: { info: 'You must be logged in to like posts.' },
+        });
+      }
+
+      apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
+        this.post.personalization.liked = true;
+        this.post.stats.likes += 1;
+      });
     },
   },
 };

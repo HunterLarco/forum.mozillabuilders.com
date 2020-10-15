@@ -63,6 +63,7 @@
     "helmet": "4.1.1",
     "joi": "17.2.1",
     "js-cookie": "2.2.1",
+    "md5": "2.3.0",
     "normalize-email": "1.1.1",
     "source-map-support": "0.5.19",
     "vue": "2.6.11",

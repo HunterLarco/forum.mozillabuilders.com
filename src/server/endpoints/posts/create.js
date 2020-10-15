@@ -1,7 +1,9 @@
 import Joi from 'joi';
 
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
+import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
+import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
 
 const RequestSchema = Joi.alternatives().conditional('.type', {
@@ -37,8 +39,13 @@ const ResponseSchema = Joi.object({
   id: Joi.string().required(),
 });
 
-async function handler(environment, request) {
+async function handler(environment, request, headers) {
+  const { id: accountId } = await getCurrentUser(environment, headers, {
+    required: true,
+  });
+
   const post = {
+    author: accountId,
     content: {},
     stats: {
       likes: 1,
@@ -60,8 +67,22 @@ async function handler(environment, request) {
     post.content.details = request.details;
   }
 
-  const { id } = await PostTable.create(environment, null, post);
-  return { id };
+  const postId = await environment.firestore.runTransaction(
+    async (transaction) => {
+      const { id } = await PostTable.create(environment, transaction, post);
+
+      // Users always like their own posts by default.
+      await LikeTable.create(environment, transaction, {
+        postId: id,
+        accountId,
+        dateCreated: new Date(),
+      });
+
+      return id;
+    }
+  );
+
+  return { id: postId };
 }
 
 export default JsonEndpoint.factory(handler, {

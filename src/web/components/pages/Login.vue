@@ -150,6 +150,15 @@ export default {
         }
       },
     },
+
+    '$route.query.info': {
+      immediate: true,
+      handler() {
+        if (this.$route.query.info) {
+          ElementMessage.info({ message: this.$route.query.info });
+        }
+      },
+    },
   },
 };
 </script>

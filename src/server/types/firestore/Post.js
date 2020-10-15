@@ -30,6 +30,8 @@ const Content = Joi.alternatives().conditional('.type', {
 });
 
 export default Joi.object({
+  author: Joi.string().required(),
+
   content: Content.required(),
 
   stats: Joi.object({
