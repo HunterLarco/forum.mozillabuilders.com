@@ -51,6 +51,10 @@ import friendlyTime from 'friendly-time';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
 export default {
   components: { ElementIcon, HorizontalLayout },
 
@@ -119,9 +123,16 @@ export default {
         return;
       }
 
-      this.$router.push({
-        path: '/login',
-        query: { info: 'You must be logged in to like posts.' },
+      if (!CurrentUserStore.state.authToken) {
+        this.$router.push({
+          path: '/login',
+          query: { info: 'You must be logged in to like posts.' },
+        });
+      }
+
+      apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
+        this.post.personalization.liked = true;
+        this.post.stats.likes += 1;
       });
     },
   },
