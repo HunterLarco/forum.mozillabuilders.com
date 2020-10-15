@@ -1,9 +1,12 @@
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
 export default async function apiFetch(path, body) {
   return await fetch(`${process.fido.flags.apiServer}/${path}`, {
     method: 'POST',
     body: JSON.stringify(body || {}),
     headers: {
       'Content-Type': 'application/json',
+      'x-unfck-auth': CurrentUserStore.state.authToken || undefined,
     },
   }).then(async (response) => {
     let json;
