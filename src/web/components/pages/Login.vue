@@ -140,6 +140,17 @@ export default {
         });
     },
   },
+
+  watch: {
+    '$route.query.error': {
+      immediate: true,
+      handler() {
+        if (this.$route.query.error) {
+          ElementMessage.error({ message: this.$route.query.error });
+        }
+      },
+    },
+  },
 };
 </script>
 

@@ -65,7 +65,7 @@ async function signup(environment, { email, username }) {
     }
   );
 
-  return await createLoginToken(environment, accountId);
+  return await createAuthToken(environment, accountId);
 }
 
 async function login(environment, accountId) {
@@ -79,10 +79,10 @@ async function login(environment, accountId) {
     });
   }
 
-  return await createLoginToken(environment, accountId);
+  return await createAuthToken(environment, accountId);
 }
 
-async function createLoginToken(environment, accountId) {
+async function createAuthToken(environment, accountId) {
   const { id } = await AuthTokenTable.create(environment, null, {
     dateCreated: new Date(),
     scopes: {

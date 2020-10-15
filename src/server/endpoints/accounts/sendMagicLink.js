@@ -41,7 +41,9 @@ async function handler(environment, request) {
     },
   });
 
-  console.log(id);
+  if (process.fido.env == 'local') {
+    console.log(`Login token for ${email.raw}: ${id}`);
+  }
 
   return {};
 }

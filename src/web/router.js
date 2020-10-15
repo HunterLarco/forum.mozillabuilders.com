@@ -29,6 +29,11 @@ export default new VueRouter({
     },
 
     {
+      path: '/login/:token',
+      component: () => import('@/src/web/components/pages/LoginWithToken'),
+    },
+
+    {
       path: '/signup',
       component: () => import('@/src/web/components/pages/Signup'),
     },
