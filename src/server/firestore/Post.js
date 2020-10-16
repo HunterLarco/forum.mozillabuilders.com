@@ -5,6 +5,7 @@ import PostSchema from '@/src/server/types/firestore/Post';
 
 import * as CounterTable from '@/src/server/firestore/Counter';
 
+import * as cursorHelpers from '@/src/server/helpers/firestore/cursor';
 import { documentToJson } from '@/src/server/helpers/firestore/json';
 
 export async function create(environment, transaction, post) {
@@ -61,7 +62,10 @@ export async function queryByAge(environment, options) {
     .orderBy('dateCreated', 'desc')
     .limit(limit);
   if (cursor) {
-    query = query.startAt(new Date(parseInt(cursor, 16)));
+    const [inclusive, dateCreated] = cursorHelpers.decompose(cursor);
+    query = inclusive
+      ? query.startAt(new Date(dateCreated))
+      : query.startAfter(new Date(dateCreated));
   }
 
   const snapshot = await query.get();
@@ -82,8 +86,8 @@ export async function queryByAge(environment, options) {
       id: document.id,
       post,
       cursor: {
-        current: BigInt(post.dateCreated).toString(16),
-        next: (BigInt(post.dateCreated) - 1n).toString(16),
+        current: cursorHelpers.compose(true, post.dateCreated),
+        next: cursorHelpers.compose(false, post.dateCreated),
       },
     };
   });
@@ -107,7 +111,10 @@ export async function queryByHotness(environment, options) {
     .orderBy('dateCreated', 'desc')
     .limit(limit);
   if (cursor) {
-    query = query.startAt(parseFloat(cursor));
+    const [inclusive, hotness, dateCreated] = cursorHelpers.decompose(cursor);
+    query = inclusive
+      ? query.startAt(hotness, new Date(dateCreated))
+      : query.startAfter(hotness, new Date(dateCreated));
   }
 
   const snapshot = await query.get();
@@ -128,8 +135,16 @@ export async function queryByHotness(environment, options) {
       id: document.id,
       post,
       cursor: {
-        current: post.stats.hotness.toString(),
-        next: (post.stats.hotness - 0.000000000000001).toString(),
+        current: cursorHelpers.compose(
+          true,
+          post.stats.hotness,
+          post.dateCreated
+        ),
+        next: cursorHelpers.compose(
+          false,
+          post.stats.hotness,
+          post.dateCreated
+        ),
       },
     };
   });

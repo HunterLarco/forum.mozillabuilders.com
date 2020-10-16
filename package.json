@@ -61,6 +61,7 @@
     "express": "4.17.1",
     "friendly-time": "1.1.1",
     "helmet": "4.1.1",
+    "intersection-observer": "0.11.0",
     "joi": "17.2.1",
     "js-cookie": "2.2.1",
     "md5": "2.3.0",
@@ -68,6 +69,7 @@
     "source-map-support": "0.5.19",
     "vue": "2.6.11",
     "vue-gtag": "1.9.1",
+    "vue-observe-visibility": "0.4.6",
     "vue-router": "3.4.1",
     "vuex": "3.5.1"
   }

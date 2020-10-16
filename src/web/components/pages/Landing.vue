@@ -22,7 +22,7 @@
       >
 
       <div :class="$style.Content">
-        <template v-if="loading_">
+        <template v-if="loading_ && !this.posts_.length">
           <div :class="$style.LoadingIndicator">
             {{ loadingText_ }}
             <ElementIcon name="loading" />
@@ -35,6 +35,8 @@
           :key="post.id"
           :post="post"
         />
+
+        <div v-observe-visibility="onInfiniteLoaderVisibility_"></div>
       </div>
     </VerticalRibbon>
   </div>
@@ -63,31 +65,62 @@ export default {
       loading_: false,
       loadingText_: '',
       error_: null,
+
       posts_: [],
+      nextCursor_: null,
+
+      infiniteLoaderVisible_: false,
     };
+  },
+
+  methods: {
+    onInfiniteLoaderVisibility_(visible) {
+      this.infiniteLoaderVisible_ = visible;
+      if (!this.error_ && !this.loading_ && visible) {
+        this.loadNextPage_();
+      }
+    },
+
+    loadNextPage_(initialLoad) {
+      const index = this.$route.path.slice(1);
+
+      if (initialLoad) {
+        this.error_ = null;
+        this.posts_ = [];
+        this.nextCursor_ = null;
+        this.loadingText_ = {
+          new: 'Fetching the lastest posts',
+          hot: 'Fetching the most popular posts',
+        }[index];
+      } else if (!this.nextCursor_ || this.loading_) {
+        return;
+      }
+
+      this.loading_ = true;
+      apiFetch('aurora/posts/query', { index, cursor: this.nextCursor_ })
+        .then(({ posts, cursor }) => {
+          this.posts_ = this.posts_.concat(posts);
+          this.nextCursor_ = cursor.next;
+          this.error_ = null;
+          this.loading_ = false;
+
+          setTimeout(() => {
+            if (this.infiniteLoaderVisible_) {
+              this.loadNextPage_();
+            }
+          }, 100);
+        })
+        .catch((error) => {
+          this.error_ = error.message;
+        });
+    },
   },
 
   watch: {
     '$route.path': {
       immediate: true,
       handler() {
-        const index = this.$route.path.slice(1);
-
-        this.posts_ = [];
-        this.loading_ = true;
-        this.loadingText_ = {
-          new: 'Fetching the lastest posts',
-          hot: 'Fetching the most popular posts',
-        }[index];
-        apiFetch('aurora/posts/query', { index })
-          .then(({ posts }) => {
-            this.posts_ = posts;
-            this.error_ = null;
-            this.loading_ = false;
-          })
-          .catch((error) => {
-            this.error_ = error.message;
-          });
+        this.loadNextPage_(true);
       },
     },
   },
