@@ -36,7 +36,20 @@
           :post="post"
         />
 
-        <div v-observe-visibility="onInfiniteLoaderVisibility_"></div>
+        <div
+          v-observe-visibility="onInfiniteLoaderVisibility_"
+          v-if="posts_.length"
+        >
+          <div :class="$style.LoadingIndicator">
+            <template v-if="nextCursor_">
+              Loading more posts
+              <ElementIcon name="loading" />
+            </template>
+            <template v-if="!nextCursor_">
+              You've reached the end!
+            </template>
+          </div>
+        </div>
       </div>
     </VerticalRibbon>
   </div>
