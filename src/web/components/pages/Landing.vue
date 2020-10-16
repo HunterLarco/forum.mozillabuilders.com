@@ -3,8 +3,12 @@
     <VerticalRibbon max-width="1200px" centered>
       <PageHeader :class="$style.PageHeader">
         <template v-slot:nav>
-          <router-link to="/hot">Hot</router-link>
-          <router-link to="/new">New</router-link>
+          <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
+            >Hot</router-link
+          >
+          <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
+            >New</router-link
+          >
         </template>
 
         <template v-slot:buttons>
