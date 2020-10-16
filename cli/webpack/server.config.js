@@ -66,7 +66,10 @@ module.exports = (env, flags) =>
         workspace.resolve('package.json')
       ),
       new CopyWebpackPlugin({
-        patterns: [{ from: workspace.resolve('src/server/app.yaml') }],
+        patterns: [
+          { from: workspace.resolve('src/server/app.yaml') },
+          { from: workspace.resolve('src/server/cron.yaml') },
+        ],
       }),
     ],
   });
