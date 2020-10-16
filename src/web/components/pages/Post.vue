@@ -8,7 +8,10 @@
         </template>
 
         <template v-slot:buttons>
-          <router-link to="/submit">Post a new topic</router-link>
+          <router-link to="/submit">
+            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+            <span v-else>Post</span>
+          </router-link>
         </template>
       </PageHeader>
 
@@ -81,6 +84,7 @@ export default {
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
+@import '@/src/web/sass/sizing';
 
 .Host {
   @include layout-fill;
@@ -97,5 +101,9 @@ export default {
 .Post {
   background: #FFF;
   margin: 30px;
+
+  @include sizing-mobile {
+    margin: 20px;
+  }
 }
 </style>

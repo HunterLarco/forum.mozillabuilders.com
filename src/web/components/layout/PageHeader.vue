@@ -36,6 +36,11 @@ export default {
 .Host {
   min-height: 93px;
   padding: 0 30px;
+
+  @include sizing-mobile {
+    min-height: 73px;
+    padding: 0 20px;
+  }
 }
 
 .Logo {
@@ -78,6 +83,7 @@ export default {
     }
 
     @include sizing-mobile {
+      line-height: 69px;
       padding: 2px 8px;
     }
   }
@@ -101,6 +107,14 @@ export default {
 
     &:hover {
       background: lighten(#0060DF, 50%);
+    }
+
+    @include sizing-tablet {
+      padding: 4px 16px;
+    }
+
+    @include sizing-mobile {
+      padding: 4px 8px;
     }
   }
 }

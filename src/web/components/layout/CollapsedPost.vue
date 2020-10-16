@@ -27,7 +27,8 @@
       <div :class="$style.Metadata">
         posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
-          >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+          >|
+          <router-link :to="`/posts/${post.id}`">0&nbsp;comments</router-link>
         </span>
       </div>
     </div>
@@ -153,9 +154,14 @@ export default {
 
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
+@import '@/src/web/sass/sizing';
 
 .Host {
   padding: 20px 30px 20px 0;
+
+  @include sizing-mobile {
+    padding: 15px 25px 15px 0;
+  }
 }
 
 .Likes {
@@ -169,6 +175,11 @@ export default {
 
   &:hover .LikeIcon {
     color: #E91E63;
+  }
+
+  @include sizing-mobile {
+    min-width: 40px;
+    padding: 0 19px 0 15px;
   }
 }
 

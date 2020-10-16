@@ -224,10 +224,19 @@ export default {
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
+@import '@/src/web/sass/sizing';
 
 .Host {
-  @include layout-center;
-  @include layout-fill;
+  min-height: 100vh;
+
+  @include sizing-mobile {
+    @include layout-vertical-center;
+
+    & > * {
+      padding: 20px;
+      width: 100%;
+    }
+  }
 }
 
 .Logo {
@@ -270,6 +279,10 @@ export default {
 
 .Form {
   min-width: 300px;
+
+  @include sizing-mobile {
+    min-width: unset;
+  }
 }
 
 .Details {
