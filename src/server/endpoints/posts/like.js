@@ -3,6 +3,7 @@ import Joi from 'joi';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
+import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
 
@@ -27,10 +28,18 @@ async function handler(environment, request, headers) {
     { required: true }
   );
 
-  await LikeTable.create(environment, null, {
-    postId: request.id,
-    accountId,
-    dateCreated: new Date(),
+  await environment.firestore.runTransaction(async (transaction) => {
+    await LikeTable.create(environment, transaction, {
+      postId: request.id,
+      accountId,
+      dateCreated: new Date(),
+    });
+
+    await CounterTable.increment(
+      environment,
+      transaction,
+      CounterTable.COUNTERS.likes(request.id)
+    );
   });
 
   return {};

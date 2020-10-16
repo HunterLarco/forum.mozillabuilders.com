@@ -6,7 +6,7 @@ const router = new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '/top',
+      path: '/hot',
       component: () => import('@/src/web/components/pages/Landing'),
     },
 
@@ -49,7 +49,7 @@ const router = new VueRouter({
 
     {
       path: '*',
-      redirect: '/top',
+      redirect: '/hot',
     },
   ],
 });

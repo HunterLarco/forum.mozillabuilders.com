@@ -3,6 +3,7 @@ import Joi from 'joi';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as AccountTable from '@/src/server/firestore/Account';
+import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 
 const Content = Joi.alternatives().conditional('.type', {
@@ -58,7 +59,10 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
   let personalization;
   if (accountId) {
     personalization = {
-      liked: await LikeTable.exists(environment, null, accountId, id),
+      liked:
+        post.author == accountId
+          ? true
+          : await LikeTable.exists(environment, null, accountId, id),
       postedByYou: post.author == accountId,
     };
   }
@@ -76,8 +80,14 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     content: post.content,
 
     stats: {
-      // TODO(hunter): fetch the most recent like count (perhaps with a cache)
-      likes: Math.round(Math.random() * 100) + 1,
+      // We add one because each user always likes their own posts by default.
+      likes:
+        1 +
+        (await CounterTable.get(
+          environment,
+          null,
+          CounterTable.COUNTERS.likes(id)
+        )),
     },
 
     personalization: personalization,

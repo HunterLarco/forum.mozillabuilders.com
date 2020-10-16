@@ -3,7 +3,6 @@ import Joi from 'joi';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
-import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
 
 const RequestSchema = Joi.alternatives().conditional('.type', {
@@ -49,6 +48,7 @@ async function handler(environment, request, headers) {
     content: {},
     stats: {
       likes: 1,
+      hotness: 0,
     },
     dateCreated: new Date(),
   };
@@ -67,22 +67,9 @@ async function handler(environment, request, headers) {
     post.content.details = request.details;
   }
 
-  const postId = await environment.firestore.runTransaction(
-    async (transaction) => {
-      const { id } = await PostTable.create(environment, transaction, post);
+  const { id } = await PostTable.create(environment, null, post);
 
-      // Users always like their own posts by default.
-      await LikeTable.create(environment, transaction, {
-        postId: id,
-        accountId,
-        dateCreated: new Date(),
-      });
-
-      return id;
-    }
-  );
-
-  return { id: postId };
+  return { id };
 }
 
 export default JsonEndpoint.factory(handler, {
