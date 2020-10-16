@@ -48,6 +48,7 @@ async function handler(environment, request, headers) {
     content: {},
     stats: {
       likes: 1,
+      hotness: 0,
     },
     dateCreated: new Date(),
   };

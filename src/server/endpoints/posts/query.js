@@ -7,7 +7,7 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as PostTable from '@/src/server/firestore/Post';
 
 const RequestSchema = Joi.object({
-  index: Joi.string().valid('new').required(),
+  index: Joi.string().valid('new', 'hot').required(),
   cursor: Joi.string().allow(null),
 });
 
@@ -22,7 +22,12 @@ const ResponseSchema = Joi.object({
 async function handler(environment, request, headers) {
   const { id: accountId } = await getCurrentUser(environment, headers);
 
-  const { posts, cursor } = await PostTable.queryByAge(environment, {
+  const queryMethod = {
+    new: PostTable.queryByAge,
+    hot: PostTable.queryByHotness,
+  };
+
+  const { posts, cursor } = await queryMethod[request.index](environment, {
     cursor: request.cursor,
   });
 

@@ -36,6 +36,7 @@ export default Joi.object({
 
   stats: Joi.object({
     likes: Joi.number().min(1).default(1),
+    hotness: Joi.number().min(0).default(0),
   }).required(),
 
   dateCreated: Joi.date().required(),
