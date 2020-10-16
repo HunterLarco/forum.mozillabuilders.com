@@ -34,7 +34,8 @@ export default {
 @import '@/src/web/sass/sizing';
 
 .Host {
-  padding: 30px;
+  min-height: 93px;
+  padding: 0 30px;
 }
 
 .Logo {
@@ -61,17 +62,23 @@ export default {
   & > a {
     @include fonts-nav-link;
 
-    padding: 0 24px;
     color: inherit;
     cursor: pointer;
+    line-height: 89px;
+    padding: 2px 24px;
     text-decoration: none;
 
+    &[selected] {
+      border-bottom: 2px solid #000;
+      padding-bottom: 0;
+    }
+
     @include sizing-tablet {
-      padding: 0 16px;
+      padding: 2px 16px;
     }
 
     @include sizing-mobile {
-      padding: 0 8px;
+      padding: 2px 8px;
     }
   }
 }
