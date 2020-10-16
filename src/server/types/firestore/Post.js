@@ -29,10 +29,25 @@ const Content = Joi.alternatives().conditional('.type', {
   ],
 });
 
+const Comment = Joi.object({
+  id: Joi.string().required(),
+
+  author: Joi.string().required(),
+
+  content: Joi.object({
+    text: Joi.string().required(),
+  }).required(),
+
+  children: Joi.array().items(Joi.link('...')).required(),
+
+  dateCreated: Joi.date().required(),
+});
+
 export default Joi.object({
   author: Joi.string().required(),
 
   content: Content.required(),
+  comments: Joi.array().items(Comment).required(),
 
   stats: Joi.object({
     likes: Joi.number().min(1).default(1),

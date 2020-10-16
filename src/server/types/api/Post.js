@@ -6,6 +6,8 @@ import * as AccountTable from '@/src/server/firestore/Account';
 import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 
+import * as commentHelpers from '@/src/server/helpers/data/Comment';
+
 const Content = Joi.alternatives().conditional('.type', {
   switch: [
     {
@@ -35,14 +37,37 @@ const Content = Joi.alternatives().conditional('.type', {
   ],
 });
 
+const Comment = Joi.object({
+  id: Joi.string().required(),
+
+  content: Joi.object({
+    text: Joi.string().required(),
+  }).required(),
+
+  children: Joi.array().items(Joi.link('...')).required(),
+
+  dateCreated: Joi.date().required(),
+});
+
+Comment.fromFirestoreComment = (comment) => ({
+  id: comment.id,
+  content: { text: comment.content.text },
+  children: comment.children.map((comment) =>
+    Comment.fromFirestoreComment(comment)
+  ),
+  dateCreated: comment.dateCreated,
+});
+
 const Schema = Joi.object({
   id: Joi.string().required(),
 
   author: PublicAccount.required(),
   content: Content.required(),
+  comments: Joi.array().items(Comment).required(),
 
   stats: Joi.object({
     likes: Joi.number().min(1).required(),
+    comments: Joi.number().min(0).required(),
   }).required(),
 
   personalization: Joi.object({
@@ -78,6 +103,9 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
     content: post.content,
+    comments: post.comments.map((comment) =>
+      Comment.fromFirestoreComment(comment)
+    ),
 
     stats: {
       // We add one because each user always likes their own posts by default.
@@ -88,6 +116,7 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
           null,
           CounterTable.COUNTERS.likes(id)
         )),
+      comments: commentHelpers.count(post.comments),
     },
 
     personalization: personalization,

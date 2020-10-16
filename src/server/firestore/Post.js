@@ -53,6 +53,28 @@ export async function get(environment, transaction, id) {
   return { id, post };
 }
 
+export async function replace(environment, transaction, postId, post) {
+  const { value, error } = PostSchema.validate(post);
+  if (error) {
+    console.error(`InvalidPostSchema: ${error.message}`, post);
+    return Promise.reject({
+      httpErrorCode: 500,
+      name: 'InvalidPostSchema',
+      message: 'Invalid post schema.',
+    });
+  }
+
+  const reference = environment.firestore.collection('Post').doc(postId);
+
+  if (transaction) {
+    await transaction.set(reference, value);
+  } else {
+    await reference.set(value);
+  }
+
+  return { id: reference.id, post };
+}
+
 export async function queryByAge(environment, options) {
   const limit = options && options.limit ? options.limit : 20;
   const cursor = options && options.cursor ? options.cursor : null;

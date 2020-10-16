@@ -67,6 +67,7 @@
     "md5": "2.3.0",
     "normalize-email": "1.1.1",
     "source-map-support": "0.5.19",
+    "uuid": "8.3.1",
     "vue": "2.6.11",
     "vue-gtag": "1.9.1",
     "vue-observe-visibility": "0.4.6",

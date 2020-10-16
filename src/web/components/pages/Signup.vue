@@ -227,6 +227,8 @@ export default {
 @import '@/src/web/sass/sizing';
 
 .Host {
+  @include layout-center;
+
   min-height: 100vh;
 
   @include sizing-mobile {

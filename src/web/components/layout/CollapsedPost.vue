@@ -28,7 +28,9 @@
         posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
           >|
-          <router-link :to="`/posts/${post.id}`">0&nbsp;comments</router-link>
+          <router-link :to="`/posts/${post.id}`"
+            >{{ comments_ }}&nbsp;comments</router-link
+          >
         </span>
       </div>
     </div>
@@ -119,6 +121,14 @@ export default {
       }
 
       return this.post.stats.likes;
+    },
+
+    comments_() {
+      if (!this.post) {
+        return null;
+      }
+
+      return this.post.stats.comments;
     },
 
     alreadyLiked_() {
