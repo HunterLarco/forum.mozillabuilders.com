@@ -31,6 +31,13 @@
         :show-comments="false"
         :link-to-post="false"
       />
+
+      <CommentThread
+        :class="$style.Comments"
+        :comments="post_.comments"
+        v-if="post_"
+      >
+      </CommentThread>
     </VerticalRibbon>
   </div>
 </template>
@@ -38,6 +45,7 @@
 <script>
 import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
+import CommentThread from '@/src/web/components/layout/CommentThread';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
@@ -47,6 +55,7 @@ export default {
   components: {
     Banner,
     CollapsedPost,
+    CommentThread,
     PageHeader,
     VerticalRibbon,
   },
@@ -104,6 +113,16 @@ export default {
 
   @include sizing-mobile {
     margin: 20px;
+  }
+}
+
+.Comments {
+  background: #FFF;
+  margin-bottom: 30px;
+  padding: 30px;
+
+  @include sizing-tablet {
+    margin: 0;
   }
 }
 </style>
