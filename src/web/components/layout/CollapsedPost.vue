@@ -27,7 +27,8 @@
       <div :class="$style.Metadata">
         posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
-          >| <router-link :to="`/posts/${post.id}`">0 comments</router-link>
+          >|
+          <router-link :to="`/posts/${post.id}`">0&nbsp;comments</router-link>
         </span>
       </div>
     </div>
