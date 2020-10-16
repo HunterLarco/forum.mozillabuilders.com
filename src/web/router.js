@@ -16,7 +16,7 @@ const router = new VueRouter({
     },
 
     {
-      path: '/posts/:id',
+      path: '/post/:id',
       component: () => import('@/src/web/components/pages/Post'),
     },
 

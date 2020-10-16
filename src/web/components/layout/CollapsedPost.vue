@@ -17,7 +17,7 @@
 
     <div>
       <router-link
-        :to="`/posts/${post.id}`"
+        :to="`/post/${post.id}`"
         :class="$style.Title"
         v-if="linkToPost"
         >{{ title_ }}</router-link
@@ -28,7 +28,7 @@
         posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
           >|
-          <router-link :to="`/posts/${post.id}`"
+          <router-link :to="`/post/${post.id}`"
             >{{ comments_ }}&nbsp;comments</router-link
           >
         </span>

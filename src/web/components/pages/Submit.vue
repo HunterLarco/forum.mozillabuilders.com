@@ -188,7 +188,7 @@ export default {
       apiFetch('aurora/posts/create', request)
         .then(({ id }) => {
           this.error_ = null;
-          this.$router.push(`/posts/${id}`);
+          this.$router.push(`/post/${id}`);
         })
         .catch((error) => {
           this.error_ = error.message;

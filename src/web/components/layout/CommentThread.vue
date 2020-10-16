@@ -49,9 +49,14 @@ function renderComments(createElement, comments) {}
 <style module lang="sass">
 .Host {}
 
-.Comment {}
+.Comment {
+  & ~ .Comment {
+    margin-top: 20px;
+  }
+}
 
 .SubComments {
-  padding-left: 20px;
+  margin-left: 40px;
+  margin-top: 20px;
 }
 </style>
