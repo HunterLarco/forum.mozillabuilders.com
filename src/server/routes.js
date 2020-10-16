@@ -20,6 +20,26 @@ export function install(environment, app) {
   ];
 
   for (const [method, path, endpointFactory] of ROUTES) {
-    app[method](path, endpointFactory(environment).handler);
+    const endpoint = endpointFactory(environment);
+    app[method](path, endpoint.handler);
+
+    if (process.fido.env == 'local' && path.match(/^\/[^/]+\/cron\//)) {
+      scheduleCronJob(path, endpoint);
+    }
   }
+}
+
+// This should only be used when running locally.
+function scheduleCronJob(path, endpoint) {
+  const log = (...args) => {
+    console.log(`LOCAL_CRON ${new Date().toISOString()} ${path}`, ...args);
+  };
+
+  setInterval(() => {
+    log('Starting');
+    endpoint
+      .fake({}, { 'x-appengine-cron': 'true' })
+      .then(() => log('Finished'))
+      .catch((error) => log('Failed with error:', error));
+  }, 15 * 1000);
 }

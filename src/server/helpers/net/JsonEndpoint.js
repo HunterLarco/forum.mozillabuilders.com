@@ -33,4 +33,13 @@ export default class JsonEndpoint {
       .then((payload) => response.send(payload))
       .catch((error) => errorHandler(response, error));
   }
+
+  async fake(request, headers) {
+    const validatedRequest = validateRequest(
+      { method: 'POST', body: request },
+      this.RequestSchema
+    );
+
+    return await this.handler_(this.environment, validatedRequest, headers);
+  }
 }
