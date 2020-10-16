@@ -3,21 +3,28 @@
     <div :class="$style.Meta">Posted {{ age_ }}</div>
     <div :class="$style.Content">{{ comment.content.text }}</div>
 
-    <template v-if="!showReplyForm_">
-      <div :class="$style.ReplyLink" @click="reply_">Reply</div>
+    <template v-if="!form_.visible">
+      <div :class="$style.ReplyLink" @click="openReplyForm_">Reply</div>
     </template>
 
-    <template v-if="showReplyForm_">
+    <template v-if="form_.visible">
       <div :class="$style.ReplyForm">
         <ElementInput
           :class="$style.ReplyTextarea"
           placeholder="Your comment..."
           type="textarea"
-          v-model="form_.reply"
+          ref="textarea"
+          :disabled="form_.loading"
+          v-model="form_.data.reply"
           :autosize="{ minRows: 2 }"
         />
         <div :class="$style.ReplyButtons">
-          <ElementButton>Add comment</ElementButton>
+          <ElementButton
+            @click="submitReplyForm_"
+            :loading="form_.loading"
+            :disabled="!form_.data.reply"
+            >Add comment</ElementButton
+          >
         </div>
       </div>
     </template>
@@ -31,6 +38,8 @@ import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
+import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: { ElementButton, ElementInput },
@@ -49,9 +58,13 @@ export default {
 
   data() {
     return {
-      showReplyForm_: false,
       form_: {
-        reply: '',
+        data: {
+          reply: '',
+        },
+
+        visible: false,
+        loading: false,
       },
     };
   },
@@ -63,15 +76,35 @@ export default {
   },
 
   methods: {
-    reply_() {
+    openReplyForm_() {
       if (!CurrentUserStore.state.authToken) {
         this.$router.push({
           path: '/signup',
           query: { info: 'You must be logged in to reply.' },
         });
       } else {
-        this.showReplyForm_ = true;
+        this.form_.visible = true;
+        this.$nextTick(() => {
+          this.$refs.textarea.focus();
+        });
       }
+    },
+
+    submitReplyForm_() {
+      this.form_.loading = true;
+      apiFetch('aurora/posts/comment', {
+        parent: {
+          post: this.post.id,
+          comment: this.comment.id,
+        },
+
+        content: {
+          text: this.form_.data.reply,
+        },
+      }).then(() => {
+        this.form_.visible = false;
+        this.form_.loading = false;
+      });
     },
   },
 };
