@@ -101,7 +101,8 @@ export default {
         content: {
           text: this.form_.data.reply,
         },
-      }).then(() => {
+      }).then(({ comment }) => {
+        this.comment.children.unshift(comment);
         this.form_.visible = false;
         this.form_.loading = false;
       });

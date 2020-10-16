@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import Comment from '@/src/server/types/api/Comment';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as AccountTable from '@/src/server/firestore/Account';
@@ -35,27 +36,6 @@ const Content = Joi.alternatives().conditional('.type', {
       }),
     },
   ],
-});
-
-const Comment = Joi.object({
-  id: Joi.string().required(),
-
-  content: Joi.object({
-    text: Joi.string().required(),
-  }).required(),
-
-  children: Joi.array().items(Joi.link('...')).required(),
-
-  dateCreated: Joi.date().required(),
-});
-
-Comment.fromFirestoreComment = (comment) => ({
-  id: comment.id,
-  content: { text: comment.content.text },
-  children: comment.children.map((comment) =>
-    Comment.fromFirestoreComment(comment)
-  ),
-  dateCreated: comment.dateCreated,
 });
 
 const Schema = Joi.object({
