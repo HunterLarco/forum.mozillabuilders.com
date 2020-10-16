@@ -57,47 +57,21 @@ export async function queryByAge(environment, options) {
   const limit = options && options.limit ? options.limit : 20;
   const cursor = options && options.cursor ? options.cursor : null;
 
-  let query = environment.firestore
-    .collection('Post')
-    .orderBy('dateCreated', 'desc')
-    .limit(limit);
-  if (cursor) {
-    const [inclusive, dateCreated] = cursorHelpers.decompose(cursor);
-    query = inclusive
-      ? query.startAt(new Date(dateCreated))
-      : query.startAfter(new Date(dateCreated));
-  }
-
-  const snapshot = await query.get();
-
-  if (snapshot.empty) {
-    return {
-      posts: [],
-      cursor: {
-        current: null,
-        next: null,
-      },
-    };
-  }
-
-  const posts = snapshot.docs.map((document) => {
-    const post = documentToJson(document);
-    return {
-      id: document.id,
-      post,
-      cursor: {
-        current: cursorHelpers.compose(true, post.dateCreated),
-        next: cursorHelpers.compose(false, post.dateCreated),
-      },
-    };
+  const {
+    documents,
+    cursor: documentsCursor,
+  } = await cursorHelpers.executeQuery({
+    query: environment.firestore
+      .collection('Post')
+      .orderBy('dateCreated', 'desc')
+      .limit(limit),
+    cursor,
+    createCursor: (post) => [post.dateCreated],
   });
 
   return {
-    posts,
-    cursor: {
-      current: posts[0].cursor.current,
-      next: posts[posts.length - 1].cursor.next,
-    },
+    posts: documents,
+    cursor: documentsCursor,
   };
 }
 
@@ -105,56 +79,22 @@ export async function queryByHotness(environment, options) {
   const limit = options && options.limit ? options.limit : 20;
   const cursor = options && options.cursor ? options.cursor : null;
 
-  let query = environment.firestore
-    .collection('Post')
-    .orderBy('stats.hotness', 'desc')
-    .orderBy('dateCreated', 'desc')
-    .limit(limit);
-  if (cursor) {
-    const [inclusive, hotness, dateCreated] = cursorHelpers.decompose(cursor);
-    query = inclusive
-      ? query.startAt(hotness, new Date(dateCreated))
-      : query.startAfter(hotness, new Date(dateCreated));
-  }
-
-  const snapshot = await query.get();
-
-  if (snapshot.empty) {
-    return {
-      posts: [],
-      cursor: {
-        current: null,
-        next: null,
-      },
-    };
-  }
-
-  const posts = snapshot.docs.map((document) => {
-    const post = documentToJson(document);
-    return {
-      id: document.id,
-      post,
-      cursor: {
-        current: cursorHelpers.compose(
-          true,
-          post.stats.hotness,
-          post.dateCreated
-        ),
-        next: cursorHelpers.compose(
-          false,
-          post.stats.hotness,
-          post.dateCreated
-        ),
-      },
-    };
+  const {
+    documents,
+    cursor: documentsCursor,
+  } = await cursorHelpers.executeQuery({
+    query: environment.firestore
+      .collection('Post')
+      .orderBy('stats.hotness', 'desc')
+      .orderBy('dateCreated', 'desc')
+      .limit(limit),
+    cursor,
+    createCursor: (post) => [post.stats.hotness, post.dateCreated],
   });
 
   return {
-    posts,
-    cursor: {
-      current: posts[0].cursor.current,
-      next: posts[posts.length - 1].cursor.next,
-    },
+    posts: documents,
+    cursor: documentsCursor,
   };
 }
 

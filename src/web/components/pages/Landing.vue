@@ -38,16 +38,11 @@
 
         <div
           v-observe-visibility="onInfiniteLoaderVisibility_"
-          v-if="posts_.length"
+          v-if="posts_.length && nextCursor_"
         >
           <div :class="$style.LoadingIndicator">
-            <template v-if="nextCursor_">
-              Loading more posts
-              <ElementIcon name="loading" />
-            </template>
-            <template v-if="!nextCursor_">
-              You've reached the end!
-            </template>
+            Loading more posts
+            <ElementIcon name="loading" />
           </div>
         </div>
       </div>
