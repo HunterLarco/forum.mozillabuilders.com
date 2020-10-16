@@ -1,8 +1,15 @@
 <script>
 import friendlyTime from 'friendly-time';
 
+import Comment from '@/src/web/components/layout/Comment';
+
 export default {
   props: {
+    post: {
+      type: Object,
+      required: true,
+    },
+
     comments: {
       type: Array,
       default: () => [],
@@ -20,16 +27,12 @@ export default {
         { class: this.$style.Host },
         comments.map((comment) => {
           return createElement('div', { class: this.$style.Comment }, [
-            createElement(
-              'div',
-              { class: this.$style.Meta },
-              `Posted ${friendlyTime(new Date(comment.dateCreated))}`
-            ),
-            createElement(
-              'div',
-              { class: this.$style.Content },
-              comment.content.text
-            ),
+            createElement(Comment, {
+              props: {
+                post: this.post,
+                comment,
+              },
+            }),
             createElement('div', { class: this.$style.SubComments }, [
               this.renderComments_(createElement, comment.children),
             ]),
@@ -44,21 +47,9 @@ function renderComments(createElement, comments) {}
 </script>
 
 <style module lang="sass">
-@import '@/src/web/sass/fonts';
+.Host {}
 
-.Host {
-}
-
-.Comment {
-}
-
-.Meta {
-  @include fonts-collapsed-post-metadata;
-}
-
-.Content {
-  @include fonts-collapsed-post-title;
-}
+.Comment {}
 
 .SubComments {
   padding-left: 20px;

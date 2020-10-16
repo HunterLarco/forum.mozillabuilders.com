@@ -34,6 +34,7 @@
 
       <CommentThread
         :class="$style.Comments"
+        :post="post_"
         :comments="post_.comments"
         v-if="post_"
       >
