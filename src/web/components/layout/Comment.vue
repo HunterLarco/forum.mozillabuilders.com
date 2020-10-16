@@ -2,16 +2,39 @@
   <div :class="$style.Host">
     <div :class="$style.Meta">Posted {{ age_ }}</div>
     <div :class="$style.Content">{{ comment.content.text }}</div>
-    <div :class="$style.ReplyLink" @click="reply_">Reply</div>
+
+    <template v-if="!showReplyForm_">
+      <div :class="$style.ReplyLink" @click="reply_">Reply</div>
+    </template>
+
+    <template v-if="showReplyForm_">
+      <div :class="$style.ReplyForm">
+        <ElementInput
+          :class="$style.ReplyTextarea"
+          placeholder="Your comment..."
+          type="textarea"
+          v-model="form_.reply"
+          :autosize="{ minRows: 2 }"
+        />
+        <div :class="$style.ReplyButtons">
+          <ElementButton>Add comment</ElementButton>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import friendlyTime from 'friendly-time';
 
+import ElementButton from '@/vendor/element-ui/Button';
+import ElementInput from '@/vendor/element-ui/Input';
+
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
+  components: { ElementButton, ElementInput },
+
   props: {
     post: {
       type: Object,
@@ -22,6 +45,15 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      showReplyForm_: false,
+      form_: {
+        reply: '',
+      },
+    };
   },
 
   computed: {
@@ -37,6 +69,8 @@ export default {
           path: '/signup',
           query: { info: 'You must be logged in to reply.' },
         });
+      } else {
+        this.showReplyForm_ = true;
       }
     },
   },
@@ -68,5 +102,23 @@ export default {
   cursor: pointer;
   display: inline-block;
   text-decoration: underline;
+}
+
+.ReplyForm {
+  margin-left: 30px;
+}
+
+.ReplyTextarea {
+  max-width: 700px;
+
+  & > textarea {
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 30px;
+  }
+}
+
+.ReplyButtons {
+  padding-top: 8px;
 }
 </style>
