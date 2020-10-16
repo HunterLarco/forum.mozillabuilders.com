@@ -56,8 +56,9 @@ async function handler(environment, request, headers) {
       parentComment.children.push(
         commentHelpers.create(request.content.text, accountId)
       );
-      console.log(parentComment.children);
     }
+
+    commentHelpers.reorderComments(post.comments);
 
     await PostTable.replace(
       environment,

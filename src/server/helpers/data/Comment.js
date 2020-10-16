@@ -1,3 +1,4 @@
+import * as dateFns from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 export function create(text, accountId) {
@@ -35,4 +36,13 @@ export function count(comments) {
     result += count(child.children);
   }
   return result;
+}
+
+export function reorderComments(comments) {
+  comments.sort((a, b) =>
+    dateFns.compareDesc(new Date(a.dateCreated), new Date(b.dateCreated))
+  );
+  for (const comment of comments) {
+    reorderComments(comment.children);
+  }
 }
