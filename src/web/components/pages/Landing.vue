@@ -3,7 +3,7 @@
     <VerticalRibbon max-width="1200px" centered>
       <PageHeader :class="$style.PageHeader">
         <template v-slot:nav>
-          <router-link to="/top">Top</router-link>
+          <router-link to="/hot">Hot</router-link>
           <router-link to="/new">New</router-link>
         </template>
 
@@ -77,7 +77,7 @@ export default {
         this.loading_ = true;
         this.loadingText_ = {
           new: 'Fetching the lastest posts',
-          top: 'Fetching the most popular posts',
+          hot: 'Fetching the most popular posts',
         }[index];
         apiFetch('aurora/posts/query', { index })
           .then(({ posts }) => {
