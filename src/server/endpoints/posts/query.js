@@ -33,8 +33,10 @@ async function handler(environment, request, headers) {
 
   return {
     posts: await Promise.all(
-      posts.map(({ id, post }) =>
-        ApiPostSchema.fromFirestorePost(environment, id, post, { accountId })
+      posts.map(({ id, document }) =>
+        ApiPostSchema.fromFirestorePost(environment, id, document, {
+          accountId,
+        })
       )
     ),
 
