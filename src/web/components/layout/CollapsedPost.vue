@@ -25,7 +25,7 @@
       <div :class="$style.Title" v-else>{{ title_ }}</div>
 
       <div :class="$style.Metadata">
-        posted {{ author_ }} {{ age_ }}
+        Posted {{ author_ }} {{ age_ }}
         <span v-if="showComments"
           >|
           <router-link :to="`/post/${post.id}`"

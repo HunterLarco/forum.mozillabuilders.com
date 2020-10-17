@@ -83,8 +83,10 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
     content: post.content,
-    comments: post.comments.map((comment) =>
-      Comment.fromFirestoreComment(comment)
+    comments: await Promise.all(
+      post.comments.map((comment) =>
+        Comment.fromFirestoreComment(environment, comment, { accountId })
+      )
     ),
 
     stats: {

@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.Host">
-    <div :class="$style.Meta">Posted {{ age_ }}</div>
+    <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
     <div :class="$style.Content">{{ comment.content.text }}</div>
 
     <template v-if="!form_.visible">
@@ -70,6 +70,17 @@ export default {
   },
 
   computed: {
+    author_() {
+      if (
+        this.comment.personalization &&
+        this.comment.personalization.postedByYou
+      ) {
+        return 'by you';
+      }
+
+      return `by ${this.comment.author.username}`;
+    },
+
     age_() {
       return friendlyTime(new Date(this.comment.dateCreated));
     },

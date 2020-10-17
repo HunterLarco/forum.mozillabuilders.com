@@ -74,7 +74,7 @@ async function handler(environment, request, headers) {
   );
 
   return {
-    comment: ApiCommentSchema.fromFirestoreComment(comment),
+    comment: await ApiCommentSchema.fromFirestoreComment(environment, comment),
   };
 }
 
