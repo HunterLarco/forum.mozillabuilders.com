@@ -16,7 +16,12 @@ async function main() {
   app.use(helmet());
   app.use(compression());
   app.use(express.json());
-  app.use(rejectInsecureRequests());
+
+  app.use(
+    rejectInsecureRequests({
+      exclude: ['*/cron/**'],
+    })
+  );
 
   const environment = await createEnvironment({
     services: ['firestore'],
