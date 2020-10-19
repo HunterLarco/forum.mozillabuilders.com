@@ -1,6 +1,6 @@
 const child_process = require('child_process');
 
-function deployDirectory({ project, directory }) {
+function deployApplication({ project, directory }) {
   const { status } = child_process.spawnSync(
     'gcloud',
     ['app', 'deploy', directory, '--project', project, '--quiet'],
@@ -14,6 +14,21 @@ function deployDirectory({ project, directory }) {
   return 'Deploy finished';
 }
 
+function deployCronFile({ project, cron }) {
+  const { status } = child_process.spawnSync(
+    'gcloud',
+    ['app', 'deploy', cron, '--project', project, '--quiet'],
+    { stdio: [process.stdin, process.stdout, process.stderr] }
+  );
+
+  if (status == null || status != 0) {
+    throw 'Deploy failed';
+  }
+
+  return 'Deploy finished';
+}
+
 module.exports = {
   deployDirectory,
+  deployCronFile,
 };

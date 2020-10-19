@@ -12,6 +12,11 @@ module.exports = {
       default: false,
     },
 
+    'cron-only': {
+      type: Boolean,
+      default: false,
+    },
+
     verbose: {
       type: Boolean,
       default: false,
@@ -41,9 +46,16 @@ module.exports = {
       throw 'As per --dry, skipping actual deploy';
     }
 
-    return appengine.deployDirectory({
+    if (!args['cron-only']) {
+      await appengine.deployApplication({
+        project: 'moz-unfck-forum',
+        directory: workspace.resolve('build/production/server'),
+      });
+    }
+
+    return appengine.deployCronFile({
       project: 'moz-unfck-forum',
-      directory: workspace.resolve('build/production/server'),
+      cron: workspace.resolve('build/production/server/cron.yaml'),
     });
   },
 };
