@@ -10,6 +10,7 @@ export default {};
 
 <style lang="sass">
 @import '@/src/web/sass/fonts';
+@import '@/src/web/sass/layout';
 
 * {
   font-size: inherit;
@@ -19,6 +20,10 @@ export default {};
 
 html body {
   @include fonts-clear;
+}
+
+body {
+  @include layout-fill;
 }
 
 [hidden] {

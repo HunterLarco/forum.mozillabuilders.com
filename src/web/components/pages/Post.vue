@@ -108,10 +108,6 @@ export default {
 .Post {
   background: #FFF;
   border-bottom: 1px solid #EEE;
-
-  @include sizing-mobile {
-    margin: 20px;
-  }
 }
 
 .Comments {
@@ -120,6 +116,11 @@ export default {
   padding: 30px;
 
   @include sizing-tablet {
+    margin: 0;
+  }
+
+  @include sizing-mobile {
+    padding: 20px;
     margin: 0;
   }
 }

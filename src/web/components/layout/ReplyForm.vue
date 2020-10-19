@@ -82,6 +82,7 @@ export default {
 }
 
 .Textarea {
+  box-shadow: none;
   max-width: 700px;
 
   & > textarea {
