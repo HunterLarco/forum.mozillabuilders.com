@@ -1,5 +1,5 @@
 <template>
-  <HorizontalLayout :class="$style.Host" vertical-center>
+  <HorizontalLayout :class="$style.Host">
     <template v-slot:left>
       <div
         :class="$style.Likes"
@@ -16,27 +16,25 @@
     </template>
 
     <div>
-      <router-link :to="`/post/${post.id}`" :class="$style.Title">{{
-        title_
-      }}</router-link>
-      <div :class="$style.Metadata">
-        Posted {{ author_ }} {{ age_ }} |
-        <router-link :to="`/post/${post.id}`"
-          >{{ comments_ }}&nbsp;comments</router-link
+      <div :class="$style.Title">{{ title_ }}</div>
+
+      <div :class="$style.Body">
+        <span v-if="post.content.type == 'question'">{{
+          post.content.details
+        }}</span>
+        <span v-if="post.content.type == 'opinion'">{{
+          post.content.details
+        }}</span>
+        <a
+          href="post.content.url"
+          target="blank"
+          v-if="post.content.type == 'url'"
+          >{{ post.content.url }}</a
         >
       </div>
-    </div>
 
-    <template v-slot:right>
-      <a
-        :class="$style.LinkIcon"
-        :href="post.content.url"
-        target="blank"
-        v-if="post.content.type == 'url'"
-      >
-        <ElementIcon name="link" />
-      </a>
-    </template>
+      <div :class="$style.Metadata">Posted {{ author_ }} {{ age_ }}</div>
+    </div>
   </HorizontalLayout>
 </template>
 
@@ -105,14 +103,6 @@ export default {
       return this.post.stats.likes;
     },
 
-    comments_() {
-      if (!this.post) {
-        return null;
-      }
-
-      return this.post.stats.comments;
-    },
-
     alreadyLiked_() {
       if (!this.post || !this.post.personalization) {
         return null;
@@ -162,6 +152,7 @@ export default {
   color: #E91E63;
   cursor: pointer;
   min-width: 46px;
+  margin-top: 2px;
   padding: 0 24px 0 20px;
   text-align: center;
 
@@ -183,17 +174,29 @@ export default {
 }
 
 .Title {
-  @include fonts-collapsed-post-title;
+  @include fonts-post-title;
 
   color: inherit;
   display: block;
   text-decoration: none;
 }
 
+.Body {
+  @include fonts-body;
+
+  margin-top: 4px;
+  white-space: pre-line;
+
+  & a {
+    color: inherit;
+  }
+}
+
 .Metadata {
-  @include fonts-collapsed-post-metadata;
+  @include fonts-post-metadata;
 
   color: #828282;
+  margin-top: 8px;
 
   & a {
     color: inherit;
@@ -201,7 +204,7 @@ export default {
 }
 
 .LinkIcon {
-  @include fonts-collapsed-post-likes;
+  @include fonts-post-likes;
 
   color: #828282;
 }
