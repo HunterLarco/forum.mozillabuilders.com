@@ -9,6 +9,7 @@ const COMMANDS = {
   'build-server': () => require('./commands/build-server.js'),
   'build-web': () => require('./commands/build-web.js'),
   'run-local': () => require('./commands/run-local.js'),
+  'deploy-server': () => require('./commands/deploy-server.js'),
   'deploy-web': () => require('./commands/deploy-web.js'),
   lint: () => require('./commands/lint.js'),
 };

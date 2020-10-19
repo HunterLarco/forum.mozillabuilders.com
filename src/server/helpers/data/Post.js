@@ -19,7 +19,7 @@ export function create(content, accountId) {
   } else if (content.type == 'url') {
     post.content.type = 'url';
     post.content.summary = stringHelpers.collapseWhitespace(content.summary);
-    post.content.url = request.url;
+    post.content.url = content.url;
   } else if (content.type == 'opinion') {
     post.content.type = 'opinion';
     post.content.summary = stringHelpers.collapseWhitespace(content.summary);

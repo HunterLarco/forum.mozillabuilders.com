@@ -2,7 +2,7 @@ import { Firestore } from '@google-cloud/firestore';
 
 export async function createFirestoreClient() {
   const settings = {
-    projectId: 'unfck-forum',
+    projectId: 'moz-unfck-forum',
   };
 
   if (process.fido.env == 'local') {
