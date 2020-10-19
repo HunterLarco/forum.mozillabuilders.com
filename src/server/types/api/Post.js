@@ -1,10 +1,13 @@
 import Joi from 'joi';
 
+import Comment from '@/src/server/types/api/Comment';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as AccountTable from '@/src/server/firestore/Account';
 import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
+
+import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 const Content = Joi.alternatives().conditional('.type', {
   switch: [
@@ -40,9 +43,11 @@ const Schema = Joi.object({
 
   author: PublicAccount.required(),
   content: Content.required(),
+  comments: Joi.array().items(Comment).required(),
 
   stats: Joi.object({
     likes: Joi.number().min(1).required(),
+    comments: Joi.number().min(0).required(),
   }).required(),
 
   personalization: Joi.object({
@@ -78,6 +83,11 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
     content: post.content,
+    comments: await Promise.all(
+      post.comments.map((comment) =>
+        Comment.fromFirestoreComment(environment, comment, { accountId })
+      )
+    ),
 
     stats: {
       // We add one because each user always likes their own posts by default.
@@ -88,6 +98,7 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
           null,
           CounterTable.COUNTERS.likes(id)
         )),
+      comments: commentHelpers.count(post.comments),
     },
 
     personalization: personalization,

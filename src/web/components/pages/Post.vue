@@ -24,13 +24,16 @@
         <router-link to="/submit">Tell us how</router-link>.</Banner
       >
 
-      <CollapsedPost
-        :class="$style.Post"
-        :post="post_"
-        v-if="post_"
-        :show-comments="false"
-        :link-to-post="false"
-      />
+      <template v-if="post_">
+        <Post :class="$style.Post" :post="post_" />
+
+        <CommentThread
+          :class="$style.Comments"
+          :post="post_"
+          :comments="post_.comments"
+        >
+        </CommentThread>
+      </template>
     </VerticalRibbon>
   </div>
 </template>
@@ -38,7 +41,9 @@
 <script>
 import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
+import CommentThread from '@/src/web/components/layout/CommentThread';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import Post from '@/src/web/components/layout/Post';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
@@ -47,7 +52,9 @@ export default {
   components: {
     Banner,
     CollapsedPost,
+    CommentThread,
     PageHeader,
+    Post,
     VerticalRibbon,
   },
 
@@ -100,10 +107,20 @@ export default {
 
 .Post {
   background: #FFF;
-  margin: 30px;
+  border-bottom: 1px solid #EEE;
 
   @include sizing-mobile {
     margin: 20px;
+  }
+}
+
+.Comments {
+  background: #FFF;
+  margin-bottom: 30px;
+  padding: 30px;
+
+  @include sizing-tablet {
+    margin: 0;
   }
 }
 </style>

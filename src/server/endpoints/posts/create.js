@@ -4,6 +4,7 @@ import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
 import * as PostTable from '@/src/server/firestore/Post';
+import * as postHelpers from '@/src/server/helpers/data/Post';
 
 const RequestSchema = Joi.alternatives().conditional('.type', {
   switch: [
@@ -43,31 +44,11 @@ async function handler(environment, request, headers) {
     required: true,
   });
 
-  const post = {
-    author: accountId,
-    content: {},
-    stats: {
-      likes: 1,
-      hotness: 0,
-    },
-    dateCreated: new Date(),
-  };
-
-  if (request.type == 'question') {
-    post.content.type = 'question';
-    post.content.question = request.question;
-    post.content.details = request.details;
-  } else if (request.type == 'url') {
-    post.content.type = 'url';
-    post.content.summary = request.summary;
-    post.content.url = request.url;
-  } else if (request.type == 'opinion') {
-    post.content.type = 'opinion';
-    post.content.summary = request.summary;
-    post.content.details = request.details;
-  }
-
-  const { id } = await PostTable.create(environment, null, post);
+  const { id } = await PostTable.create(
+    environment,
+    null,
+    postHelpers.create(request, accountId)
+  );
 
   return { id };
 }

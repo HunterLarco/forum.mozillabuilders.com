@@ -77,3 +77,29 @@
   font-size: 14px;
   line-height: 21px;
 }
+
+@mixin fonts-post-title {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 27px;
+}
+
+@mixin fonts-post-metadata {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+@mixin fonts-post-likes {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 27px;
+}

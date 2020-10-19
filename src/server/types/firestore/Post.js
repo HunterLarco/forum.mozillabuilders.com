@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import Comment from '@/src/server/types/firestore/Comment';
+
 const Content = Joi.alternatives().conditional('.type', {
   switch: [
     {
@@ -33,6 +35,7 @@ export default Joi.object({
   author: Joi.string().required(),
 
   content: Content.required(),
+  comments: Joi.array().items(Comment).required(),
 
   stats: Joi.object({
     likes: Joi.number().min(1).default(1),
