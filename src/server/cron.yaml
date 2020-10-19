@@ -1,4 +1,4 @@
 cron:
-  - description: 'rankHostPosts'
-    url: /aurora/cron/rankHostPosts
+  - description: 'rankHotPosts'
+    url: /aurora/cron/rankHotPosts
     schedule: every 5 minutes
