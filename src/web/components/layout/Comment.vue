@@ -113,6 +113,7 @@ export default {
           text: this.form_.data.reply,
         },
       }).then(({ comment }) => {
+        ++this.post.stats.comments;
         this.comment.children.unshift(comment);
         this.form_.visible = false;
         this.form_.loading = false;

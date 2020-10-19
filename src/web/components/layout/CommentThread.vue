@@ -17,14 +17,21 @@ export default {
   },
 
   render(createElement) {
-    return this.renderComments_(createElement, this.comments);
+    return createElement('div', { class: this.$style.Host }, [
+      createElement(
+        'div',
+        { class: this.$style.Label },
+        `${this.post.stats.comments} Comments`
+      ),
+      this.renderComments_(createElement, this.comments),
+    ]);
   },
 
   methods: {
     renderComments_(createElement, comments) {
       return createElement(
         'div',
-        { class: this.$style.Host },
+        {},
         comments.map((comment) => {
           return createElement('div', { class: this.$style.Comment }, [
             createElement(Comment, {
@@ -44,12 +51,18 @@ export default {
     },
   },
 };
-
-function renderComments(createElement, comments) {}
 </script>
 
 <style module lang="sass">
+@import '@/src/web/sass/fonts';
+
 .Host {}
+
+.Label {
+  @include fonts-body;
+
+  margin-bottom: 20px;
+}
 
 .Comment {
   & ~ .Comment {
