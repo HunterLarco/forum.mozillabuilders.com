@@ -29,6 +29,6 @@ function deployCronFile({ project, cron }) {
 }
 
 module.exports = {
-  deployDirectory,
+  deployApplication,
   deployCronFile,
 };

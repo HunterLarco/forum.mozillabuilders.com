@@ -6,6 +6,7 @@ import express from 'express';
 import helmet from 'helmet';
 
 import rejectInsecureRequests from '@/src/server/middleware/rejectInsecureRequests';
+import rejectNonAppengineRequests from '@/src/server/middleware/rejectNonAppengineRequests';
 
 import * as routes from '@/src/server/routes';
 import { createEnvironment } from '@/src/server/environment';
@@ -17,11 +18,8 @@ async function main() {
   app.use(compression());
   app.use(express.json());
 
-  app.use(
-    rejectInsecureRequests({
-      exclude: ['*/cron/**'],
-    })
-  );
+  app.use(rejectInsecureRequests({ exclude: ['*/cron/**'] }));
+  app.use(rejectNonAppengineRequests({ include: ['*/cron/**'] }));
 
   const environment = await createEnvironment({
     services: ['firestore'],
