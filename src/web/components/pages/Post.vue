@@ -24,18 +24,16 @@
         <router-link to="/submit">Tell us how</router-link>.</Banner
       >
 
-      <Post :class="$style.Post" :post="post_" v-if="post_" />
+      <template v-if="post_">
+        <Post :class="$style.Post" :post="post_" />
 
-      <CommentThread
-        :class="$style.Comments"
-        :post="post_"
-        :comments="post_.comments"
-        v-if="post_ && post_.comments.length"
-      >
-      </CommentThread>
-      <div :class="$style.EmptyComments" v-else>
-        Be the first to comment on this!
-      </div>
+        <CommentThread
+          :class="$style.Comments"
+          :post="post_"
+          :comments="post_.comments"
+        >
+        </CommentThread>
+      </template>
     </VerticalRibbon>
   </div>
 </template>
@@ -124,13 +122,5 @@ export default {
   @include sizing-tablet {
     margin: 0;
   }
-}
-
-.EmptyComments {
-  @extend .Comments;
-
-  @include fonts-body;
-
-  text-align: center;
 }
 </style>
