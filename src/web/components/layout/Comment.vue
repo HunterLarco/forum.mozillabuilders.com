@@ -104,6 +104,7 @@ export default {
   @include fonts-collapsed-post-title;
 
   padding: 8px 0;
+  white-space: pre-line;
 }
 
 .ReplyLink {

@@ -46,10 +46,7 @@ async function handler(environment, request, headers) {
       if (!request.parent.comment) {
         post.comments.push(comment);
       } else {
-        const parentComment = commentHelpers.findComment(
-          post,
-          request.parent.comment
-        );
+        const parentComment = commentHelpers.find(post, request.parent.comment);
         if (!parentComment) {
           return Promise.reject({
             httpErrorCode: 404,
@@ -60,7 +57,7 @@ async function handler(environment, request, headers) {
         parentComment.children.push(comment);
       }
 
-      commentHelpers.reorderComments(post.comments);
+      commentHelpers.reorder(post.comments);
 
       await PostTable.replace(
         environment,

@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import Comment from '@/src/server/types/firestore/Comment';
+
 const Content = Joi.alternatives().conditional('.type', {
   switch: [
     {
@@ -27,20 +29,6 @@ const Content = Joi.alternatives().conditional('.type', {
       }),
     },
   ],
-});
-
-const Comment = Joi.object({
-  id: Joi.string().required(),
-
-  author: Joi.string().required(),
-
-  content: Joi.object({
-    text: Joi.string().required(),
-  }).required(),
-
-  children: Joi.array().items(Joi.link('...')).required(),
-
-  dateCreated: Joi.date().required(),
 });
 
 export default Joi.object({
