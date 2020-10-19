@@ -3,30 +3,18 @@
     <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
     <div :class="$style.Content">{{ comment.content.text }}</div>
 
-    <template v-if="!form_.visible">
+    <template v-if="!showReplyForm_">
       <div :class="$style.ReplyLink" @click="openReplyForm_">Reply</div>
     </template>
 
-    <template v-if="form_.visible">
-      <div :class="$style.ReplyForm">
-        <ElementInput
-          :class="$style.ReplyTextarea"
-          placeholder="Your comment..."
-          type="textarea"
-          ref="textarea"
-          :disabled="form_.loading"
-          v-model="form_.data.reply"
-          :autosize="{ minRows: 2 }"
-        />
-        <div :class="$style.ReplyButtons">
-          <ElementButton
-            @click="submitReplyForm_"
-            :loading="form_.loading"
-            :disabled="!form_.data.reply"
-            >Add comment</ElementButton
-          >
-        </div>
-      </div>
+    <template v-if="showReplyForm_">
+      <ReplyForm
+        :class="$style.ReplyForm"
+        :post="post"
+        :comment="comment"
+        ref="replyForm"
+        @submit="closeReplyForm_"
+      />
     </template>
   </div>
 </template>
@@ -34,15 +22,14 @@
 <script>
 import friendlyTime from 'friendly-time';
 
+import ReplyForm from '@/src/web/components/layout/ReplyForm';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
-import apiFetch from '@/src/web/helpers/net/apiFetch';
-
 export default {
-  components: { ElementButton, ElementInput },
+  components: { ReplyForm, ElementButton, ElementInput },
 
   props: {
     post: {
@@ -58,14 +45,7 @@ export default {
 
   data() {
     return {
-      form_: {
-        data: {
-          reply: '',
-        },
-
-        visible: false,
-        loading: false,
-      },
+      showReplyForm_: false,
     };
   },
 
@@ -94,30 +74,15 @@ export default {
           query: { info: 'You must be logged in to reply.' },
         });
       } else {
-        this.form_.visible = true;
+        this.showReplyForm_ = true;
         this.$nextTick(() => {
-          this.$refs.textarea.focus();
+          this.$refs.replyForm.focus();
         });
       }
     },
 
-    submitReplyForm_() {
-      this.form_.loading = true;
-      apiFetch('aurora/posts/comment', {
-        parent: {
-          post: this.post.id,
-          comment: this.comment.id,
-        },
-
-        content: {
-          text: this.form_.data.reply,
-        },
-      }).then(({ comment }) => {
-        ++this.post.stats.comments;
-        this.comment.children.unshift(comment);
-        this.form_.visible = false;
-        this.form_.loading = false;
-      });
+    closeReplyForm_() {
+      this.showReplyForm_ = false;
     },
   },
 };
@@ -152,19 +117,5 @@ export default {
 
 .ReplyForm {
   margin-left: 30px;
-}
-
-.ReplyTextarea {
-  max-width: 700px;
-
-  & > textarea {
-    font-family: Arial;
-    font-size: 14px;
-    line-height: 30px;
-  }
-}
-
-.ReplyButtons {
-  padding-top: 8px;
 }
 </style>

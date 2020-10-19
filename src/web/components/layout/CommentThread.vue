@@ -2,6 +2,7 @@
 import friendlyTime from 'friendly-time';
 
 import Comment from '@/src/web/components/layout/Comment';
+import ReplyForm from '@/src/web/components/layout/ReplyForm';
 
 export default {
   props: {
@@ -22,6 +23,11 @@ export default {
         'div',
         { class: this.$style.Label },
         `${this.post.stats.comments} Comments`
+      ),
+      createElement(
+        ReplyForm,
+        { class: this.$style.ReplyForm, props: { post: this.post } },
+        []
       ),
       this.renderComments_(createElement, this.comments),
     ]);
@@ -61,6 +67,10 @@ export default {
 .Label {
   @include fonts-body;
 
+  margin-bottom: 20px;
+}
+
+.ReplyForm {
   margin-bottom: 20px;
 }
 
