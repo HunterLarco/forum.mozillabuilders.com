@@ -26,7 +26,7 @@
           post.content.details
         }}</span>
         <a
-          href="post.content.url"
+          :href="post.content.url"
           target="blank"
           v-if="post.content.type == 'url'"
           >{{ post.content.url }}</a
