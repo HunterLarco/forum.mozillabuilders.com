@@ -33,9 +33,11 @@ export default {
                 comment,
               },
             }),
-            createElement('div', { class: this.$style.SubComments }, [
-              this.renderComments_(createElement, comment.children),
-            ]),
+            comment.children.length
+              ? createElement('div', { class: this.$style.SubComments }, [
+                  this.renderComments_(createElement, comment.children),
+                ])
+              : null,
           ]);
         })
       );
