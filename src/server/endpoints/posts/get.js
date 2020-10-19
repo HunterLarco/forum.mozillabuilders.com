@@ -19,6 +19,14 @@ async function handler(environment, request, headers) {
 
   const { post } = await PostTable.get(environment, null, request.id);
 
+  if (!post) {
+    return Promise.reject({
+      httpErrorCode: 404,
+      name: 'PostNotFound',
+      message: `Post ${request.id} not found`,
+    });
+  }
+
   return {
     post: await ApiPostSchema.fromFirestorePost(environment, request.id, post, {
       accountId,

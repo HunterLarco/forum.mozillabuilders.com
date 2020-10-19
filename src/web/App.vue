@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.Host">
     <router-view></router-view>
   </div>
 </template>
@@ -10,6 +10,7 @@ export default {};
 
 <style lang="sass">
 @import '@/src/web/sass/fonts';
+@import '@/src/web/sass/layout';
 
 * {
   font-size: inherit;
@@ -21,7 +22,19 @@ html body {
   @include fonts-clear;
 }
 
+body {
+  @include layout-fill;
+}
+
 [hidden] {
   display: none !important;
+}
+</style>
+
+<style module lang="sass">
+@import '@/src/web/sass/layout';
+
+.Host {
+  @include layout-max-dimensions;
 }
 </style>

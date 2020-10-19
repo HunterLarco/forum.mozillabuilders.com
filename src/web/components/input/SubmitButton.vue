@@ -1,5 +1,10 @@
 <template>
-  <div :class="[$style.Host, ...hostModifiers_]" tabindex="0" @click="onClick_">
+  <div
+    :class="[$style.Host, ...hostModifiers_]"
+    tabindex="0"
+    @click="onClick_"
+    @keydown.enter="onClick_"
+  >
     <slot>{{ text }}</slot>
     <ElementIcon :class="$style.LoadingIcon" name="loading" v-if="loading" />
   </div>
