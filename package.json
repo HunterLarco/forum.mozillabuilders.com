@@ -45,7 +45,6 @@
     "webpack-dev-server": "3.11.0",
     "webpack-merge": "5.0.9",
     "webpack-node-externals": "2.5.2",
-    "wildcard-match": "4.0.0",
     "write-file-webpack-plugin": "4.5.1"
   },
   "dependencies": {
@@ -72,6 +71,7 @@
     "vue-gtag": "1.9.1",
     "vue-observe-visibility": "0.4.6",
     "vue-router": "3.4.1",
-    "vuex": "3.5.1"
+    "vuex": "3.5.1",
+    "wildcard-match": "4.0.0"
   }
 }
