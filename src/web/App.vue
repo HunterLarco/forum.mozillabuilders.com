@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.Host">
     <router-view></router-view>
   </div>
 </template>
@@ -28,5 +28,13 @@ body {
 
 [hidden] {
   display: none !important;
+}
+</style>
+
+<style module lang="sass">
+@import '@/src/web/sass/layout';
+
+.Host {
+  @include layout-max-dimensions;
 }
 </style>

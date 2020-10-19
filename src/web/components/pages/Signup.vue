@@ -229,7 +229,7 @@ export default {
 .Host {
   @include layout-center;
 
-  min-height: 100vh;
+  min-height: 100%;
 
   @include sizing-mobile {
     @include layout-vertical-center;
