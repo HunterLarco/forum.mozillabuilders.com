@@ -59,7 +59,7 @@
             :class="$style.SubmitButton"
             @click="submit_"
             :loading="submitting_"
-            >Continue with email</ElementButton
+            >{{ submitButtonText_ }}</ElementButton
           >
         </ElementForm>
       </div>
@@ -206,6 +206,12 @@ export default {
         .finally(() => {
           this.submitting_ = false;
         });
+    },
+  },
+
+  computed: {
+    submitButtonText_() {
+      return this.submitted_ ? 'Continue with code' : 'Continue with email';
     },
   },
 
