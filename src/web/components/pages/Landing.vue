@@ -29,6 +29,29 @@
       >
 
       <div :class="$style.Content">
+        <template v-if="!posts_.length">
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+        </template>
+
         <CollapsedPost
           :class="$style.Post"
           v-for="post in posts_"
@@ -51,6 +74,7 @@ import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
@@ -62,6 +86,7 @@ export default {
     ElementIcon,
     IndeterminateProgressBar,
     PageHeader,
+    SkeletonCollapsedPost,
     VerticalRibbon,
   },
 
