@@ -56,7 +56,7 @@ async function handler(environment, request) {
       text: Mustache.render(PlainTextMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
       }),
-      html: Mustache.render(HTMLTextMagicLinkEmail, {
+      html: Mustache.render(HTMLMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
       }),
     });
