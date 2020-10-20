@@ -29,13 +29,6 @@
       >
 
       <div :class="$style.Content">
-        <template v-if="loading_ && !this.posts_.length">
-          <div :class="$style.LoadingIndicator">
-            {{ loadingText_ }}
-            <ElementIcon name="loading" />
-          </div>
-        </template>
-
         <CollapsedPost
           :class="$style.Post"
           v-for="post in posts_"
@@ -43,15 +36,10 @@
           :post="post"
         />
 
-        <div
+        <IndeterminateProgressBar
           v-observe-visibility="onInfiniteLoaderVisibility_"
-          v-if="posts_.length && nextCursor_"
-        >
-          <div :class="$style.LoadingIndicator">
-            Loading more posts
-            <ElementIcon name="loading" />
-          </div>
-        </div>
+          v-if="!posts_.length || nextCursor_"
+        />
       </div>
     </VerticalRibbon>
   </div>
@@ -61,6 +49,7 @@
 import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
+import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
@@ -71,6 +60,7 @@ export default {
     Banner,
     CollapsedPost,
     ElementIcon,
+    IndeterminateProgressBar,
     PageHeader,
     VerticalRibbon,
   },
@@ -78,7 +68,6 @@ export default {
   data() {
     return {
       loading_: false,
-      loadingText_: '',
       error_: null,
 
       posts_: [],
@@ -103,10 +92,6 @@ export default {
         this.error_ = null;
         this.posts_ = [];
         this.nextCursor_ = null;
-        this.loadingText_ = {
-          new: 'Fetching the lastest posts',
-          hot: 'Fetching the most popular posts',
-        }[index];
       } else if (!this.nextCursor_ || this.loading_) {
         return;
       }
