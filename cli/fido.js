@@ -12,6 +12,7 @@ const COMMANDS = {
   'server:deploy': () => require('./commands/server:deploy.js'),
   'web:build': () => require('./commands/web:build.js'),
   'web:deploy': () => require('./commands/web:deploy.js'),
+  'email:upload-asset': () => require('./commands/email:upload-asset.js'),
   'secrets:create': () => require('./commands/secrets:create.js'),
   'secrets:delete': () => require('./commands/secrets:delete.js'),
   'secrets:list': () => require('./commands/secrets:list.js'),
@@ -28,7 +29,7 @@ function main(positionalArgs, keywordArgs) {
     console.log('Usage: fido <command>');
     console.log();
     console.log('where <command> is one of:');
-    console.log('    ' + Object.keys(COMMANDS).join(', '));
+    console.log('    ' + Object.keys(COMMANDS).join('\n    '));
     process.exit(1);
   }
 

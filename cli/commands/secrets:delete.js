@@ -11,7 +11,7 @@ module.exports = {
     const [name] = positionalArgs;
 
     if (!name) {
-      throw 'Missing name from invocation `delete-secret <name>`';
+      throw 'Missing name from invocation `secrets:delete <name>`';
     } else if (positionalArgs.length > 1) {
       throw (
         'Unexpected arguments besides name: ' +

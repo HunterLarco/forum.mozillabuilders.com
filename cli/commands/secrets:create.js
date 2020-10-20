@@ -15,9 +15,9 @@ module.exports = {
     const [name, value] = positionalArgs;
 
     if (!name) {
-      throw 'Missing name from invocation `create-secret <name> <value>`';
+      throw 'Missing name from invocation `secrets:create <name> <value>`';
     } else if (!value) {
-      throw 'Missing value from invocation `create-secret <name> <value>`';
+      throw 'Missing value from invocation `secrets:create <name> <value>`';
     } else if (positionalArgs.length > 2) {
       throw (
         'Unexpected arguments besides name and value: ' +
