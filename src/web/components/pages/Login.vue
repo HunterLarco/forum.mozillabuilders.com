@@ -154,11 +154,11 @@ export default {
       if (this.submitted_) {
         this.login_();
       } else {
-        this.requestMagicLink_();
+        this.sendMagicLink_();
       }
     },
 
-    requestMagicLink_() {
+    sendMagicLink_() {
       const email = this.form_.data.email;
 
       const emailError = this.validateEmail_(email);
@@ -183,12 +183,6 @@ export default {
     login_() {
       const email = this.form_.data.email;
       const password = this.form_.data.password;
-
-      const emailError = this.validateEmail_(email);
-      this.form_.errors.email = emailError;
-      if (emailError) {
-        return;
-      }
 
       const passwordError = this.validatePassword_(password);
       this.form_.errors.password = passwordError;
