@@ -19,12 +19,16 @@
       <div :class="$style.Title">{{ title_ }}</div>
 
       <div :class="$style.Body">
-        <span v-if="post.content.type == 'question'">{{
-          post.content.details
-        }}</span>
-        <span v-if="post.content.type == 'opinion'">{{
-          post.content.details
-        }}</span>
+        <AttributedText
+          v-if="post.content.type == 'question'"
+          :text="post.content.details.text"
+          :entities="post.content.details.entities"
+        />
+        <AttributedText
+          v-if="post.content.type == 'opinion'"
+          :text="post.content.details.text"
+          :entities="post.content.details.entities"
+        />
         <a
           :href="post.content.url"
           target="blank"
@@ -41,6 +45,7 @@
 <script>
 import friendlyTime from 'friendly-time';
 
+import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
@@ -49,7 +54,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
-  components: { ElementIcon, HorizontalLayout },
+  components: { AttributedText, ElementIcon, HorizontalLayout },
 
   props: {
     post: {
