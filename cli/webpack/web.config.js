@@ -21,7 +21,6 @@ module.exports = (env, flags) =>
       new HtmlWebpackPlugin({
         template: require('html-webpack-template'),
         title: '#Unfck #MozForum',
-        mobile: true,
         hash: true,
         lang: 'en-US',
         appMountId: 'app',
@@ -30,6 +29,10 @@ module.exports = (env, flags) =>
             name: 'description',
             content:
               "We love it, we need it, and we can all feel the ways it’s fcked. Together we can unfck it. Let's talk about how.",
+          },
+          {
+            name: 'viewport',
+            content: 'width=device-width, initial-scale=1, maximum-scale=1',
           },
         ],
       }),
