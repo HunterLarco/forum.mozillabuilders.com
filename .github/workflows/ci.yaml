@@ -41,6 +41,6 @@ jobs:
       - name: Lint
         run: cli/fido.js lint
       - name: Build Server
-        run: cli/fido.js build-server --strict --env production
+        run: cli/fido.js server:build --strict --env production
       - name: Build Web
-        run: cli/fido.js build-web --strict --env production
+        run: cli/fido.js web:build --strict --env production
