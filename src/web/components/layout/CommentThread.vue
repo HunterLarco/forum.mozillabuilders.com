@@ -47,7 +47,11 @@ export default {
             },
             'Log in to add a comment'
           ),
-      this.renderComments_(createElement, this.comments),
+      this.post.comments.length
+        ? createElement('div', { class: this.$style.Comments }, [
+            this.renderComments_(createElement, this.comments),
+          ])
+        : null,
     ]);
   },
 
@@ -85,12 +89,10 @@ export default {
 
 .Label {
   @include fonts-body;
-
-  margin-bottom: 20px;
 }
 
 .ReplyForm {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .LoginToComment {
@@ -98,7 +100,11 @@ export default {
 
   color: inherit;
   display: block;
-  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.Comments {
+  margin-top: 20px;
 }
 
 .Comment {
