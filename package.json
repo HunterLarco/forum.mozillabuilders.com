@@ -78,6 +78,7 @@
     "vue-observe-visibility": "0.4.6",
     "vue-router": "3.4.1",
     "vuex": "3.5.1",
+    "webpack-mjml-loader": "1.1.0",
     "wildcard-match": "4.0.0"
   }
 }
