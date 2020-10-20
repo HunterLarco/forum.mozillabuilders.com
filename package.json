@@ -32,6 +32,7 @@
     "html-webpack-template": "6.2.0",
     "is-image": "3.0.0",
     "minimist": "1.2.5",
+    "mjml": "4.7.1",
     "node-sass": "4.14.1",
     "p-limit": "3.0.2",
     "postcss-loader": "3.0.0",
@@ -47,6 +48,7 @@
     "webpack": "4.44.1",
     "webpack-dev-server": "3.11.0",
     "webpack-merge": "5.0.9",
+    "webpack-mjml-loader": "1.1.0",
     "webpack-node-externals": "2.5.2",
     "write-file-webpack-plugin": "4.5.1"
   },
@@ -68,6 +70,7 @@
     "joi": "17.2.1",
     "js-cookie": "2.2.1",
     "md5": "2.3.0",
+    "mustache": "4.0.1",
     "normalize-email": "1.1.1",
     "source-map-support": "0.5.19",
     "sparkpost": "2.1.4",
@@ -78,7 +81,6 @@
     "vue-observe-visibility": "0.4.6",
     "vue-router": "3.4.1",
     "vuex": "3.5.1",
-    "webpack-mjml-loader": "1.1.0",
     "wildcard-match": "4.0.0"
   }
 }

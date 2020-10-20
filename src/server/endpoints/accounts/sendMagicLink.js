@@ -1,11 +1,15 @@
 import * as dateFns from 'date-fns';
 import Joi from 'joi';
+import Mustache from 'mustache';
 
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 
 import * as AccountIdentityTable from '@/src/server/firestore/AccountIdentity';
 import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
 import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
+
+import HTMLMagicLinkEmail from '@/src/server/emails/MagicLink.mjml';
+import PlainTextMagicLinkEmail from '@/src/server/emails/MagicLink.txt';
 
 const RequestSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -31,7 +35,7 @@ async function handler(environment, request) {
     });
   }
 
-  const { id } = await AuthTokenTable.create(environment, null, {
+  const { id: loginToken } = await AuthTokenTable.create(environment, null, {
     dateCreated: new Date(),
     expiration: dateFns.addDays(new Date(), 1),
     scopes: {
@@ -42,7 +46,20 @@ async function handler(environment, request) {
   });
 
   if (process.fido.env == 'local') {
-    console.log(`Login token for ${email.raw}: ${id}`);
+    console.log(
+      `Login url for ${email.raw}: http://localhost:8080/login/${loginToken}`
+    );
+  } else {
+    await environment.sparkpost.send({
+      to: email.raw,
+      subject: 'Your temporary Mozilla Unfck Forum login link',
+      text: Mustache.render(PlainTextMagicLinkEmail, {
+        loginUrl: `https://unfck.xyz/login/${loginToken}`,
+      }),
+      html: Mustache.render(HTMLTextMagicLinkEmail, {
+        loginUrl: `https://unfck.xyz/login/${loginToken}`,
+      }),
+    });
   }
 
   return {};
