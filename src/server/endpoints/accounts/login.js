@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import normalizeEmail from 'normalize-email';
 
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 
@@ -8,7 +9,8 @@ import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
 import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
 
 const RequestSchema = Joi.object({
-  token: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
 });
 
 const ResponseSchema = Joi.object({
@@ -83,7 +85,7 @@ async function login(environment, accountId) {
 }
 
 async function createAuthToken(environment, accountId) {
-  const { id } = await AuthTokenTable.create(environment, null, {
+  const { id } = await AuthTokenTable.create(environment, {
     dateCreated: new Date(),
     scopes: {
       accountAuth: {
@@ -96,12 +98,16 @@ async function createAuthToken(environment, accountId) {
 }
 
 async function handler(environment, request) {
-  const { token } = await AuthTokenTable.get(environment, null, request.token);
+  const { id: tokenId, token } = await AuthTokenTable.get(environment, {
+    email: normalizeEmail(request.email),
+    password: request.password,
+  });
+
   if (!token) {
     return Promise.reject({
       httpErrorCode: 404,
       name: 'InvalidToken',
-      message: `Token ${request.token} not found`,
+      message: 'Incorrect login credentials',
     });
   }
 
@@ -110,11 +116,11 @@ async function handler(environment, request) {
       email: token.scopes.signup.email,
       username: token.scopes.signup.username,
     });
-    await AuthTokenTable.remove(environment, null, request.token);
+    await AuthTokenTable.remove(environment, tokenId);
     return { token: loginToken };
   } else if (token.scopes.login) {
     const loginToken = await login(environment, token.scopes.login.accountId);
-    await AuthTokenTable.remove(environment, null, request.token);
+    await AuthTokenTable.remove(environment, tokenId);
     return { token: loginToken };
   }
 

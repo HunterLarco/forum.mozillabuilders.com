@@ -16,7 +16,7 @@ export default async function getCurrentUser(environment, headers, options) {
     return { id: null, account: null };
   }
 
-  const { token } = await AuthTokenTable.get(environment, null, authTokenId);
+  const { token } = await AuthTokenTable.get(environment, authTokenId);
 
   if (!token && required) {
     return Promise.reject({
