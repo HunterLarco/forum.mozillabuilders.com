@@ -10,9 +10,19 @@ export default createStore('CurrentUserStore', {
   },
 
   actions: {
-    async login({ commit }, loginToken) {
+    async loginWithToken({ commit }, loginToken) {
       const { token: authToken } = await apiFetch('aurora/accounts/login', {
         token: loginToken,
+      });
+      commit('setAuthToken', authToken);
+    },
+
+    async loginWithCode({ commit }, { email, password }) {
+      const { token: authToken } = await apiFetch('aurora/accounts/login', {
+        compositeKey: {
+          email,
+          password,
+        },
       });
       commit('setAuthToken', authToken);
     },

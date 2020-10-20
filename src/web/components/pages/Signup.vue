@@ -98,6 +98,8 @@ import ElementInput from '@/vendor/element-ui/Input';
 import ElementMessage from '@/vendor/element-ui/Message';
 import ElementTooltip from '@/vendor/element-ui/Tooltip';
 
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
@@ -250,12 +252,7 @@ export default {
       }
 
       this.submitting_ = true;
-      apiFetch('aurora/accounts/login', {
-        compositeKey: {
-          email,
-          password,
-        },
-      })
+      CurrentUserStore.dispatch('loginWithCode', { email, password })
         .then(() => {
           this.$router.push('/');
         })
