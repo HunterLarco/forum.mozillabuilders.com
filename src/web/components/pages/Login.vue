@@ -32,7 +32,7 @@
           <ElementFormItem v-if="submitted_">
             <div :class="$style.Details">
               We just sent you a temporary login link.<br />
-              Please check your inbox.
+              Please check your inbox
               <ElementTooltip placement="right">
                 <div slot="content">Not seeing our email? Check spam.</div>
                 <ElementIcon name="info" />
