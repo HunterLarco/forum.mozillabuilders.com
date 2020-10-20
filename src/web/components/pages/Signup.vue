@@ -25,6 +25,7 @@
               v-model="form_.data.username"
               @input="form_.errors.username = null"
               :readonly="submitting_"
+              :disabled="submitted_"
               @keydown.native.prevent.enter="submit_"
             />
           </ElementFormItem>
@@ -39,13 +40,14 @@
               v-model="form_.data.email"
               @input="form_.errors.email = null"
               :readonly="submitting_"
+              :disabled="submitted_"
               @keydown.native.prevent.enter="submit_"
             />
           </ElementFormItem>
 
           <ElementFormItem v-if="submitted_">
             <div :class="$style.Details">
-              We just sent you a temporary login link.<br />
+              We just sent you a temporary login code.<br />
               Please check your inbox
               <ElementTooltip placement="right">
                 <div slot="content">Not seeing our email? Check spam.</div>
@@ -54,11 +56,25 @@
             </div>
           </ElementFormItem>
 
+          <ElementFormItem
+            prop="password"
+            :error="form_.errors.password"
+            v-if="submitted_"
+          >
+            <ElementInput
+              placeholder="Temporary code..."
+              v-model="form_.data.password"
+              @input="form_.errors.password = null"
+              @keydown.native.prevent.enter="submit_"
+              :readonly="submitting_"
+            />
+          </ElementFormItem>
+
           <ElementButton
             :class="$style.SubmitButton"
             @click="submit_"
             :loading="submitting_"
-            >Continue with email</ElementButton
+            >{{ submitButtonText_ }}</ElementButton
           >
         </ElementForm>
       </div>
@@ -100,11 +116,13 @@ export default {
         data: {
           email: '',
           username: '',
+          password: '',
         },
 
         errors: {
           email: null,
           username: null,
+          password: null,
         },
 
         rules: {
@@ -171,7 +189,22 @@ export default {
       return null;
     },
 
+    validatePassword_(password) {
+      if (!password) {
+        return 'Temporary code is required.';
+      }
+      return null;
+    },
+
     submit_() {
+      if (this.submitted_) {
+        this.login_();
+      } else {
+        this.sendMagicLink_();
+      }
+    },
+
+    sendMagicLink_() {
       const email = this.form_.data.email;
       const username = this.form_.data.username;
 
@@ -204,6 +237,40 @@ export default {
         .finally(() => {
           this.submitting_ = false;
         });
+    },
+
+    login_() {
+      const email = this.form_.data.email;
+      const password = this.form_.data.password;
+
+      const passwordError = this.validatePassword_(password);
+      this.form_.errors.password = passwordError;
+      if (passwordError) {
+        return;
+      }
+
+      this.submitting_ = true;
+      apiFetch('aurora/accounts/login', {
+        compositeKey: {
+          email,
+          password,
+        },
+      })
+        .then(() => {
+          this.$router.push('/');
+        })
+        .catch((error) => {
+          this.form_.errors.password = error.message;
+        })
+        .finally(() => {
+          this.submitting_ = false;
+        });
+    },
+  },
+
+  computed: {
+    submitButtonText_() {
+      return this.submitted_ ? 'Continue with code' : 'Continue with email';
     },
   },
 

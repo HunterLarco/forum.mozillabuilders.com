@@ -6,6 +6,7 @@ import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 
 import * as AccountIdentityTable from '@/src/server/firestore/AccountIdentity';
 import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
+import * as passwordHelpers from '@/src/server/helpers/password';
 import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
 
 import HTMLMagicLinkEmail from '@/src/server/emails/MagicLink.mjml';
@@ -69,30 +70,45 @@ async function handler(environment, request) {
     });
   }
 
-  const { id: loginToken } = await AuthTokenTable.create(environment, null, {
-    dateCreated: new Date(),
-    expiration: dateFns.addDays(new Date(), 1),
-    scopes: {
-      signup: {
-        email,
-        username: request.username,
+  // Rather than magic links, we email users a passphrase which can be used to
+  // login. This much easier on mobile users.
+  const password = passwordHelpers.createFriendlyPassword();
+
+  const { id: loginToken } = await AuthTokenTable.create(
+    environment,
+    {
+      dateCreated: new Date(),
+      expiration: dateFns.addDays(new Date(), 1),
+      scopes: {
+        signup: {
+          email,
+          username: request.username,
+        },
       },
     },
-  });
+    {
+      compositeKey: {
+        email: email.normalized,
+        password,
+      },
+    }
+  );
 
   if (process.fido.env == 'local') {
-    console.log(
-      `Login url for ${email.raw}: http://localhost:8080/login/${loginToken}`
-    );
+    console.log(`Login information for ${email.raw}:`);
+    console.log(`    Temporary password: ${password}`);
+    console.log(`    Login token: ${loginToken}`);
   } else {
     await environment.sendgrid.send({
       to: email.raw,
-      subject: 'Your temporary Mozilla Unfck Forum login link',
+      subject: `Your temporary Mozilla Unfck Forum code is ${password}`,
       text: Mustache.render(PlainTextMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        password,
       }),
       html: Mustache.render(HTMLMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        password,
       }),
     });
   }

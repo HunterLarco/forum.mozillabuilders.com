@@ -18,6 +18,10 @@
     <mj-style inline="inline">
       .dim { color: #9F91AF }
     </mj-style>
+    <mj-style inline="inline">
+      .password { background: rgba(255, 255, 255, 0.1); padding: 4px 8px;
+      max-width: 300px; border-radius: 5px; }
+    </mj-style>
     <mj-style>
       .main-section { padding-left: 70px; padding-right: 70px; padding-top:
       70px; padding-bottom: 40px; box-sizing: border-box; } @media (max-width:
@@ -41,6 +45,10 @@
               Click here to log in with this magic link.
             </a>
           </p>
+          <p>
+            <i>or use this temporary code</i>
+          </p>
+          <p class="password">{{{ password }}}</p>
           <p class="dim">
             If you didn't try to login, you can safely ignore this email.
           </p>
