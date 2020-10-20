@@ -1,19 +1,18 @@
-const firebase = require('firebase-tools');
-
+const appengine = require('../util/appengine.js');
 const argparse = require('../util/argparse.js');
-const buildWeb = require('./build-web.js');
+const buildServer = require('./server:build.js');
 const confirm = require('../util/confirm.js');
 const logging = require('../util/logging.js');
 const workspace = require('../util/workspace.js');
 
 module.exports = {
   arguments: {
-    'firebase-token': {
-      type: String,
-      default: undefined,
+    dry: {
+      type: Boolean,
+      default: false,
     },
 
-    dry: {
+    'cron-only': {
       type: Boolean,
       default: false,
     },
@@ -32,14 +31,14 @@ module.exports = {
     }
 
     logging.success(
-      await buildWeb.run([], {
+      await buildServer.run([], {
         env: 'production',
         strict: true,
         verbose: args.verbose,
       })
     );
 
-    if (!(await confirm.resource('production/web'))) {
+    if (!(await confirm.resource('production/server'))) {
       throw 'Deploy cancelled';
     }
 
@@ -47,18 +46,16 @@ module.exports = {
       throw 'As per --dry, skipping actual deploy';
     }
 
-    try {
-      await firebase.deploy({
-        project: 'unfck-forum',
-        force: true,
-        cwd: workspace.resolve('build/production/web'),
-        token: args['firebase-token'],
+    if (!args['cron-only']) {
+      await appengine.deployApplication({
+        project: 'moz-unfck-forum',
+        directory: workspace.resolve('build/production/server'),
       });
-    } catch (error) {
-      console.error(error);
-      throw 'Deploy failed';
     }
 
-    return 'Deploy finished';
+    return appengine.deployCronFile({
+      project: 'moz-unfck-forum',
+      cron: workspace.resolve('build/production/server/cron.yaml'),
+    });
   },
 };

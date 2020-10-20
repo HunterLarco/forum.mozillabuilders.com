@@ -6,15 +6,15 @@ const argparse = require('./util/argparse.js');
 const logging = require('./util/logging.js');
 
 const COMMANDS = {
-  'build-server': () => require('./commands/build-server.js'),
-  'build-web': () => require('./commands/build-web.js'),
   'run-local': () => require('./commands/run-local.js'),
-  'deploy-server': () => require('./commands/deploy-server.js'),
-  'deploy-web': () => require('./commands/deploy-web.js'),
-  'create-secret': () => require('./commands/create-secret.js'),
-  'delete-secret': () => require('./commands/delete-secret.js'),
-  'list-secrets': () => require('./commands/list-secrets.js'),
   lint: () => require('./commands/lint.js'),
+  'server:build': () => require('./commands/server:build.js'),
+  'server:deploy': () => require('./commands/server:deploy.js'),
+  'web:build': () => require('./commands/web:build.js'),
+  'web:deploy': () => require('./commands/web:deploy.js'),
+  'secrets:create': () => require('./commands/secrets:create.js'),
+  'secrets:delete': () => require('./commands/secrets:delete.js'),
+  'secrets:list': () => require('./commands/secrets:list.js'),
 };
 
 function main(positionalArgs, keywordArgs) {
