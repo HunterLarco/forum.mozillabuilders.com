@@ -11,6 +11,9 @@ const COMMANDS = {
   'run-local': () => require('./commands/run-local.js'),
   'deploy-server': () => require('./commands/deploy-server.js'),
   'deploy-web': () => require('./commands/deploy-web.js'),
+  'create-secret': () => require('./commands/create-secret.js'),
+  'delete-secret': () => require('./commands/delete-secret.js'),
+  'list-secrets': () => require('./commands/list-secrets.js'),
   lint: () => require('./commands/lint.js'),
 };
 

@@ -1,7 +1,9 @@
 import { createFirestoreClient } from '@/src/server/environment/firestore';
+import { createSparkpostClient } from '@/src/server/environment/sparkpost';
 
 const SERVICES = {
   firestore: createFirestoreClient,
+  sparkpost: createSparkpostClient,
 };
 
 export async function createEnvironment({ services }) {
