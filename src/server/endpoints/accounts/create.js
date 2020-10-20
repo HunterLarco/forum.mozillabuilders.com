@@ -104,9 +104,11 @@ async function handler(environment, request) {
       subject: 'Your temporary Mozilla Unfck Forum login link',
       text: Mustache.render(PlainTextMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        password,
       }),
       html: Mustache.render(HTMLMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        password,
       }),
     });
   }
