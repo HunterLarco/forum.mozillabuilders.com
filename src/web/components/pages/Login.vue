@@ -26,18 +26,33 @@
               @input="form_.errors.email = null"
               @keydown.native.prevent.enter="submit_"
               :readonly="submitting_"
+              :disabled="submitted_"
             />
           </ElementFormItem>
 
           <ElementFormItem v-if="submitted_">
             <div :class="$style.Details">
-              We just sent you a temporary login link.<br />
+              We just sent you a temporary login code.<br />
               Please check your inbox
               <ElementTooltip placement="right">
                 <div slot="content">Not seeing our email? Check spam.</div>
                 <ElementIcon name="info" />
               </ElementTooltip>
             </div>
+          </ElementFormItem>
+
+          <ElementFormItem
+            prop="password"
+            :error="form_.errors.password"
+            v-if="submitted_"
+          >
+            <ElementInput
+              placeholder="Temporary code..."
+              v-model="form_.data.password"
+              @input="form_.errors.password = null"
+              @keydown.native.prevent.enter="submit_"
+              :readonly="submitting_"
+            />
           </ElementFormItem>
 
           <ElementButton
@@ -85,10 +100,12 @@ export default {
       form_: {
         data: {
           email: '',
+          password: '',
         },
 
         errors: {
           email: null,
+          password: '',
         },
 
         rules: {
@@ -126,7 +143,22 @@ export default {
       return null;
     },
 
+    validatePassword_(password) {
+      if (!password) {
+        return 'Temporary code is required.';
+      }
+      return null;
+    },
+
     submit_() {
+      if (this.submitted_) {
+        this.login_();
+      } else {
+        this.requestMagicLink_();
+      }
+    },
+
+    requestMagicLink_() {
       const email = this.form_.data.email;
 
       const emailError = this.validateEmail_(email);
@@ -142,6 +174,40 @@ export default {
         })
         .catch((error) => {
           this.form_.errors.email = error.message;
+        })
+        .finally(() => {
+          this.submitting_ = false;
+        });
+    },
+
+    login_() {
+      const email = this.form_.data.email;
+      const password = this.form_.data.password;
+
+      const emailError = this.validateEmail_(email);
+      this.form_.errors.email = emailError;
+      if (emailError) {
+        return;
+      }
+
+      const passwordError = this.validatePassword_(password);
+      this.form_.errors.password = passwordError;
+      if (passwordError) {
+        return;
+      }
+
+      this.submitting_ = true;
+      apiFetch('aurora/accounts/login', {
+        compositeKey: {
+          email,
+          password,
+        },
+      })
+        .then(() => {
+          this.$router.push('/');
+        })
+        .catch((error) => {
+          this.form_.errors.password = error.message;
         })
         .finally(() => {
           this.submitting_ = false;
