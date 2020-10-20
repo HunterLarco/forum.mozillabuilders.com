@@ -24,6 +24,8 @@
         <router-link to="/submit">Tell us how</router-link>.</Banner
       >
 
+      <IndeterminateProgressBar v-if="!post_" />
+
       <template v-if="post_">
         <Post :class="$style.Post" :post="post_" />
 
@@ -42,6 +44,7 @@
 import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import CommentThread from '@/src/web/components/layout/CommentThread';
+import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import Post from '@/src/web/components/layout/Post';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
@@ -53,6 +56,7 @@ export default {
     Banner,
     CollapsedPost,
     CommentThread,
+    IndeterminateProgressBar,
     PageHeader,
     Post,
     VerticalRibbon,

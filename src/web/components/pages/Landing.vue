@@ -29,11 +29,27 @@
       >
 
       <div :class="$style.Content">
-        <template v-if="loading_ && !this.posts_.length">
-          <div :class="$style.LoadingIndicator">
-            {{ loadingText_ }}
-            <ElementIcon name="loading" />
-          </div>
+        <template v-if="!posts_.length">
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
         </template>
 
         <CollapsedPost
@@ -43,15 +59,10 @@
           :post="post"
         />
 
-        <div
+        <IndeterminateProgressBar
           v-observe-visibility="onInfiniteLoaderVisibility_"
-          v-if="posts_.length && nextCursor_"
-        >
-          <div :class="$style.LoadingIndicator">
-            Loading more posts
-            <ElementIcon name="loading" />
-          </div>
-        </div>
+          v-if="!posts_.length || nextCursor_"
+        />
       </div>
     </VerticalRibbon>
   </div>
@@ -61,7 +72,9 @@
 import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
+import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
 import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
@@ -71,14 +84,15 @@ export default {
     Banner,
     CollapsedPost,
     ElementIcon,
+    IndeterminateProgressBar,
     PageHeader,
+    SkeletonCollapsedPost,
     VerticalRibbon,
   },
 
   data() {
     return {
       loading_: false,
-      loadingText_: '',
       error_: null,
 
       posts_: [],
@@ -103,10 +117,6 @@ export default {
         this.error_ = null;
         this.posts_ = [];
         this.nextCursor_ = null;
-        this.loadingText_ = {
-          new: 'Fetching the lastest posts',
-          hot: 'Fetching the most popular posts',
-        }[index];
       } else if (!this.nextCursor_ || this.loading_) {
         return;
       }
