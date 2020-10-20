@@ -64,7 +64,7 @@ async function handler(environment, request) {
     console.log(`    Temporary password: ${password}`);
     console.log(`    Login token: ${loginToken}`);
   } else {
-    await environment.sendgrid.send({
+    await environment.sparkpost.send({
       to: email.raw,
       subject: `Your temporary Mozilla Unfck Forum code is ${password}`,
       text: Mustache.render(PlainTextMagicLinkEmail, {
