@@ -30,6 +30,7 @@
     "generate-package-json-webpack-plugin": "2.0.0",
     "html-webpack-plugin": "4.3.0",
     "html-webpack-template": "6.2.0",
+    "image-webpack-loader": "7.0.1",
     "is-image": "3.0.0",
     "minimist": "1.2.5",
     "mjml": "4.7.1",
