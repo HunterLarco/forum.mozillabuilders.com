@@ -66,7 +66,7 @@ async function handler(environment, request) {
   } else {
     await environment.sendgrid.send({
       to: email.raw,
-      subject: 'Your temporary Mozilla Unfck Forum login link',
+      subject: `Your temporary Mozilla Unfck Forum code is ${password}`,
       text: Mustache.render(PlainTextMagicLinkEmail, {
         loginUrl: `https://unfck.xyz/login/${loginToken}`,
         password,
