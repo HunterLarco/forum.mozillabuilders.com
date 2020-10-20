@@ -32,7 +32,11 @@
           <ElementFormItem v-if="submitted_">
             <div :class="$style.Details">
               We just sent you a temporary login link.<br />
-              Please check your inbox.
+              Please check your inbox
+              <ElementTooltip placement="right">
+                <div slot="content">Not seeing our email? Check spam.</div>
+                <ElementIcon name="info" />
+              </ElementTooltip>
             </div>
           </ElementFormItem>
 
@@ -59,8 +63,10 @@ import emailValidator from 'email-validator';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementForm from '@/vendor/element-ui/Form';
 import ElementFormItem from '@/vendor/element-ui/FormItem';
+import ElementIcon from '@/vendor/element-ui/Icon';
 import ElementInput from '@/vendor/element-ui/Input';
 import ElementMessage from '@/vendor/element-ui/Message';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -69,7 +75,9 @@ export default {
     ElementButton,
     ElementForm,
     ElementFormItem,
+    ElementIcon,
     ElementInput,
+    ElementTooltip,
   },
 
   data() {

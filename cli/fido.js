@@ -6,12 +6,16 @@ const argparse = require('./util/argparse.js');
 const logging = require('./util/logging.js');
 
 const COMMANDS = {
-  'build-server': () => require('./commands/build-server.js'),
-  'build-web': () => require('./commands/build-web.js'),
   'run-local': () => require('./commands/run-local.js'),
-  'deploy-server': () => require('./commands/deploy-server.js'),
-  'deploy-web': () => require('./commands/deploy-web.js'),
   lint: () => require('./commands/lint.js'),
+  'server:build': () => require('./commands/server:build.js'),
+  'server:deploy': () => require('./commands/server:deploy.js'),
+  'web:build': () => require('./commands/web:build.js'),
+  'web:deploy': () => require('./commands/web:deploy.js'),
+  'email:upload-asset': () => require('./commands/email:upload-asset.js'),
+  'secrets:create': () => require('./commands/secrets:create.js'),
+  'secrets:delete': () => require('./commands/secrets:delete.js'),
+  'secrets:list': () => require('./commands/secrets:list.js'),
 };
 
 function main(positionalArgs, keywordArgs) {
@@ -25,7 +29,7 @@ function main(positionalArgs, keywordArgs) {
     console.log('Usage: fido <command>');
     console.log();
     console.log('where <command> is one of:');
-    console.log('    ' + Object.keys(COMMANDS).join(', '));
+    console.log('    ' + Object.keys(COMMANDS).join('\n    '));
     process.exit(1);
   }
 

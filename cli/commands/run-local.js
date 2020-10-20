@@ -1,6 +1,6 @@
 const argparse = require('../util/argparse.js');
-const buildServer = require('./build-server.js');
-const buildWeb = require('./build-web.js');
+const buildServer = require('./server:build.js');
+const buildWeb = require('./web:build.js');
 const firestore = require('../util/firestore.js');
 const logging = require('../util/logging.js');
 
