@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import AttributedText from '@/src/server/types/api/AttributedText';
 import Comment from '@/src/server/types/api/Comment';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
@@ -16,7 +17,7 @@ const Content = Joi.alternatives().conditional('.type', {
       then: Joi.object({
         type: 'question',
         question: Joi.string().required(),
-        details: Joi.string().required(),
+        details: AttributedText.required(),
       }),
     },
     {
@@ -32,7 +33,7 @@ const Content = Joi.alternatives().conditional('.type', {
       then: Joi.object({
         type: 'opinion',
         summary: Joi.string().required(),
-        details: Joi.string().required(),
+        details: AttributedText.required(),
       }),
     },
   ],
@@ -78,11 +79,28 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     post.author
   );
 
+  let content = {};
+  if (post.content.type == 'question') {
+    content.type = 'question';
+    content.question = post.content.question;
+    content.details = AttributedText.fromText(post.content.details);
+  } else if (post.content.type == 'url') {
+    content.type = 'url';
+    content.summary = post.content.summary;
+    content.url = post.content.url;
+  } else if (post.content.type == 'opinion') {
+    content.type = 'opinion';
+    content.summary = post.content.summary;
+    content.details = AttributedText.fromText(post.content.details);
+  } else {
+    throw new Error(`Unknown post content type ${post.content.type}`);
+  }
+
   return {
     id,
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
-    content: post.content,
+    content,
     comments: await Promise.all(
       post.comments.map((comment) =>
         Comment.fromFirestoreComment(environment, comment, { accountId })

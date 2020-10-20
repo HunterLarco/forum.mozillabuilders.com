@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import AttributedText from '@/src/server/types/api/AttributedText';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as AccountTable from '@/src/server/firestore/Account';
@@ -9,7 +10,7 @@ const Schema = Joi.object({
 
   author: PublicAccount.required(),
   content: Joi.object({
-    text: Joi.string().required(),
+    text: AttributedText.required(),
   }).required(),
 
   children: Joi.array().items(Joi.link('...')).required(),
@@ -41,7 +42,9 @@ Schema.fromFirestoreComment = async (environment, comment, options) => {
     id: comment.id,
 
     author: PublicAccount.fromFirestoreAccount(comment.author, author),
-    content: { text: comment.content.text },
+    content: {
+      text: AttributedText.fromText(comment.content.text),
+    },
 
     children: await Promise.all(
       comment.children.map((comment) =>

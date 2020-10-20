@@ -1,7 +1,11 @@
 <template>
   <div :class="$style.Host">
     <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
-    <div :class="$style.Content">{{ comment.content.text }}</div>
+    <AttributedText
+      :class="$style.Content"
+      :text="comment.content.text.text"
+      :entities="comment.content.text.entities"
+    />
 
     <template v-if="!showReplyForm_">
       <div :class="$style.ReplyLink" @click="openReplyForm_">Reply</div>
@@ -22,14 +26,15 @@
 <script>
 import friendlyTime from 'friendly-time';
 
-import ReplyForm from '@/src/web/components/layout/ReplyForm';
+import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
+import ReplyForm from '@/src/web/components/layout/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
-  components: { ReplyForm, ElementButton, ElementInput },
+  components: { AttributedText, ReplyForm, ElementButton, ElementInput },
 
   props: {
     post: {
