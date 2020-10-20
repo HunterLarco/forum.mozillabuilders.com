@@ -95,7 +95,9 @@ async function handler(environment, request) {
   );
 
   if (process.fido.env == 'local') {
-    console.log(`Login passphrase for ${email.raw}: ${password}`);
+    console.log(`Login information for ${email.raw}:`);
+    console.log(`    Temporary password: ${password}`);
+    console.log(`    Login token: ${loginToken}`);
   } else {
     await environment.sendgrid.send({
       to: email.raw,

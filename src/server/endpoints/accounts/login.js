@@ -9,9 +9,12 @@ import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
 import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
 
 const RequestSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
-});
+  token: Joi.string(),
+  compositeKey: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+}).xor('token', 'compositeKey');
 
 const ResponseSchema = Joi.object({
   token: Joi.string().required(),
@@ -98,10 +101,12 @@ async function createAuthToken(environment, accountId) {
 }
 
 async function handler(environment, request) {
-  const { id: tokenId, token } = await AuthTokenTable.get(environment, {
-    email: normalizeEmail(request.email),
-    password: request.password,
-  });
+  const { id: tokenId, token } = request.compositeKey
+    ? await AuthTokenTable.get(environment, {
+        email: normalizeEmail(request.compositeKey.email),
+        password: request.compositeKey.password,
+      })
+    : await AuthTokenTable.get(environment, request.token);
 
   if (!token) {
     return Promise.reject({
