@@ -50,7 +50,7 @@ async function handler(environment, request) {
       `Login url for ${email.raw}: http://localhost:8080/login/${loginToken}`
     );
   } else {
-    await environment.sparkpost.send({
+    await environment.sendgrid.send({
       to: email.raw,
       subject: 'Your temporary Mozilla Unfck Forum login link',
       text: Mustache.render(PlainTextMagicLinkEmail, {

@@ -1,8 +1,10 @@
 import { createFirestoreClient } from '@/src/server/environment/firestore';
+import { createSendgridClient } from '@/src/server/environment/sendgrid';
 import { createSparkpostClient } from '@/src/server/environment/sparkpost';
 
 const SERVICES = {
   firestore: createFirestoreClient,
+  sendgrid: createSendgridClient,
   sparkpost: createSparkpostClient,
 };
 

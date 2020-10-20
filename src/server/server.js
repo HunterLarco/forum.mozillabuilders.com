@@ -22,7 +22,7 @@ async function main() {
   app.use(rejectNonAppengineRequests({ include: ['*/cron/**'] }));
 
   const environment = await createEnvironment({
-    services: ['firestore', 'sparkpost'],
+    services: ['firestore', 'sendgrid'],
   });
 
   routes.install(environment, app);
