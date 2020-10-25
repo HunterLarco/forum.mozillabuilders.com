@@ -19,15 +19,6 @@
     </PageHeader>
 
     <PageRibbon>
-      <Banner
-        >Let's
-        <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
-          >#unfck</a
-        >
-        the internet, together!
-        <router-link to="/submit">Tell us how</router-link>.</Banner
-      >
-
       <div :class="$style.Content">
         <template v-if="!posts_.length">
           <SkeletonCollapsedPost />
@@ -65,14 +56,16 @@
         />
       </div>
     </PageRibbon>
+
+    <PageFooter />
   </div>
 </template>
 
 <script>
-import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
@@ -81,10 +74,10 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Banner,
     CollapsedPost,
     ElementIcon,
     IndeterminateProgressBar,
+    PageFooter,
     PageHeader,
     PageRibbon,
     SkeletonCollapsedPost,

@@ -15,15 +15,6 @@
     </PageHeader>
 
     <PageRibbon>
-      <Banner
-        >Let's
-        <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
-          >#unfck</a
-        >
-        the internet, together!
-        <router-link to="/submit">Tell us how</router-link>.</Banner
-      >
-
       <IndeterminateProgressBar v-if="!post_" />
 
       <template v-if="post_">
@@ -37,14 +28,16 @@
         </CommentThread>
       </template>
     </PageRibbon>
+
+    <PageFooter />
   </div>
 </template>
 
 <script>
-import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import CommentThread from '@/src/web/components/layout/CommentThread';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import Post from '@/src/web/components/layout/Post';
@@ -53,10 +46,10 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Banner,
     CollapsedPost,
     CommentThread,
     IndeterminateProgressBar,
+    PageFooter,
     PageHeader,
     PageRibbon,
     Post,

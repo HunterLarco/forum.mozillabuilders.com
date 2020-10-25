@@ -10,7 +10,7 @@
       >
         <template v-slot:left>
           <router-link to="/">
-            <img src="~@/src/web/assets/logos/MozillaBuilders.png" />
+            <img :src="logo_" />
           </router-link>
         </template>
 
@@ -28,8 +28,17 @@
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
+import MozillaBuildersLogo from '@/src/web/assets/logos/MozillaBuilders.png';
+import MozillaLogo from '@/src/web/assets/logos/Mozilla.png';
+
 export default {
   components: { HorizontalLayout, PageRibbon },
+
+  computed: {
+    logo_() {
+      return this.$sizing(MozillaBuildersLogo, { mobile: MozillaLogo });
+    },
+  },
 };
 </script>
 

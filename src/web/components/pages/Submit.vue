@@ -118,12 +118,15 @@
         </HorizontalLayout>
       </div>
     </PageRibbon>
+
+    <PageFooter />
   </div>
 </template>
 
 <script>
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
@@ -135,6 +138,7 @@ export default {
   components: {
     ElementInput,
     HorizontalLayout,
+    PageFooter,
     PageHeader,
     PageRibbon,
     SubmitButton,
