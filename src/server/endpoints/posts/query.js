@@ -34,9 +34,12 @@ async function handler(environment, request, headers) {
     limit: PAGE_SIZE + 1,
   });
 
+  const hasNextPage = posts.length == PAGE_SIZE + 1;
+  const renderedPosts = hasNextPage ? posts.slice(0, -1) : posts;
+
   return {
     posts: await Promise.all(
-      posts.slice(0, -1).map(({ id, document }) =>
+      renderedPosts.map(({ id, document }) =>
         ApiPostSchema.fromFirestorePost(environment, id, document, {
           accountId,
         })
@@ -45,8 +48,7 @@ async function handler(environment, request, headers) {
 
     cursor: {
       current: cursor.current || request.cursor || null,
-      next:
-        posts.length == PAGE_SIZE + 1 ? posts[PAGE_SIZE].cursor.current : null,
+      next: hasNextPage ? posts[PAGE_SIZE].cursor.current : null,
     },
   };
 }
