@@ -180,11 +180,6 @@ export default {
   & > * {
     cursor: inherit;
   }
-
-  @include sizing-mobile {
-    min-width: 40px;
-    padding: 0 19px 0 15px;
-  }
 }
 
 .LikeIcon {

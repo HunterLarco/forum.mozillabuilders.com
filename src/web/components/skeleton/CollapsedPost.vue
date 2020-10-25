@@ -8,24 +8,24 @@
       viewBox="$sizing('0 0 1600 80', { tablet: '0 0 1000 80', mobile: '0 0 700 80' })"
     >
       <template v-if="$sizing.gt('tablet')">
-        <rect x="55" y="20" rx="10" ry="30" width="80" height="40" />
-        <rect x="180" y="10" rx="10" ry="30" width="1410" height="20" />
-        <rect x="180" y="48" rx="10" ry="30" width="900" height="20" />
-        <rect x="1095" y="48" rx="10" ry="30" width="390" height="20" />
+        <rect x="35" y="20" rx="10" ry="30" width="40" height="40" />
+        <rect x="110" y="10" rx="10" ry="30" width="1480" height="20" />
+        <rect x="110" y="48" rx="10" ry="30" width="440" height="20" />
+        <rect x="570" y="48" rx="10" ry="30" width="290" height="20" />
       </template>
 
       <template v-if="$sizing.lte('tablet') && $sizing.gt('mobile')">
-        <rect x="55" y="20" rx="10" ry="30" width="80" height="40" />
-        <rect x="180" y="10" rx="10" ry="30" width="810" height="20" />
-        <rect x="180" y="48" rx="10" ry="30" width="400" height="20" />
-        <rect x="595" y="48" rx="10" ry="30" width="190" height="20" />
+        <rect x="35" y="20" rx="10" ry="30" width="40" height="40" />
+        <rect x="110" y="10" rx="10" ry="30" width="855" height="20" />
+        <rect x="110" y="48" rx="10" ry="30" width="380" height="20" />
+        <rect x="510" y="48" rx="10" ry="30" width="200" height="20" />
       </template>
 
       <template v-if="$sizing.lte('mobile')">
-        <rect x="55" y="20" rx="10" ry="30" width="50" height="40" />
-        <rect x="130" y="10" rx="10" ry="30" width="570" height="20" />
-        <rect x="130" y="48" rx="10" ry="30" width="350" height="20" />
-        <rect x="490" y="48" rx="10" ry="30" width="160" height="20" />
+        <rect x="35" y="20" rx="10" ry="30" width="40" height="40" />
+        <rect x="110" y="10" rx="10" ry="30" width="555" height="20" />
+        <rect x="110" y="48" rx="10" ry="30" width="310" height="20" />
+        <rect x="440" y="48" rx="10" ry="30" width="160" height="20" />
       </template>
     </ContentLoader>
   </div>
