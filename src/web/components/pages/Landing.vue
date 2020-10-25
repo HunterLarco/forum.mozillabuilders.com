@@ -1,34 +1,25 @@
 <template>
   <div :class="$style.Host">
-    <VerticalRibbon max-width="1200px" centered>
-      <PageHeader :class="$style.PageHeader">
-        <template v-slot:nav>
-          <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
-            >Hot</router-link
-          >
-          <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
-            >New</router-link
-          >
-        </template>
-
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
-
-      <Banner
-        >Let's
-        <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
-          >#unfck</a
+    <PageHeader>
+      <template v-slot:nav>
+        <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
+          >Hot</router-link
         >
-        the internet, together!
-        <router-link to="/submit">Tell us how</router-link>.</Banner
-      >
+        <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
+          >New</router-link
+        >
+      </template>
 
-      <div :class="$style.Content">
+      <template v-slot:buttons>
+        <router-link to="/submit">
+          <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+          <span v-else>Post</span>
+        </router-link>
+      </template>
+    </PageHeader>
+
+    <PageRibbon>
+      <div :class="$style.Posts">
         <template v-if="!posts_.length">
           <SkeletonCollapsedPost />
           <SkeletonCollapsedPost />
@@ -59,35 +50,41 @@
           :post="post"
         />
 
-        <IndeterminateProgressBar
-          v-observe-visibility="onInfiniteLoaderVisibility_"
-          v-if="!posts_.length || nextCursor_"
-        />
+        <div
+          :class="$style.NextPageButton"
+          v-if="nextCursor_ && !loading_"
+          @click="loadNextPage_(false)"
+        >
+          Next Page
+        </div>
+        <IndeterminateProgressBar v-if="posts_.length && loading_" />
       </div>
-    </VerticalRibbon>
+    </PageRibbon>
+
+    <PageFooter />
   </div>
 </template>
 
 <script>
-import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
-import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Banner,
     CollapsedPost,
     ElementIcon,
     IndeterminateProgressBar,
+    PageFooter,
     PageHeader,
+    PageRibbon,
     SkeletonCollapsedPost,
-    VerticalRibbon,
   },
 
   data() {
@@ -97,19 +94,10 @@ export default {
 
       posts_: [],
       nextCursor_: null,
-
-      infiniteLoaderVisible_: false,
     };
   },
 
   methods: {
-    onInfiniteLoaderVisibility_(visible) {
-      this.infiniteLoaderVisible_ = visible;
-      if (!this.error_ && !this.loading_ && visible) {
-        this.loadNextPage_();
-      }
-    },
-
     loadNextPage_(initialLoad) {
       const index = this.$route.path.slice(1);
 
@@ -128,12 +116,6 @@ export default {
           this.nextCursor_ = cursor.next;
           this.error_ = null;
           this.loading_ = false;
-
-          setTimeout(() => {
-            if (this.infiniteLoaderVisible_) {
-              this.loadNextPage_();
-            }
-          }, 100);
         })
         .catch((error) => {
           this.error_ = error.message;
@@ -155,26 +137,13 @@ export default {
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
+@import '@/src/web/sass/sizing';
 
 .Host {
   @include layout-fill;
 
-  background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.PageHeader {
-  background: #FFFFFF;
-}
-
-.Content {
-  background: #FFF;
-  margin-bottom: 40px;
-
-  @media (max-width: 1260px) {
-    margin-bottom: 0;
-  }
 }
 
 .LoadingIndicator {
@@ -188,9 +157,33 @@ export default {
   }
 }
 
+.Posts {
+  border-radius: 5px;
+  border: 1px solid #000;
+  margin: 30px;
+  position: relative;
+
+  @include sizing-mobile {
+    margin: 15px;
+  }
+}
+
 .Post {
   & ~ .Post {
     border-top: 1px solid #EEE;
   }
+}
+
+.NextPageButton {
+  @include fonts-nav-link;
+
+  background: #FFF;
+  bottom: 0;
+  cursor: pointer;
+  right: 50px;
+  padding: 0 8px;
+  position: absolute;
+  transform: translateY(50%);
+  z-index: 1;
 }
 </style>

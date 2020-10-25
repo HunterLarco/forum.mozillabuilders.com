@@ -1,27 +1,27 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div
-        :class="$style.Likes"
-        :style="alreadyLiked_ ? 'cursor: default' : ''"
-        @click="like_"
-      >
-        <ElementIcon
+      <div :class="$style.Likes" @click="like_" :liked="alreadyLiked_">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
           :class="$style.LikeIcon"
-          name="caret-top"
-          v-if="!alreadyLiked_"
-        />
-        {{ likes_ }}
+        >
+          <path d="M0 15.878 l12-11.878 12 11.878-4 4.122-8-8-8 8-4-4.122z" />
+        </svg>
+        <label>{{ likes_ }}</label>
       </div>
     </template>
 
     <div>
-      <router-link :to="`/post/${post.id}`" :class="$style.Title">{{
-        title_
-      }}</router-link>
+      <router-link
+        :to="`/post/${post.id}`"
+        :class="[$style.Title, $style.Clickable]"
+        >{{ title_ }}</router-link
+      >
       <div :class="$style.Metadata">
-        Posted {{ author_ }} {{ age_ }} |
-        <router-link :to="`/post/${post.id}`"
+        {{ author_ }} posted {{ age_ }} |
+        <router-link :to="`/post/${post.id}`" :class="$style.Clickable"
           >{{ comments_ }}&nbsp;comments</router-link
         >
       </div>
@@ -83,10 +83,10 @@ export default {
       }
 
       if (this.post.personalization && this.post.personalization.postedByYou) {
-        return 'by you';
+        return 'you';
       }
 
-      return `by ${this.post.author.username}`;
+      return this.post.author.username;
     },
 
     age_() {
@@ -124,10 +124,6 @@ export default {
 
   methods: {
     like_() {
-      if (this.alreadyLiked_) {
-        return;
-      }
-
       if (!CurrentUserStore.state.authToken) {
         this.$router.push({
           path: '/signup',
@@ -135,10 +131,17 @@ export default {
         });
       }
 
-      apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
-        this.post.personalization.liked = true;
-        this.post.stats.likes += 1;
-      });
+      if (this.alreadyLiked_) {
+        apiFetch('aurora/posts/unlike', { id: this.post.id }).then(() => {
+          this.post.personalization.liked = false;
+          this.post.stats.likes -= 1;
+        });
+      } else {
+        apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
+          this.post.personalization.liked = true;
+          this.post.stats.likes += 1;
+        });
+      }
     },
   },
 };
@@ -159,35 +162,48 @@ export default {
 .Likes {
   @include fonts-collapsed-post-likes;
 
-  color: #E91E63;
+  color: #BBB;
   cursor: pointer;
-  min-width: 46px;
-  padding: 0 24px 0 20px;
+  min-width: 42px;
+  padding: 0 4px;
   text-align: center;
+  user-select: none;
 
-  &:hover .LikeIcon {
+  &[liked] {
     color: #E91E63;
+
+    .LikeIcon path {
+      fill: #E91E63;
+    }
   }
 
-  @include sizing-mobile {
-    min-width: 40px;
-    padding: 0 19px 0 15px;
+  & > * {
+    cursor: inherit;
   }
 }
 
 .LikeIcon {
-  color: lighten(#E91E63, 30%);
-  font-size: 14px;
-  position: relative;
-  top: -3px;
+  display: block;
+  margin: 0 auto;
+  width: 14px;
+
+  path {
+    fill: #BBB;
+  }
 }
 
 .Title {
   @include fonts-collapsed-post-title;
 
   color: inherit;
-  display: block;
+  display: inline-block;
   text-decoration: none;
+}
+
+.Clickable {
+  &:hover {
+    background: darken(#FFF, 7%);
+  }
 }
 
 .Metadata {

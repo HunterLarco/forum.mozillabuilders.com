@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.Host">
-    <VerticalRibbon max-width="1200px" centered>
-      <PageHeader :class="$style.PageHeader">
+    <div style="min-height: 80%;">
+      <PageHeader>
         <template v-slot:nav>
           <router-link to="/hot">Hot</router-link>
           <router-link to="/new">New</router-link>
@@ -15,7 +15,7 @@
         </template>
       </PageHeader>
 
-      <div :class="$style.Content">
+      <PageRibbon>
         <div :class="$style.QuestionTypes">
           <TextCheckbox
             :class="$style.QuestionType"
@@ -116,18 +116,21 @@
 
           <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
         </HorizontalLayout>
-      </div>
-    </VerticalRibbon>
+      </PageRibbon>
+    </div>
+
+    <PageFooter />
   </div>
 </template>
 
 <script>
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
-import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -135,10 +138,11 @@ export default {
   components: {
     ElementInput,
     HorizontalLayout,
+    PageFooter,
     PageHeader,
+    PageRibbon,
     SubmitButton,
     TextCheckbox,
-    VerticalRibbon,
   },
 
   data() {
@@ -208,22 +212,12 @@ export default {
 .Host {
   @include layout-fill;
 
-  background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
-.PageHeader {
-  background: #FFF;
-}
-
-.Content {
-  background: #FFF;
-  padding: 30px;
-}
-
 .QuestionTypes {
-  margin-bottom: 30px;
+  margin: 30px 0;
 }
 
 .QuestionType {

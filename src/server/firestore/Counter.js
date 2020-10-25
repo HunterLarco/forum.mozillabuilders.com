@@ -31,6 +31,10 @@ export async function increment(environment, transaction, counter, amount = 1) {
   }
 }
 
+export async function decrement(environment, transaction, counter, amount = 1) {
+  return await increment(environment, transaction, counter, -amount);
+}
+
 export async function get(environment, transaction, counter) {
   const querySnapshot = await environment.firestore
     .collection('ShardedCounters')

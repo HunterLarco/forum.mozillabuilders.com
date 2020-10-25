@@ -25,6 +25,7 @@ export default {
       style.marginRight = 'auto';
     }
 
+    style.boxSizing = 'border-box';
     if (this.padding) {
       style.padding = this.padding;
     }

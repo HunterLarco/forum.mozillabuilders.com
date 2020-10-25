@@ -1,17 +1,15 @@
 <template>
   <HorizontalLayout :class="$style.Host">
     <template v-slot:left>
-      <div
-        :class="$style.Likes"
-        :style="alreadyLiked_ ? 'cursor: default' : ''"
-        @click="like_"
-      >
-        <ElementIcon
+      <div :class="$style.Likes" @click="like_" :liked="alreadyLiked_">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
           :class="$style.LikeIcon"
-          name="caret-top"
-          v-if="!alreadyLiked_"
-        />
-        {{ likes_ }}
+        >
+          <path d="M0 15.878 l12-11.878 12 11.878-4 4.122-8-8-8 8-4-4.122z" />
+        </svg>
+        <label>{{ likes_ }}</label>
       </div>
     </template>
 
@@ -119,10 +117,6 @@ export default {
 
   methods: {
     like_() {
-      if (this.alreadyLiked_) {
-        return;
-      }
-
       if (!CurrentUserStore.state.authToken) {
         this.$router.push({
           path: '/signup',
@@ -130,10 +124,17 @@ export default {
         });
       }
 
-      apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
-        this.post.personalization.liked = true;
-        this.post.stats.likes += 1;
-      });
+      if (this.alreadyLiked_) {
+        apiFetch('aurora/posts/unlike', { id: this.post.id }).then(() => {
+          this.post.personalization.liked = false;
+          this.post.stats.likes -= 1;
+        });
+      } else {
+        apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
+          this.post.personalization.liked = true;
+          this.post.stats.likes += 1;
+        });
+      }
     },
   },
 };
@@ -152,30 +153,37 @@ export default {
 }
 
 .Likes {
-  @include fonts-collapsed-post-likes;
+  @include fonts-post-likes;
 
-  color: #E91E63;
+  color: #BBB;
   cursor: pointer;
-  min-width: 46px;
-  margin-top: 2px;
-  padding: 0 24px 0 20px;
+  margin-top: 6px;
+  min-width: 62px;
+  padding: 0 4px;
   text-align: center;
+  user-select: none;
 
-  &:hover .LikeIcon {
+  &[liked] {
     color: #E91E63;
+
+    .LikeIcon path {
+      fill: #E91E63;
+    }
   }
 
-  @include sizing-mobile {
-    min-width: 40px;
-    padding: 0 19px 0 15px;
+  & > * {
+    cursor: inherit;
   }
 }
 
 .LikeIcon {
-  color: lighten(#E91E63, 30%);
-  font-size: 14px;
-  position: relative;
-  top: -3px;
+  display: block;
+  margin: 0 auto;
+  width: 14px;
+
+  path {
+    fill: #BBB;
+  }
 }
 
 .Title {

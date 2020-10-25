@@ -19,13 +19,10 @@ export async function create(environment, transaction, like) {
     .collection('Like')
     .doc(md5(`${like.postId}:${like.accountId}`));
 
-  // Unlike other tables, we use set instead of create. It's not consequential
-  // to try and create a like twice since the key is always tied to a post +
-  // account.
   if (transaction) {
-    await transaction.set(reference, value);
+    await transaction.create(reference, value);
   } else {
-    await reference.set(value);
+    await reference.create(value);
   }
 
   return { id: reference.id, like };

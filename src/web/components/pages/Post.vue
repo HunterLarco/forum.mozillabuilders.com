@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.Host">
-    <VerticalRibbon max-width="1200px" centered>
-      <PageHeader :class="$style.PageHeader">
+    <div style="min-height: 80%;">
+      <PageHeader>
         <template v-slot:nav>
           <router-link to="/hot">Hot</router-link>
           <router-link to="/new">New</router-link>
@@ -15,51 +15,46 @@
         </template>
       </PageHeader>
 
-      <Banner
-        >Let's
-        <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
-          >#unfck</a
-        >
-        the internet, together!
-        <router-link to="/submit">Tell us how</router-link>.</Banner
-      >
+      <PageRibbon>
+        <IndeterminateProgressBar v-if="!post_" />
 
-      <IndeterminateProgressBar v-if="!post_" />
+        <template v-if="post_">
+          <Post :class="$style.Post" :post="post_" />
 
-      <template v-if="post_">
-        <Post :class="$style.Post" :post="post_" />
+          <CommentThread
+            :class="$style.Comments"
+            :post="post_"
+            :comments="post_.comments"
+          >
+          </CommentThread>
+        </template>
+      </PageRibbon>
+    </div>
 
-        <CommentThread
-          :class="$style.Comments"
-          :post="post_"
-          :comments="post_.comments"
-        >
-        </CommentThread>
-      </template>
-    </VerticalRibbon>
+    <PageFooter />
   </div>
 </template>
 
 <script>
-import Banner from '@/src/web/components/layout/Banner';
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import CommentThread from '@/src/web/components/layout/CommentThread';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
+import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import Post from '@/src/web/components/layout/Post';
-import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Banner,
     CollapsedPost,
     CommentThread,
     IndeterminateProgressBar,
+    PageFooter,
     PageHeader,
+    PageRibbon,
     Post,
-    VerticalRibbon,
   },
 
   data() {
@@ -100,13 +95,8 @@ export default {
 .Host {
   @include layout-fill;
 
-  background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.PageHeader {
-  background: #FFF;
 }
 
 .Post {
@@ -116,16 +106,10 @@ export default {
 
 .Comments {
   background: #FFF;
-  margin-bottom: 30px;
   padding: 30px;
-
-  @include sizing-tablet {
-    margin: 0;
-  }
 
   @include sizing-mobile {
     padding: 20px;
-    margin: 0;
   }
 }
 </style>
