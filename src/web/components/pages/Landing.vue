@@ -19,11 +19,7 @@
     </PageHeader>
 
     <PageRibbon>
-      <HorizontalLayout
-        :middle-class="$style.Posts"
-        :right-class="$style.PostsSidebar"
-        spacing="30"
-      >
+      <div :class="$style.Posts">
         <template v-if="!posts_.length">
           <SkeletonCollapsedPost />
           <SkeletonCollapsedPost />
@@ -62,11 +58,7 @@
           Next Page
         </div>
         <IndeterminateProgressBar v-if="posts_.length && loading_" />
-
-        <template v-slot:right>
-          <div></div>
-        </template>
-      </HorizontalLayout>
+      </div>
     </PageRibbon>
 
     <PageFooter />
@@ -76,7 +68,6 @@
 <script>
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
-import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
@@ -89,7 +80,6 @@ export default {
   components: {
     CollapsedPost,
     ElementIcon,
-    HorizontalLayout,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
@@ -147,6 +137,7 @@ export default {
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
+@import '@/src/web/sass/sizing';
 
 .Host {
   @include layout-fill;
@@ -171,6 +162,10 @@ export default {
   border: 1px solid #000;
   margin: 30px;
   position: relative;
+
+  @include sizing-mobile {
+    margin: 15px;
+  }
 }
 
 .Post {
@@ -190,9 +185,5 @@ export default {
   position: absolute;
   transform: translateY(50%);
   z-index: 1;
-}
-
-.PostsSidebar {
-  width: 300px;
 }
 </style>
