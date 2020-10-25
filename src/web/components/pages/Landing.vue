@@ -19,42 +19,40 @@
     </PageHeader>
 
     <PageRibbon>
-      <div :class="$style.Content">
-        <template v-if="!posts_.length">
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-        </template>
+      <template v-if="!posts_.length">
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+        <SkeletonCollapsedPost />
+      </template>
 
-        <CollapsedPost
-          :class="$style.Post"
-          v-for="post in posts_"
-          :key="post.id"
-          :post="post"
-        />
+      <CollapsedPost
+        :class="$style.Post"
+        v-for="post in posts_"
+        :key="post.id"
+        :post="post"
+      />
 
-        <IndeterminateProgressBar
-          v-observe-visibility="onInfiniteLoaderVisibility_"
-          v-if="!posts_.length || nextCursor_"
-        />
-      </div>
+      <IndeterminateProgressBar
+        v-observe-visibility="onInfiniteLoaderVisibility_"
+        v-if="!posts_.length || nextCursor_"
+      />
     </PageRibbon>
 
     <PageFooter />
@@ -152,18 +150,8 @@ export default {
 .Host {
   @include layout-fill;
 
-  background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.Content {
-  background: #FFF;
-  margin-bottom: 40px;
-
-  @media (max-width: 1260px) {
-    margin-bottom: 0;
-  }
 }
 
 .LoadingIndicator {
