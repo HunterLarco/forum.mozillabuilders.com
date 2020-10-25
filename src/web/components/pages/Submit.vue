@@ -1,21 +1,21 @@
 <template>
   <div :class="$style.Host">
-    <PageHeader>
-      <template v-slot:nav>
-        <router-link to="/hot">Hot</router-link>
-        <router-link to="/new">New</router-link>
-      </template>
+    <div style="min-height: 80%;">
+      <PageHeader>
+        <template v-slot:nav>
+          <router-link to="/hot">Hot</router-link>
+          <router-link to="/new">New</router-link>
+        </template>
 
-      <template v-slot:buttons>
-        <router-link to="/submit">
-          <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-          <span v-else>Post</span>
-        </router-link>
-      </template>
-    </PageHeader>
+        <template v-slot:buttons>
+          <router-link to="/submit">
+            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+            <span v-else>Post</span>
+          </router-link>
+        </template>
+      </PageHeader>
 
-    <PageRibbon>
-      <div :class="$style.Content">
+      <PageRibbon>
         <div :class="$style.QuestionTypes">
           <TextCheckbox
             :class="$style.QuestionType"
@@ -116,8 +116,8 @@
 
           <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
         </HorizontalLayout>
-      </div>
-    </PageRibbon>
+      </PageRibbon>
+    </div>
 
     <PageFooter />
   </div>
@@ -212,18 +212,12 @@ export default {
 .Host {
   @include layout-fill;
 
-  background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
-.Content {
-  background: #FFF;
-  padding: 30px;
-}
-
 .QuestionTypes {
-  margin-bottom: 30px;
+  margin: 30px 0;
 }
 
 .QuestionType {
