@@ -39,7 +39,18 @@ async function handler(environment, request, headers) {
   }
 
   await environment.firestore.runTransaction(async (transaction) => {
+    if (
+      !(await LikeTable.exists(environment, transaction, accountId, request.id))
+    ) {
+      return Promise.reject({
+        httpErrorCode: 412,
+        name: 'InvalidUnlike',
+        message: "You cannot unlike a post you haven't already liked",
+      });
+    }
+
     await LikeTable.remove(environment, transaction, accountId, request.id);
+
     await CounterTable.decrement(
       environment,
       transaction,

@@ -166,6 +166,7 @@ export default {
   cursor: pointer;
   min-width: 42px;
   text-align: center;
+  user-select: none;
 
   &[liked] {
     color: #E91E63;
