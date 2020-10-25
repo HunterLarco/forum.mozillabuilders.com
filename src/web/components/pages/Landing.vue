@@ -1,24 +1,24 @@
 <template>
   <div :class="$style.Host">
-    <VerticalRibbon max-width="1200px" centered>
-      <PageHeader :class="$style.PageHeader">
-        <template v-slot:nav>
-          <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
-            >Hot</router-link
-          >
-          <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
-            >New</router-link
-          >
-        </template>
+    <PageHeader>
+      <template v-slot:nav>
+        <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
+          >Hot</router-link
+        >
+        <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
+          >New</router-link
+        >
+      </template>
 
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
+      <template v-slot:buttons>
+        <router-link to="/submit">
+          <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+          <span v-else>Post</span>
+        </router-link>
+      </template>
+    </PageHeader>
 
+    <PageRibbon>
       <Banner
         >Let's
         <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
@@ -64,7 +64,7 @@
           v-if="!posts_.length || nextCursor_"
         />
       </div>
-    </VerticalRibbon>
+    </PageRibbon>
   </div>
 </template>
 
@@ -74,8 +74,8 @@ import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
-import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -86,8 +86,8 @@ export default {
     ElementIcon,
     IndeterminateProgressBar,
     PageHeader,
+    PageRibbon,
     SkeletonCollapsedPost,
-    VerticalRibbon,
   },
 
   data() {
@@ -162,10 +162,6 @@ export default {
   background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.PageHeader {
-  background: #FFFFFF;
 }
 
 .Content {

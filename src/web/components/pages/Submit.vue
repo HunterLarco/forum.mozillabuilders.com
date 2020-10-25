@@ -1,20 +1,20 @@
 <template>
   <div :class="$style.Host">
-    <VerticalRibbon max-width="1200px" centered>
-      <PageHeader :class="$style.PageHeader">
-        <template v-slot:nav>
-          <router-link to="/hot">Hot</router-link>
-          <router-link to="/new">New</router-link>
-        </template>
+    <PageHeader>
+      <template v-slot:nav>
+        <router-link to="/hot">Hot</router-link>
+        <router-link to="/new">New</router-link>
+      </template>
 
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
+      <template v-slot:buttons>
+        <router-link to="/submit">
+          <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+          <span v-else>Post</span>
+        </router-link>
+      </template>
+    </PageHeader>
 
+    <PageRibbon>
       <div :class="$style.Content">
         <div :class="$style.QuestionTypes">
           <TextCheckbox
@@ -117,7 +117,7 @@
           <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
         </HorizontalLayout>
       </div>
-    </VerticalRibbon>
+    </PageRibbon>
   </div>
 </template>
 
@@ -125,9 +125,9 @@
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageHeader from '@/src/web/components/layout/PageHeader';
+import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
-import VerticalRibbon from '@/src/web/components/layout/VerticalRibbon';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -136,9 +136,9 @@ export default {
     ElementInput,
     HorizontalLayout,
     PageHeader,
+    PageRibbon,
     SubmitButton,
     TextCheckbox,
-    VerticalRibbon,
   },
 
   data() {
@@ -211,10 +211,6 @@ export default {
   background: #F0F0F0;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.PageHeader {
-  background: #FFF;
 }
 
 .Content {
