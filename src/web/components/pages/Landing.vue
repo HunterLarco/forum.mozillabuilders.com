@@ -19,40 +19,54 @@
     </PageHeader>
 
     <PageRibbon>
-      <template v-if="!posts_.length">
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-        <SkeletonCollapsedPost />
-      </template>
+      <HorizontalLayout
+        :middle-class="$style.Posts"
+        :right-class="$style.PostsSidebar"
+        spacing="30"
+      >
+        <template v-if="!posts_.length">
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+          <SkeletonCollapsedPost />
+        </template>
 
-      <CollapsedPost
-        :class="$style.Post"
-        v-for="post in posts_"
-        :key="post.id"
-        :post="post"
-      />
+        <CollapsedPost
+          :class="$style.Post"
+          v-for="post in posts_"
+          :key="post.id"
+          :post="post"
+        />
 
-      <IndeterminateProgressBar
-        v-observe-visibility="onInfiniteLoaderVisibility_"
-        v-if="!posts_.length || nextCursor_"
-      />
+        <div
+          :class="$style.NextPageButton"
+          v-if="nextCursor_ && !loading_"
+          @click="loadNextPage_(false)"
+        >
+          Next Page
+        </div>
+        <IndeterminateProgressBar v-if="posts_.length && loading_" />
+
+        <template v-slot:right>
+          <div></div>
+        </template>
+      </HorizontalLayout>
     </PageRibbon>
 
     <PageFooter />
@@ -62,6 +76,7 @@
 <script>
 import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
 import ElementIcon from '@/vendor/element-ui/Icon';
+import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
@@ -74,6 +89,7 @@ export default {
   components: {
     CollapsedPost,
     ElementIcon,
+    HorizontalLayout,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
@@ -88,19 +104,10 @@ export default {
 
       posts_: [],
       nextCursor_: null,
-
-      infiniteLoaderVisible_: false,
     };
   },
 
   methods: {
-    onInfiniteLoaderVisibility_(visible) {
-      this.infiniteLoaderVisible_ = visible;
-      if (!this.error_ && !this.loading_ && visible) {
-        this.loadNextPage_();
-      }
-    },
-
     loadNextPage_(initialLoad) {
       const index = this.$route.path.slice(1);
 
@@ -119,12 +126,6 @@ export default {
           this.nextCursor_ = cursor.next;
           this.error_ = null;
           this.loading_ = false;
-
-          setTimeout(() => {
-            if (this.infiniteLoaderVisible_) {
-              this.loadNextPage_();
-            }
-          }, 100);
         })
         .catch((error) => {
           this.error_ = error.message;
@@ -165,9 +166,33 @@ export default {
   }
 }
 
+.Posts {
+  border-radius: 5px;
+  border: 1px solid #000;
+  margin: 30px;
+  position: relative;
+}
+
 .Post {
   & ~ .Post {
     border-top: 1px solid #EEE;
   }
+}
+
+.NextPageButton {
+  @include fonts-nav-link;
+
+  background: #FFF;
+  bottom: 0;
+  cursor: pointer;
+  right: 50px;
+  padding: 0 8px;
+  position: absolute;
+  transform: translateY(50%);
+  z-index: 1;
+}
+
+.PostsSidebar {
+  width: 300px;
 }
 </style>

@@ -19,6 +19,8 @@ const ResponseSchema = Joi.object({
   }),
 });
 
+const PAGE_SIZE = 20;
+
 async function handler(environment, request, headers) {
   const { id: accountId } = await getCurrentUser(environment, headers);
 
@@ -29,11 +31,12 @@ async function handler(environment, request, headers) {
 
   const { posts, cursor } = await queryMethod[request.index](environment, {
     cursor: request.cursor,
+    limit: PAGE_SIZE + 1,
   });
 
   return {
     posts: await Promise.all(
-      posts.map(({ id, document }) =>
+      posts.slice(0, -1).map(({ id, document }) =>
         ApiPostSchema.fromFirestorePost(environment, id, document, {
           accountId,
         })
@@ -42,7 +45,8 @@ async function handler(environment, request, headers) {
 
     cursor: {
       current: cursor.current || request.cursor || null,
-      next: cursor.next,
+      next:
+        posts.length == PAGE_SIZE + 1 ? posts[PAGE_SIZE].cursor.current : null,
     },
   };
 }

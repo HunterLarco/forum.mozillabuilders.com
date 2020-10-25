@@ -165,6 +165,7 @@ export default {
   color: #BBB;
   cursor: pointer;
   min-width: 42px;
+  padding: 0 4px;
   text-align: center;
   user-select: none;
 
