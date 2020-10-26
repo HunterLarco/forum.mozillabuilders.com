@@ -8,19 +8,19 @@
       <mj-text
         font-weight="400"
         font-size="15px"
-        color="#FFFFFF"
+        color="#000000"
         line-height="22px"
       ></mj-text>
     </mj-attributes>
     <mj-style inline="inline">
-      .text-link { color: #FFFFFF }
+      .text-link { color: #000000 }
     </mj-style>
     <mj-style inline="inline">
-      .dim { color: #9F91AF }
+      .dim { color: #AAAAAA }
     </mj-style>
     <mj-style inline="inline">
-      .password { background: rgba(255, 255, 255, 0.1); padding: 4px 8px;
-      max-width: 300px; border-radius: 5px; }
+      .password { background: #EEEEEE; padding: 4px 8px; max-width: 300px;
+      border-radius: 5px; }
     </mj-style>
     <mj-style>
       .main-section { padding-left: 70px; padding-right: 70px; padding-top:
@@ -31,11 +31,7 @@
   </mj-head>
 
   <mj-body background-color="#FFFFFF">
-    <mj-section
-      background-repeat="repeat"
-      text-align="center"
-      background-color="#28143F"
-    >
+    <mj-section background-repeat="repeat" text-align="center">
       <mj-column css-class="main-section">
         <mj-text font-size="22px" font-weight="600"
           >Login #MozillaBuilders #Forum</mj-text
@@ -57,11 +53,11 @@
         </mj-text>
 
         <mj-image
-          src="https://storage.googleapis.com/moz-unfck-forum-email-assets/0be7ca8ace7dbbe0a3aa4dca8ee23678.png"
+          src="https://storage.googleapis.com/moz-unfck-forum-email-assets/42eb4643d3e3ab3aaa05b554310fc09f.png"
           alt="Mozilla Builders Forum"
           href="https://forum.mozillabuilders.com"
-          width="100px"
-          padding-top="40px"
+          width="200px"
+          padding-top="20px"
         />
       </mj-column>
     </mj-section>

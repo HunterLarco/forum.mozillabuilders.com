@@ -1,7 +1,10 @@
-Login #MozillaBuilder #Forum
+Login #MozillaBuilders #Forum
 
 Click here to log in with this magic link:
 {{{ loginUrl }}}
+
+or use this temporary code:
+{{{ password }}}
 
 If you didn't try to login, you can safely ignore this email.
 
