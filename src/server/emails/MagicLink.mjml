@@ -1,6 +1,6 @@
 <mjml>
   <mj-head>
-    <mj-title>Mozilla Unfck Forum Login</mj-title>
+    <mj-title>Mozilla Builders Forum Login</mj-title>
     <mj-attributes>
       <mj-all
         font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
@@ -37,7 +37,9 @@
       background-color="#28143F"
     >
       <mj-column css-class="main-section">
-        <mj-text font-size="22px" font-weight="600">Login #unfck</mj-text>
+        <mj-text font-size="22px" font-weight="600"
+          >Login #MozillaBuilders #Forum</mj-text
+        >
 
         <mj-text>
           <p>
@@ -56,8 +58,8 @@
 
         <mj-image
           src="https://storage.googleapis.com/moz-unfck-forum-email-assets/0be7ca8ace7dbbe0a3aa4dca8ee23678.png"
-          alt="Mozilla Unfck Forum"
-          href="https://unfck.xyz"
+          alt="Mozilla Builders Forum"
+          href="https://forum.mozillabuilders.com"
           width="100px"
           padding-top="40px"
         />

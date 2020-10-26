@@ -101,13 +101,13 @@ async function handler(environment, request) {
   } else {
     await environment.sparkpost.send({
       to: email.raw,
-      subject: `Your temporary Mozilla Unfck Forum code is ${password}`,
+      subject: `Your temporary Mozilla Builders Forum code is ${password}`,
       text: Mustache.render(PlainTextMagicLinkEmail, {
-        loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        loginUrl: `https://forum.mozillabuilders.com/login/${loginToken}`,
         password,
       }),
       html: Mustache.render(HTMLMagicLinkEmail, {
-        loginUrl: `https://unfck.xyz/login/${loginToken}`,
+        loginUrl: `https://forum.mozillabuilders.com/login/${loginToken}`,
         password,
       }),
     });

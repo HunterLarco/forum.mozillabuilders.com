@@ -1,4 +1,4 @@
-Login #unfck
+Login #MozillaBuilder #Forum
 
 Click here to log in with this magic link:
 {{{ loginUrl }}}
@@ -6,4 +6,4 @@ Click here to log in with this magic link:
 If you didn't try to login, you can safely ignore this email.
 
 ---
-Mozilla Unfck Forum
+Mozilla Builders Forum
