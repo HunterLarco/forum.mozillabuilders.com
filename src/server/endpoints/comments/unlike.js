@@ -42,14 +42,34 @@ async function handler(environment, request, headers) {
     });
   }
 
+  if (comment.author == accountId) {
+    return Promise.reject({
+      httpErrorCode: 400,
+      name: 'InvalidUnlike',
+      message: 'You cannot unlike your own comment',
+    });
+  }
+
   await environment.firestore.runTransaction(async (transaction) => {
-    await LikeTable.create(environment, transaction, {
+    if (
+      !(await LikeTable.exists(environment, transaction, {
+        commentId: request.id,
+        accountId,
+      }))
+    ) {
+      return Promise.reject({
+        httpErrorCode: 412,
+        name: 'InvalidUnlike',
+        message: "You cannot unlike a comment you haven't already liked",
+      });
+    }
+
+    await LikeTable.remove(environment, transaction, {
       commentId: request.id,
       accountId,
-      dateCreated: new Date(),
     });
 
-    await CounterTable.increment(
+    await CounterTable.decrement(
       environment,
       transaction,
       CounterTable.COUNTERS.commentLikes(request.id)

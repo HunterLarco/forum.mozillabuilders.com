@@ -84,9 +84,7 @@ export async function remove(
 }
 
 function createKey({ postId, commentId, accountId }) {
-  let key = [postId, accountId, commentId];
-  while (key.length && key[key.length - 1] == null) {
-    key = key.slice(0, -1);
-  }
-  return md5(key.join(':'));
+  return postId
+    ? md5(`${postId}/${accountId}`)
+    : md5(`c:${commentId}/${accountId}`);
 }

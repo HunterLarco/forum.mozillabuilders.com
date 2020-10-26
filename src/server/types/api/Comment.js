@@ -4,6 +4,8 @@ import AttributedText from '@/src/server/types/api/AttributedText';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as AccountTable from '@/src/server/firestore/Account';
+import * as CounterTable from '@/src/server/firestore/Counter';
+import * as LikeTable from '@/src/server/firestore/Like';
 
 const Schema = Joi.object({
   id: Joi.string().required(),
@@ -15,7 +17,12 @@ const Schema = Joi.object({
 
   children: Joi.array().items(Joi.link('...')).required(),
 
+  stats: Joi.object({
+    likes: Joi.number().min(1).required(),
+  }).required(),
+
   personalization: Joi.object({
+    liked: Joi.boolean().required(),
     postedByYou: Joi.boolean().required(),
   }),
 
@@ -28,6 +35,13 @@ Schema.fromFirestoreComment = async (environment, comment, options) => {
   let personalization;
   if (accountId) {
     personalization = {
+      liked:
+        comment.author == accountId
+          ? true
+          : await LikeTable.exists(environment, null, {
+              commentId: comment.id,
+              accountId,
+            }),
       postedByYou: comment.author == accountId,
     };
   }
@@ -51,6 +65,17 @@ Schema.fromFirestoreComment = async (environment, comment, options) => {
         Schema.fromFirestoreComment(environment, comment, options)
       )
     ),
+
+    stats: {
+      // We add one because each user always likes their own posts by default.
+      likes:
+        1 +
+        (await CounterTable.get(
+          environment,
+          null,
+          CounterTable.COUNTERS.commentLikes(comment.id)
+        )),
+    },
 
     personalization,
 

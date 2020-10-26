@@ -53,11 +53,8 @@ export default {
     submit_() {
       this.loading_ = true;
       apiFetch('aurora/posts/comment', {
-        parent: {
-          post: this.post.id,
-          comment: this.comment ? this.comment.id : null,
-        },
-
+        postId: this.comment ? undefined : this.post.id,
+        commentId: this.comment ? this.comment.id : undefined,
         content: {
           text: this.content_,
         },

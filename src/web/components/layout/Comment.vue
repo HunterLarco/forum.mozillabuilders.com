@@ -1,5 +1,14 @@
 <template>
-  <div :class="$style.Host">
+  <HorizontalLayout :class="$style.Host">
+    <template v-slot:left>
+      <LikeButton
+        :class="$style.LikeButton"
+        :count="comment.stats.likes"
+        :liked="comment.personalization ? comment.personalization.liked : false"
+        @click.native="like_"
+      />
+    </template>
+
     <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
     <AttributedText
       :class="$style.Content"
@@ -20,7 +29,7 @@
         @submit="closeReplyForm_"
       />
     </template>
-  </div>
+  </HorizontalLayout>
 </template>
 
 <script>
@@ -29,12 +38,23 @@ import friendlyTime from 'friendly-time';
 import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
+import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/layout/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
-  components: { AttributedText, ReplyForm, ElementButton, ElementInput },
+  components: {
+    AttributedText,
+    ElementButton,
+    ElementInput,
+    HorizontalLayout,
+    LikeButton,
+    ReplyForm,
+  },
 
   props: {
     post: {
@@ -89,6 +109,27 @@ export default {
     closeReplyForm_() {
       this.showReplyForm_ = false;
     },
+
+    like_() {
+      if (!CurrentUserStore.state.authToken) {
+        this.$router.push({
+          path: '/signup',
+          query: { info: 'You must be logged in to like comments.' },
+        });
+      }
+
+      if (this.comment.personalization.liked) {
+        apiFetch('aurora/comments/unlike', { id: this.comment.id }).then(() => {
+          this.comment.personalization.liked = false;
+          this.comment.stats.likes -= 1;
+        });
+      } else {
+        apiFetch('aurora/comments/like', { id: this.comment.id }).then(() => {
+          this.comment.personalization.liked = true;
+          this.comment.stats.likes += 1;
+        });
+      }
+    },
   },
 };
 </script>
@@ -110,6 +151,10 @@ export default {
 
   padding: 8px 0;
   white-space: pre-line;
+}
+
+.LikeButton {
+  margin-right: 10px;
 }
 
 .ReplyLink {
