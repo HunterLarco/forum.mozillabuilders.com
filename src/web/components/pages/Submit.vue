@@ -16,106 +16,56 @@
       </PageHeader>
 
       <PageRibbon>
-        <div :class="$style.QuestionTypes">
-          <TextCheckbox
-            :class="$style.QuestionType"
-            :selected="questionType_ == 'opinion'"
-            @click="questionType_ = 'opinion'"
-            text="Post an opinion"
-            :disabled="loading_"
-          />
+        <div :class="$style.Content">
+          <div :class="$style.FormLabel">Post a new topic</div>
 
-          <TextCheckbox
-            :class="$style.QuestionType"
-            :selected="questionType_ == 'question'"
-            @click="questionType_ = 'question'"
-            text="Ask a question"
-            :disabled="loading_"
-          />
-
-          <TextCheckbox
-            :class="$style.QuestionType"
-            :selected="questionType_ == 'url'"
-            @click="questionType_ = 'url'"
-            text="Share a URL"
-            :disabled="loading_"
-          />
-        </div>
-
-        <template v-if="questionType_ == 'opinion'">
           <ElementInput
-            placeholder="What's the 80/20 of what you're thinking about?"
+            :class="$style.Title"
+            placeholder="What's on your mind?"
             v-model="form_.opinion.summary"
             :disabled="loading_"
           >
             <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Summary</span>
+              <span>Title</span>
             </template>
           </ElementInput>
           <div :class="$style.Spacer" />
           <ElementInput
             :class="$style.Textarea"
-            placeholder="Tell us more about it..."
+            placeholder="Tell us more..."
             type="textarea"
             :disabled="loading_"
             v-model="form_.opinion.details"
             :autosize="{ minRows: 2 }"
           />
-        </template>
-
-        <template v-if="questionType_ == 'question'">
-          <ElementInput
-            placeholder="What's on your mind?"
-            v-model="form_.question.question"
-            :disabled="loading_"
-          >
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Question</span>
-            </template>
-          </ElementInput>
           <div :class="$style.Spacer" />
-          <ElementInput
-            :class="$style.Textarea"
-            placeholder="Tell us more about it..."
-            :disabled="loading_"
-            type="textarea"
-            v-model="form_.question.details"
-            :autosize="{ minRows: 2 }"
-          />
-        </template>
+          <ElementDropdown @command="topic_ = $event">
+            <ElementButton>
+              <label v-if="topic_">{{ topic_ }}</label>
+              <label v-else>Tag your post</label>
+              <ElementIcon name="arrow-down" />
+            </ElementButton>
+            <ElementDropdownMenu slot="dropdown">
+              <ElementDropdownItem
+                :command="topic"
+                v-for="topic in topics_"
+                :key="topic"
+                >{{ topic }}</ElementDropdownItem
+              >
+            </ElementDropdownMenu>
+          </ElementDropdown>
 
-        <template v-if="questionType_ == 'url'">
-          <ElementInput
-            placeholder="What is this URL about?"
-            v-model="form_.url.summary"
-            :disabled="loading_"
-          >
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Summary</span>
-            </template>
-          </ElementInput>
           <div :class="$style.Spacer" />
-          <ElementInput
-            placeholder="https://..."
-            v-model="form_.url.url"
-            :disabled="loading_"
-          >
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">URL</span>
+          <div :class="$style.Spacer" />
+
+          <HorizontalLayout vertical-center spacing="10">
+            <template v-slot:left>
+              <SubmitButton @click="submit_" :loading="loading_" />
             </template>
-          </ElementInput>
-        </template>
 
-        <div :class="$style.Spacer" />
-        <div :class="$style.Spacer" />
-
-        <HorizontalLayout vertical-center spacing="10">
-          <template v-slot:left>
-            <SubmitButton @click="submit_" :loading="loading_" />
-          </template>
-
-          <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
-        </HorizontalLayout>
+            <div :class="$style.Error" v-if="error_">{{ error_ }}</div>
+          </HorizontalLayout>
+        </div>
       </PageRibbon>
     </div>
 
@@ -124,6 +74,11 @@
 </template>
 
 <script>
+import ElementButton from '@/vendor/element-ui/Button';
+import ElementDropdown from '@/vendor/element-ui/Dropdown';
+import ElementDropdownItem from '@/vendor/element-ui/DropdownItem';
+import ElementDropdownMenu from '@/vendor/element-ui/DropdownMenu';
+import ElementIcon from '@/vendor/element-ui/Icon';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -136,6 +91,11 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
+    ElementButton,
+    ElementDropdown,
+    ElementDropdownItem,
+    ElementDropdownMenu,
+    ElementIcon,
     ElementInput,
     HorizontalLayout,
     PageFooter,
@@ -148,6 +108,18 @@ export default {
   data() {
     return {
       questionType_: 'opinion',
+
+      topics_: [
+        'Collaboration & Society',
+        'Decentralized Web',
+        'Messaging & Social Networking',
+        'Surveillance Capitalism',
+        'Misinformation & Content',
+        'Artificial Intelligence',
+        'Web Assembly',
+        'Search',
+      ],
+      topic_: null,
 
       form_: {
         question: {
@@ -216,22 +188,26 @@ export default {
   overflow-y: scroll;
 }
 
-.QuestionTypes {
-  margin: 30px 0;
+.Content {
+  border-radius: 5px;
+  border: 1px solid #000;
+  margin: 30px;
+  padding: 30px;
+  position: relative;
 }
 
-.QuestionType {
-  margin-top: 10px;
-  margin-right: 10px;
+.FormLabel {
+  @include fonts-nav-link;
 
-  &:last-child {
-    margin-right: 0;
-  }
+  margin-bottom: 20px;
+  opacity: 0.4;
+  text-transform: uppercase;
 }
 
-.InputPrepend {
-  display: inline-block;
-  min-width: 70px;
+.Title {
+  @include fonts-post-title;
+
+  font-weight: normal;
 }
 
 .Spacer {

@@ -7,12 +7,26 @@ import * as PostTable from '@/src/server/firestore/Post';
 import * as postHelpers from '@/src/server/helpers/data/Post';
 
 const RequestSchema = Joi.object({
-  title: Joi.required().required(),
+  title: Joi.string().required(),
+
   content: Joi.object({
     text: Joi.string(),
     link: Joi.string().uri(),
   })
     .xor('text', 'link')
+    .required(),
+
+  group: Joi.string()
+    .allow(
+      'collaboration-and-society',
+      'decentralized-web',
+      'messaging-and-social-networking',
+      'surveillance-capitalism',
+      'misinformation-and-content',
+      'artificial-intelligence',
+      'web-assembly',
+      'search'
+    )
     .required(),
 });
 
