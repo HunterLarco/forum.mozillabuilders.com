@@ -45,7 +45,7 @@ const Schema = Joi.object({
 
   author: PublicAccount.required(),
   content: Content.required(),
-  comments: Joi.array().items(Comment).required(),
+  comments: Joi.array().items(Comment),
 
   stats: Joi.object({
     likes: Joi.number().min(1).required(),
@@ -61,21 +61,7 @@ const Schema = Joi.object({
 });
 
 Schema.fromFirestorePost = async (environment, id, post, options) => {
-  const { accountId = null } = options || {};
-
-  let personalization;
-  if (accountId) {
-    personalization = {
-      liked:
-        post.author == accountId
-          ? true
-          : await LikeTable.exists(environment, null, {
-              postId: id,
-              accountId,
-            }),
-      postedByYou: post.author == accountId,
-    };
-  }
+  const { accountId = null, includeComments = false } = options || {};
 
   const { account: author } = await AccountTable.get(
     environment,
@@ -83,37 +69,10 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     post.author
   );
 
-  let content = {};
-  if (post.content.type == 'question') {
-    content.type = 'question';
-    content.question = post.content.question;
-    content.details = AttributedText.fromText(post.content.details);
-  } else if (post.content.type == 'url') {
-    content.type = 'url';
-    content.summary = post.content.summary;
-    content.url = post.content.url;
-  } else if (post.content.type == 'opinion') {
-    content.type = 'opinion';
-    content.summary = post.content.summary;
-    content.details = AttributedText.fromText(post.content.details);
-  } else {
-    throw new Error(`Unknown post content type ${post.content.type}`);
-  }
-
-  const comments = await Promise.all(
-    post.comments.map((comment) =>
-      Comment.fromFirestoreComment(environment, comment, { accountId })
-    )
-  );
-
-  reorderComments(comments);
-
-  return {
+  const apiPost = {
     id,
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
-    content,
-    comments,
 
     stats: {
       // We add one because each user always likes their own posts by default.
@@ -127,10 +86,54 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
       comments: commentHelpers.count(post.comments),
     },
 
-    personalization: personalization,
-
     dateCreated: post.dateCreated,
   };
+
+  if (accountId) {
+    apiPost.personalization = {
+      liked:
+        post.author == accountId
+          ? true
+          : await LikeTable.exists(environment, null, {
+              postId: id,
+              accountId,
+            }),
+      postedByYou: post.author == accountId,
+    };
+  }
+
+  if (post.content.type == 'question') {
+    apiPost.content = {
+      type: 'question',
+      question: post.content.question,
+      details: AttributedText.fromText(post.content.details),
+    };
+  } else if (post.content.type == 'url') {
+    apiPost.content = {
+      type: 'url',
+      summary: post.content.summary,
+      url: post.content.url,
+    };
+  } else if (post.content.type == 'opinion') {
+    apiPost.content = {
+      type: 'opinion',
+      summary: post.content.summary,
+      details: AttributedText.fromText(post.content.details),
+    };
+  } else {
+    throw new Error(`Unknown post content type ${post.content.type}`);
+  }
+
+  if (includeComments) {
+    apiPost.comments = await Promise.all(
+      post.comments.map((comment) =>
+        Comment.fromFirestoreComment(environment, comment, { accountId })
+      )
+    );
+    reorderComments(apiPost.comments);
+  }
+
+  return apiPost;
 };
 
 function reorderComments(comments) {
