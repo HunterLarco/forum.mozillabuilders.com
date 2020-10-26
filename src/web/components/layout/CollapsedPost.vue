@@ -30,9 +30,9 @@
     <template v-slot:right>
       <a
         :class="$style.LinkIcon"
-        :href="post.content.url"
+        :href="post.content.link"
         target="blank"
-        v-if="post.content.type == 'url'"
+        v-if="post.content.link"
       >
         <ElementIcon name="link" />
       </a>
@@ -66,15 +66,7 @@ export default {
         return null;
       }
 
-      if (this.post.content.type == 'question') {
-        return this.post.content.question;
-      } else if (this.post.content.type == 'url') {
-        return this.post.content.summary;
-      } else if (this.post.content.type == 'opinion') {
-        return this.post.content.summary;
-      }
-
-      throw new Error(`Unknown post type: ${this.post.content.type}`);
+      return this.post.title;
     },
 
     author_() {
@@ -217,7 +209,7 @@ export default {
 }
 
 .LinkIcon {
-  @include fonts-collapsed-post-likes;
+  @include fonts-body;
 
   color: #828282;
 }

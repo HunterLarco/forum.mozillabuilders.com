@@ -6,33 +6,14 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as PostTable from '@/src/server/firestore/Post';
 import * as postHelpers from '@/src/server/helpers/data/Post';
 
-const RequestSchema = Joi.alternatives().conditional('.type', {
-  switch: [
-    {
-      is: 'question',
-      then: Joi.object({
-        type: 'question',
-        question: Joi.string().required(),
-        details: Joi.string().required(),
-      }),
-    },
-    {
-      is: 'url',
-      then: Joi.object({
-        type: 'url',
-        summary: Joi.string().required(),
-        url: Joi.string().uri().required(),
-      }),
-    },
-    {
-      is: 'opinion',
-      then: Joi.object({
-        type: 'opinion',
-        summary: Joi.string().required(),
-        details: Joi.string().required(),
-      }),
-    },
-  ],
+const RequestSchema = Joi.object({
+  title: Joi.required().required(),
+  content: Joi.object({
+    text: Joi.string(),
+    link: Joi.string().uri(),
+  })
+    .xor('text', 'link')
+    .required(),
 });
 
 const ResponseSchema = Joi.object({
@@ -47,7 +28,7 @@ async function handler(environment, request, headers) {
   const { id } = await PostTable.create(
     environment,
     null,
-    postHelpers.create(request, accountId)
+    postHelpers.create(request.title, request.content, accountId)
   );
 
   return { id };
