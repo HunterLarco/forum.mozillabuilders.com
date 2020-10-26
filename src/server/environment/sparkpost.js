@@ -22,8 +22,8 @@ export async function createSparkpostClient() {
         recipients: [{ address: { email: to } }],
         content: {
           from: {
-            name: 'Mozilla Unfck',
-            email: 'noreply@mail.unfck.xyz',
+            name: 'Mozilla Builders',
+            email: 'noreply@mail.mozillabuilders.com',
           },
           subject,
           html,

@@ -2,8 +2,7 @@
   <div :class="$style.Host">
     <div>
       <router-link :class="$style.Logo" to="/">
-        <img src="~@/src/web/assets/logos/Mozilla.png" />
-        <label>Unfck Forum</label>
+        <img src="~@/src/web/assets/logos/MozillaBuilders.png" />
       </router-link>
 
       <div :class="$style.Content">

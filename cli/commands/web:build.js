@@ -88,7 +88,7 @@ module.exports = {
     const configTemplate = require('../webpack/web.config.js');
     const config = configTemplate(args.env, {
       apiServer: environment.select(args.env, {
-        production: 'https://api.unfck.xyz',
+        production: 'https://api.forum.mozillabuilders.com',
         local: args['local-api-server'],
       }),
     });

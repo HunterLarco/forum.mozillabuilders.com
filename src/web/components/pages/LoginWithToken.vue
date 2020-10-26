@@ -7,7 +7,7 @@ import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
   mounted() {
-    CurrentUserStore.dispatch('login', this.$route.params.token)
+    CurrentUserStore.dispatch('loginWithToken', this.$route.params.token)
       .then(() => {
         this.$router.push('/');
       })

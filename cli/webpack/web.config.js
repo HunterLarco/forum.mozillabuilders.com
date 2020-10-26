@@ -20,7 +20,7 @@ module.exports = (env, flags) =>
     plugins: [
       new HtmlWebpackPlugin({
         template: require('html-webpack-template'),
-        title: '#Unfck #MozForum',
+        title: '#MozillaBuilders #Forum',
         hash: true,
         lang: 'en-US',
         appMountId: 'app',
