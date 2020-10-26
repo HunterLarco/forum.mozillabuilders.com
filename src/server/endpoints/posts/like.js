@@ -14,7 +14,15 @@ const RequestSchema = Joi.object({
 const ResponseSchema = Joi.object({});
 
 async function handler(environment, request, headers) {
-  if (!(await PostTable.exists(environment, null, request.id))) {
+  const { id: accountId, account } = await getCurrentUser(
+    environment,
+    headers,
+    { required: true }
+  );
+
+  const { post } = await PostTable.get(environment, null, request.id);
+
+  if (!post) {
     return Promise.reject({
       httpErrorCode: 404,
       name: 'PostNotFound',
@@ -22,11 +30,13 @@ async function handler(environment, request, headers) {
     });
   }
 
-  const { id: accountId, account } = await getCurrentUser(
-    environment,
-    headers,
-    { required: true }
-  );
+  if (post.author == accountId) {
+    return Promise.reject({
+      httpErrorCode: 412,
+      name: 'InvaludLike',
+      message: 'You cannot like your own post',
+    });
+  }
 
   await environment.firestore.runTransaction(async (transaction) => {
     await LikeTable.create(environment, transaction, {

@@ -15,9 +15,13 @@ export async function create(environment, transaction, like) {
     });
   }
 
-  const reference = environment.firestore
-    .collection('Like')
-    .doc(md5(`${like.postId}:${like.accountId}`));
+  const reference = environment.firestore.collection('Like').doc(
+    createKey({
+      postId: like.postId,
+      commentId: like.commentId,
+      accountId: like.accountId,
+    })
+  );
 
   if (transaction) {
     await transaction.create(reference, value);
@@ -28,10 +32,14 @@ export async function create(environment, transaction, like) {
   return { id: reference.id, like };
 }
 
-export async function exists(environment, transaction, accountId, postId) {
+export async function exists(
+  environment,
+  transaction,
+  { postId, commentId, accountId }
+) {
   const reference = environment.firestore
     .collection('Like')
-    .doc(md5(`${postId}:${accountId}`));
+    .doc(createKey({ postId, commentId, accountId }));
   const document = transaction
     ? await transaction.get(reference)
     : await reference.get();
@@ -39,10 +47,14 @@ export async function exists(environment, transaction, accountId, postId) {
   return document.exists;
 }
 
-export async function get(environment, transaction, accountId, postId) {
+export async function get(
+  environment,
+  transaction,
+  { postId, commentId, accountId }
+) {
   const reference = environment.firestore
     .collection('Like')
-    .doc(md5(`${postId}:${accountId}`));
+    .doc(createKey({ postId, commentId, accountId }));
   const document = transaction
     ? await transaction.get(reference)
     : await reference.get();
@@ -55,14 +67,24 @@ export async function get(environment, transaction, accountId, postId) {
   return { id: reference.id, like };
 }
 
-export async function remove(environment, transaction, accountId, postId) {
+export async function remove(
+  environment,
+  transaction,
+  { postId, commentId, accountId }
+) {
   const reference = environment.firestore
     .collection('Like')
-    .doc(md5(`${postId}:${accountId}`));
+    .doc(createKey({ postId, commentId, accountId }));
 
   if (transaction) {
     await transaction.delete(reference);
   } else {
     await reference.delete();
   }
+}
+
+function createKey({ postId, commentId, accountId }) {
+  return postId
+    ? md5(`${postId}/${accountId}`)
+    : md5(`c:${commentId}/${accountId}`);
 }

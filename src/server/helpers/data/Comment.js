@@ -1,11 +1,11 @@
-import * as dateFns from 'date-fns';
+import md5 from 'md5';
 import { v4 as uuidv4 } from 'uuid';
 
 import * as stringHelpers from '@/src/server/helpers/strings';
 
-export function create(text, accountId) {
+export function create(postId, text, accountId) {
   return {
-    id: uuidv4(),
+    id: `${postId}-${md5(uuidv4())}`,
     author: accountId,
     content: { text: stringHelpers.collapseWhitespace(text) },
     children: [],
@@ -40,11 +40,6 @@ export function count(comments) {
   return result;
 }
 
-export function reorder(comments) {
-  comments.sort((a, b) =>
-    dateFns.compareDesc(new Date(a.dateCreated), new Date(b.dateCreated))
-  );
-  for (const comment of comments) {
-    reorder(comment.children);
-  }
+export function postId(commentId) {
+  return commentId.split('-')[0];
 }

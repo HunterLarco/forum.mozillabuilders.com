@@ -7,6 +7,12 @@ export const COUNTERS = {
     id,
     shards: 5,
   }),
+
+  commentLikes: (id) => ({
+    namespace: 'Likes:Comments',
+    id,
+    shards: 1,
+  }),
 };
 
 export async function increment(environment, transaction, counter, amount = 1) {

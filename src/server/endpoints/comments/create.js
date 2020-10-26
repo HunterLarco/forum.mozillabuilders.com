@@ -8,15 +8,13 @@ import * as PostTable from '@/src/server/firestore/Post';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 const RequestSchema = Joi.object({
-  parent: Joi.object({
-    post: Joi.string().required(),
-    comment: Joi.string().allow(null),
-  }).required(),
+  postId: Joi.string(),
+  commentId: Joi.string(),
 
   content: Joi.object({
     text: Joi.string().required(),
   }),
-});
+}).xor('postId', 'commentId');
 
 const ResponseSchema = Joi.object({
   comment: ApiCommentSchema.required(),
@@ -25,53 +23,53 @@ const ResponseSchema = Joi.object({
 async function handler(environment, request, headers) {
   const { id: accountId } = await getCurrentUser(environment, headers);
 
+  const postId = request.postId
+    ? request.postId
+    : commentHelpers.postId(request.commentId);
+  const commentId = request.commentId ? request.commentId : null;
+
   const comment = await environment.firestore.runTransaction(
     async (transaction) => {
-      const { post } = await PostTable.get(
-        environment,
-        transaction,
-        request.parent.post
-      );
+      const { post } = await PostTable.get(environment, transaction, postId);
 
       if (!post) {
         return Promise.reject({
           httpErrorCode: 404,
           name: 'ParentNotFound',
-          message: `Post ${request.parent.post} does not exist.`,
+          message: `Post ${postId} does not exist.`,
         });
       }
 
-      const comment = commentHelpers.create(request.content.text, accountId);
+      const comment = commentHelpers.create(
+        postId,
+        request.content.text,
+        accountId
+      );
 
-      if (!request.parent.comment) {
+      if (!commentId) {
         post.comments.push(comment);
       } else {
-        const parentComment = commentHelpers.find(post, request.parent.comment);
+        const parentComment = commentHelpers.find(post, commentId);
         if (!parentComment) {
           return Promise.reject({
             httpErrorCode: 404,
             name: 'ParentNotFound',
-            message: `Comment ${request.parent.post}/${request.parent.comment} does not exist.`,
+            message: `Comment ${commentId} does not exist.`,
           });
         }
         parentComment.children.push(comment);
       }
 
-      commentHelpers.reorder(post.comments);
-
-      await PostTable.replace(
-        environment,
-        transaction,
-        request.parent.post,
-        post
-      );
+      await PostTable.replace(environment, transaction, postId, post);
 
       return comment;
     }
   );
 
   return {
-    comment: await ApiCommentSchema.fromFirestoreComment(environment, comment),
+    comment: await ApiCommentSchema.fromFirestoreComment(environment, comment, {
+      accountId,
+    }),
   };
 }
 

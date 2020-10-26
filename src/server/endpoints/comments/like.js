@@ -6,6 +6,7 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
+import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 const RequestSchema = Joi.object({
   id: Joi.string().required(),
@@ -14,53 +15,52 @@ const RequestSchema = Joi.object({
 const ResponseSchema = Joi.object({});
 
 async function handler(environment, request, headers) {
-  const { post } = await PostTable.get(environment, null, request.id);
-
-  if (!post) {
-    return Promise.reject({
-      httpErrorCode: 404,
-      name: 'PostNotFound',
-      message: `Post ${request.id} not found`,
-    });
-  }
-
   const { id: accountId, account } = await getCurrentUser(
     environment,
     headers,
     { required: true }
   );
 
-  if (post.author == accountId) {
+  const postId = commentHelpers.postId(request.id);
+  const { post } = await PostTable.get(environment, null, postId);
+
+  if (!post) {
+    return Promise.reject({
+      httpErrorCode: 404,
+      name: 'PostNotFound',
+      message: `Post ${postId} not found`,
+    });
+  }
+
+  const comment = commentHelpers.find(post, request.id);
+
+  if (!comment) {
+    return Promise.reject({
+      httpErrorCode: 404,
+      name: 'CommentNotFound',
+      message: `Comment ${request.id} not found`,
+    });
+  }
+
+  if (comment.author == accountId) {
     return Promise.reject({
       httpErrorCode: 400,
       name: 'InvalidUnlike',
-      message: 'You cannot unlike your own post',
+      message: 'You cannot relike your own comment.',
     });
   }
 
   await environment.firestore.runTransaction(async (transaction) => {
-    if (
-      !(await LikeTable.exists(environment, transaction, {
-        postId: request.id,
-        accountId,
-      }))
-    ) {
-      return Promise.reject({
-        httpErrorCode: 412,
-        name: 'InvalidUnlike',
-        message: "You cannot unlike a post you haven't already liked",
-      });
-    }
-
-    await LikeTable.remove(environment, transaction, {
-      postId: request.id,
+    await LikeTable.create(environment, transaction, {
+      commentId: request.id,
       accountId,
+      dateCreated: new Date(),
     });
 
-    await CounterTable.decrement(
+    await CounterTable.increment(
       environment,
       transaction,
-      CounterTable.COUNTERS.likes(request.id)
+      CounterTable.COUNTERS.commentLikes(request.id)
     );
   });
 

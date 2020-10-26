@@ -30,6 +30,7 @@ async function handler(environment, request, headers) {
   return {
     post: await ApiPostSchema.fromFirestorePost(environment, request.id, post, {
       accountId,
+      includeComments: true,
     }),
   };
 }
