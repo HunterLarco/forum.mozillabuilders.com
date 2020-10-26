@@ -1,9 +1,9 @@
 import * as stringHelpers from '@/src/server/helpers/strings';
 
-export function create(content, accountId) {
+export function create(title, content, accountId) {
   const post = {
     author: accountId,
-    content: {},
+    title: stringHelpers.collapseWhitespace(title),
     comments: [],
     stats: {
       likes: 1,
@@ -12,18 +12,12 @@ export function create(content, accountId) {
     dateCreated: new Date(),
   };
 
-  if (content.type == 'question') {
-    post.content.type = 'question';
-    post.content.question = stringHelpers.collapseWhitespace(content.question);
-    post.content.details = stringHelpers.collapseWhitespace(content.details);
-  } else if (content.type == 'url') {
-    post.content.type = 'url';
-    post.content.summary = stringHelpers.collapseWhitespace(content.summary);
-    post.content.url = content.url;
-  } else if (content.type == 'opinion') {
-    post.content.type = 'opinion';
-    post.content.summary = stringHelpers.collapseWhitespace(content.summary);
-    post.content.details = stringHelpers.collapseWhitespace(content.details);
+  if (content.text) {
+    post.content = { text: stringHelpers.collapseWhitespace(content.text) };
+  } else if (content.link) {
+    post.content = { link: content.link };
+  } else {
+    throw new Error('Unable to create new post: invalid content');
   }
 
   return post;

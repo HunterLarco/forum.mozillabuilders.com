@@ -18,21 +18,13 @@
 
       <div :class="$style.Body">
         <AttributedText
-          v-if="post.content.type == 'question'"
-          :text="post.content.details.text"
-          :entities="post.content.details.entities"
+          v-if="post.content.text"
+          :text="post.content.text.text"
+          :entities="post.content.text.entities"
         />
-        <AttributedText
-          v-if="post.content.type == 'opinion'"
-          :text="post.content.details.text"
-          :entities="post.content.details.entities"
-        />
-        <a
-          :href="post.content.url"
-          target="blank"
-          v-if="post.content.type == 'url'"
-          >{{ post.content.url }}</a
-        >
+        <a :href="post.content.link" target="blank" v-if="post.content.link">{{
+          post.content.link
+        }}</a>
       </div>
 
       <div :class="$style.Metadata">Posted {{ author_ }} {{ age_ }}</div>
@@ -67,15 +59,7 @@ export default {
         return null;
       }
 
-      if (this.post.content.type == 'question') {
-        return this.post.content.question;
-      } else if (this.post.content.type == 'url') {
-        return this.post.content.summary;
-      } else if (this.post.content.type == 'opinion') {
-        return this.post.content.summary;
-      }
-
-      throw new Error(`Unknown post type: ${this.post.content.type}`);
+      return this.post.title;
     },
 
     author_() {
