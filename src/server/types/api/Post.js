@@ -68,7 +68,10 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
       liked:
         post.author == accountId
           ? true
-          : await LikeTable.exists(environment, null, accountId, id),
+          : await LikeTable.exists(environment, null, {
+              postId: id,
+              accountId,
+            }),
       postedByYou: post.author == accountId,
     };
   }
