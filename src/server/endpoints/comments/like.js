@@ -42,6 +42,14 @@ async function handler(environment, request, headers) {
     });
   }
 
+  if (comment.author == accountId) {
+    return Promise.reject({
+      httpErrorCode: 400,
+      name: 'InvalidUnlike',
+      message: 'You cannot relike your own comment.',
+    });
+  }
+
   await environment.firestore.runTransaction(async (transaction) => {
     await LikeTable.create(environment, transaction, {
       commentId: request.id,
