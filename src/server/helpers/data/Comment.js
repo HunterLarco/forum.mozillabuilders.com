@@ -1,4 +1,3 @@
-import * as dateFns from 'date-fns';
 import md5 from 'md5';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,15 +38,6 @@ export function count(comments) {
     result += count(child.children);
   }
   return result;
-}
-
-export function reorder(comments) {
-  comments.sort((a, b) =>
-    dateFns.compareDesc(new Date(a.dateCreated), new Date(b.dateCreated))
-  );
-  for (const comment of comments) {
-    reorder(comment.children);
-  }
 }
 
 export function postId(commentId) {

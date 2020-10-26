@@ -1,3 +1,4 @@
+import * as dateFns from 'date-fns';
 import Joi from 'joi';
 
 import AttributedText from '@/src/server/types/api/AttributedText';
@@ -99,16 +100,20 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     throw new Error(`Unknown post content type ${post.content.type}`);
   }
 
+  const comments = await Promise.all(
+    post.comments.map((comment) =>
+      Comment.fromFirestoreComment(environment, comment, { accountId })
+    )
+  );
+
+  reorderComments(comments);
+
   return {
     id,
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
     content,
-    comments: await Promise.all(
-      post.comments.map((comment) =>
-        Comment.fromFirestoreComment(environment, comment, { accountId })
-      )
-    ),
+    comments,
 
     stats: {
       // We add one because each user always likes their own posts by default.
@@ -127,5 +132,15 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     dateCreated: post.dateCreated,
   };
 };
+
+function reorderComments(comments) {
+  comments.sort((a, b) =>
+    dateFns.compareDesc(new Date(a.dateCreated), new Date(b.dateCreated))
+  );
+  comments.sort((a, b) => b.stats.likes - a.stats.likes);
+  for (const comment of comments) {
+    reorderComments(comment.children);
+  }
+}
 
 export default Schema;

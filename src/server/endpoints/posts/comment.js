@@ -60,8 +60,6 @@ async function handler(environment, request, headers) {
         parentComment.children.push(comment);
       }
 
-      commentHelpers.reorder(post.comments);
-
       await PostTable.replace(environment, transaction, postId, post);
 
       return comment;
