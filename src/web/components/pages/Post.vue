@@ -16,10 +16,14 @@
       </PageHeader>
 
       <PageRibbon>
-        <IndeterminateProgressBar v-if="loading_" />
+        <template v-if="!post_">
+          <IndeterminateProgressBar v-if="loading_" />
+        </template>
 
         <template v-if="post_">
           <Post :class="$style.Post" :post="post_" />
+
+          <IndeterminateProgressBar v-if="loading_" />
 
           <CommentThread
             :class="$style.Comments"
