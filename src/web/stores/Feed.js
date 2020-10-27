@@ -60,5 +60,17 @@ export default createStore('FeedStore', {
       Vue.set(feed.cursor, 'last', cursor.current);
       Vue.set(feed.cursor, 'next', cursor.next || null);
     },
+
+    reset(state) {
+      Vue.set(state, 'posts', {});
+      Vue.set(state.feeds.hot, 'posts', []);
+      Vue.set(state.feeds.hot.cursor, 'first', null);
+      Vue.set(state.feeds.hot.cursor, 'last', null);
+      Vue.set(state.feeds.hot.cursor, 'next', null);
+      Vue.set(state.feeds.new, 'posts', []);
+      Vue.set(state.feeds.new.cursor, 'first', null);
+      Vue.set(state.feeds.new.cursor, 'last', null);
+      Vue.set(state.feeds.new.cursor, 'next', null);
+    },
   },
 });
