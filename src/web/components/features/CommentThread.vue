@@ -1,8 +1,8 @@
 <script>
 import friendlyTime from 'friendly-time';
 
-import Comment from '@/src/web/components/layout/Comment';
-import ReplyForm from '@/src/web/components/layout/ReplyForm';
+import Comment from '@/src/web/components/features/Comment';
+import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 

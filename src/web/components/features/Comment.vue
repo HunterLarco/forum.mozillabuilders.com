@@ -40,7 +40,7 @@ import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
-import ReplyForm from '@/src/web/components/layout/ReplyForm';
+import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
