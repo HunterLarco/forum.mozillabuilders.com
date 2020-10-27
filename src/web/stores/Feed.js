@@ -25,7 +25,7 @@ export default createStore('FeedStore', {
       },
     },
 
-    allPosts: {},
+    posts: {},
   },
 
   actions: {
@@ -50,7 +50,7 @@ export default createStore('FeedStore', {
       const feed = state.feeds[feedName];
 
       for (const post of posts) {
-        Vue.set(state.allPosts, post.id, post);
+        Vue.set(state.posts, post.id, post);
         feed.posts.push(post);
       }
 

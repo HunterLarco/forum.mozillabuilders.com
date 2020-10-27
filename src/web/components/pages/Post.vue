@@ -16,7 +16,7 @@
       </PageHeader>
 
       <PageRibbon>
-        <IndeterminateProgressBar v-if="!post_" />
+        <IndeterminateProgressBar v-if="loading_" />
 
         <template v-if="post_">
           <Post :class="$style.Post" :post="post_" />
@@ -25,6 +25,7 @@
             :class="$style.Comments"
             :post="post_"
             :comments="post_.comments"
+            v-if="post_.comments"
           >
           </CommentThread>
         </template>
@@ -43,6 +44,8 @@ import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import Post from '@/src/web/components/layout/Post';
+
+import FeedStore from '@/src/web/stores/Feed';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -69,6 +72,11 @@ export default {
     'route$.params.id': {
       immediate: true,
       handler() {
+        const feedPost = FeedStore.state.posts[this.$route.params.id];
+        if (feedPost) {
+          this.post_ = feedPost;
+        }
+
         this.loading_ = true;
         apiFetch('aurora/posts/get', { id: this.$route.params.id })
           .then(({ post }) => {
