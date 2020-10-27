@@ -52,8 +52,8 @@
 
         <div
           :class="$style.NextPageButton"
-          v-if="nextCursor_ && !loading_"
-          @click="loadNextPage_(false)"
+          v-if="hasNextPage_ && !loading_"
+          @click="loadNextPage_"
         >
           Next Page
         </div>
@@ -74,7 +74,7 @@ import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
 
-import apiFetch from '@/src/web/helpers/net/apiFetch';
+import FeedStore from '@/src/web/stores/Feed';
 
 export default {
   components: {
@@ -90,36 +90,29 @@ export default {
   data() {
     return {
       loading_: false,
-      error_: null,
-
-      posts_: [],
-      nextCursor_: null,
     };
   },
 
+  computed: {
+    posts_() {
+      const index = this.$route.path.slice(1);
+      return FeedStore.state.feeds[index].posts;
+    },
+
+    hasNextPage_() {
+      const index = this.$route.path.slice(1);
+      return !!FeedStore.state.feeds[index].cursor.next;
+    },
+  },
+
   methods: {
-    loadNextPage_(initialLoad) {
+    loadNextPage_() {
       const index = this.$route.path.slice(1);
 
-      if (initialLoad) {
-        this.error_ = null;
-        this.posts_ = [];
-        this.nextCursor_ = null;
-      } else if (!this.nextCursor_ || this.loading_) {
-        return;
-      }
-
       this.loading_ = true;
-      apiFetch('aurora/posts/query', { index, cursor: this.nextCursor_ })
-        .then(({ posts, cursor }) => {
-          this.posts_ = this.posts_.concat(posts);
-          this.nextCursor_ = cursor.next;
-          this.error_ = null;
-          this.loading_ = false;
-        })
-        .catch((error) => {
-          this.error_ = error.message;
-        });
+      FeedStore.dispatch('loadNextPage', index).then(() => {
+        this.loading_ = false;
+      });
     },
   },
 
@@ -127,7 +120,10 @@ export default {
     '$route.path': {
       immediate: true,
       handler() {
-        this.loadNextPage_(true);
+        const index = this.$route.path.slice(1);
+        if (!FeedStore.state.feeds[index].posts.length) {
+          this.loadNextPage_();
+        }
       },
     },
   },
