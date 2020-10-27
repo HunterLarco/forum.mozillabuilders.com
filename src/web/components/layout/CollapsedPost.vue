@@ -20,23 +20,21 @@
         >{{ title_ }}</router-link
       >
       <div :class="$style.Metadata">
-        {{ author_ }} posted {{ age_ }} |
+        <template v-if="post.content.url">
+          <a
+            :href="post.content.url"
+            target="blank"
+            :class="[$style.Clickable, $style.UrlOutlink]"
+            ><ElementIcon name="link" />{{ displayUrl_ }}</a
+          >
+          &middot;
+        </template>
+        {{ author_ }} posted {{ age_ }} &middot;
         <router-link :to="`/post/${post.id}`" :class="$style.Clickable"
           >{{ comments_ }}&nbsp;comments</router-link
         >
       </div>
     </div>
-
-    <template v-slot:right>
-      <a
-        :class="$style.LinkIcon"
-        :href="post.content.url"
-        target="blank"
-        v-if="post.content.type == 'url'"
-      >
-        <ElementIcon name="link" />
-      </a>
-    </template>
   </HorizontalLayout>
 </template>
 
@@ -119,6 +117,15 @@ export default {
       }
 
       return this.post.personalization.liked;
+    },
+
+    displayUrl_() {
+      if (!this.post || this.post.content.type != 'url') {
+        return null;
+      }
+
+      const url = new URL(this.post.content.url);
+      return url.hostname;
     },
   },
 
@@ -216,9 +223,8 @@ export default {
   }
 }
 
-.LinkIcon {
-  @include fonts-collapsed-post-likes;
-
-  color: #828282;
+.UrlOutlink {
+  color: #4799eb !important;
+  text-decoration: none;
 }
 </style>
