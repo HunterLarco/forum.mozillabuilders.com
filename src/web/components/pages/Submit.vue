@@ -132,6 +132,8 @@ import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 
+import FeedStore from '@/src/web/stores/Feed';
+
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
@@ -190,9 +192,10 @@ export default {
 
       this.loading_ = true;
       apiFetch('aurora/posts/create', request)
-        .then(({ id }) => {
+        .then(({ post }) => {
+          FeedStore.commit('prependPost', { post });
           this.error_ = null;
-          this.$router.push(`/post/${id}`);
+          this.$router.push(`/post/${post.id}`);
         })
         .catch((error) => {
           this.error_ = error.message;

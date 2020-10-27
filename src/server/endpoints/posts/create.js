@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import ApiPostSchema from '@/src/server/types/api/Post';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
@@ -36,7 +37,7 @@ const RequestSchema = Joi.alternatives().conditional('.type', {
 });
 
 const ResponseSchema = Joi.object({
-  id: Joi.string().required(),
+  post: ApiPostSchema.required(),
 });
 
 async function handler(environment, request, headers) {
@@ -44,13 +45,17 @@ async function handler(environment, request, headers) {
     required: true,
   });
 
-  const { id } = await PostTable.create(
+  const { id, post } = await PostTable.create(
     environment,
     null,
     postHelpers.create(request, accountId)
   );
 
-  return { id };
+  return {
+    post: await ApiPostSchema.fromFirestorePost(environment, id, post, {
+      accountId,
+    }),
+  };
 }
 
 export default JsonEndpoint.factory(handler, {

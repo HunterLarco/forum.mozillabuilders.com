@@ -4,6 +4,8 @@ import Vue from 'vue';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
+import FeedStore from '@/src/web/stores/Feed';
+
 export default createStore('CurrentUserStore', {
   state: {
     authToken: Cookie.get('x-unfck-auth'),
@@ -37,6 +39,10 @@ export default createStore('CurrentUserStore', {
         Cookie.remove('x-unfck-auth');
         Vue.set(state, 'authToken', null);
       }
+
+      // Whenever we change the current user, the feed (which is personalized)
+      // must be reset.
+      FeedStore.commit('reset');
     },
   },
 });
