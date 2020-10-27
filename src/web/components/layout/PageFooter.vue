@@ -2,11 +2,9 @@
   <div :class="$style.Host">
     <Banner
       >Let's
-      <a href="https://www.mozilla.org/en-US/firefox/unfck/" target="blank"
-        >#unfck</a
-      >
-      the internet, together!
-      <router-link to="/submit">Tell us how</router-link>.</Banner
+      <a href="https://builders.mozilla.community/" target="blank"
+        >fix the internet</a
+      >, together! <router-link to="/submit">Tell us how</router-link>.</Banner
     >
 
     <PageRibbon :class="$style.CenteredContent">

@@ -21,26 +21,26 @@
     <PageRibbon>
       <div :class="$style.Posts">
         <template v-if="!posts_.length">
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
-          <SkeletonCollapsedPost />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
+          <CollapsedPostSkeleton />
         </template>
 
         <CollapsedPost
@@ -66,13 +66,13 @@
 </template>
 
 <script>
-import CollapsedPost from '@/src/web/components/layout/CollapsedPost';
+import CollapsedPost from '@/src/web/components/features/CollapsedPost';
+import CollapsedPostSkeleton from '@/src/web/components/features/CollapsedPostSkeleton';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
-import SkeletonCollapsedPost from '@/src/web/components/skeleton/CollapsedPost';
 
 import FeedStore from '@/src/web/stores/Feed';
 
@@ -84,7 +84,7 @@ export default {
     PageFooter,
     PageHeader,
     PageRibbon,
-    SkeletonCollapsedPost,
+    CollapsedPostSkeleton,
   },
 
   data() {
