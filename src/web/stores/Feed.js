@@ -61,6 +61,13 @@ export default createStore('FeedStore', {
       Vue.set(feed.cursor, 'next', cursor.next || null);
     },
 
+    prependPost(state, { post }) {
+      if (state.feeds.new.posts.length) {
+        state.feeds.new.posts.unshift(post);
+        Vue.set(state.posts, post.id, post);
+      }
+    },
+
     reset(state) {
       Vue.set(state, 'posts', {});
       Vue.set(state.feeds.hot, 'posts', []);
