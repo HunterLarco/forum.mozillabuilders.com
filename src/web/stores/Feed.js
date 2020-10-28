@@ -45,6 +45,12 @@ export default createStore('FeedStore', {
       commit('extendFeed', { feedName, posts, cursor });
     },
 
+    async create({ commit }, request) {
+      const { post } = await apiFetch('aurora/posts/create', request);
+      commit('prependPost', post);
+      return post.id;
+    },
+
     async likePost({ commit }, id) {
       commit('likePost', id);
 
@@ -79,6 +85,7 @@ export default createStore('FeedStore', {
         content,
       });
       commit('prependComment', { postId, commentId, comment });
+      return comment.id;
     },
   },
 
@@ -98,7 +105,7 @@ export default createStore('FeedStore', {
       feed.cursor.next = cursor.next || null;
     },
 
-    prependPost(state, { post }) {
+    prependPost(state, post) {
       if (state.feeds.new.ids.length) {
         Vue.set(state.posts, post.id, post);
         state.feeds.new.ids.unshift(post.id);

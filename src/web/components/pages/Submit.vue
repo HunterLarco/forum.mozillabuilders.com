@@ -105,8 +105,6 @@ import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 
 import FeedStore from '@/src/web/stores/Feed';
 
-import apiFetch from '@/src/web/helpers/net/apiFetch';
-
 export default {
   components: {
     ElementInput,
@@ -151,11 +149,10 @@ export default {
       }
 
       this.loading_ = true;
-      apiFetch('aurora/posts/create', request)
-        .then(({ post }) => {
-          FeedStore.commit('prependPost', { post });
+      FeedStore.dispatch('create', request)
+        .then((postId) => {
           this.error_ = null;
-          this.$router.push(`/post/${post.id}`);
+          this.$router.push(`/post/${postId}`);
         })
         .catch((error) => {
           this.error_ = error.message;
