@@ -39,9 +39,10 @@ import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
-import apiFetch from '@/src/web/helpers/net/apiFetch';
-
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
+import FeedStore from '@/src/web/stores/Feed';
+
+import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: { AttributedText, ElementIcon, HorizontalLayout },
@@ -112,27 +113,13 @@ export default {
 
       this.likeLoading_ = true;
       if (this.alreadyLiked_) {
-        this.post.personalization.liked = false;
-        this.post.stats.likes -= 1;
-        apiFetch('aurora/posts/unlike', { id: this.post.id })
-          .catch(() => {
-            this.post.personalization.liked = true;
-            this.post.stats.likes += 1;
-          })
-          .finally(() => {
-            this.likeLoading_ = false;
-          });
+        FeedStore.dispatch('unlikePost', this.post.id).finally(() => {
+          this.likeLoading_ = false;
+        });
       } else {
-        this.post.personalization.liked = true;
-        this.post.stats.likes += 1;
-        apiFetch('aurora/posts/like', { id: this.post.id })
-          .catch(() => {
-            this.post.personalization.liked = false;
-            this.post.stats.likes -= 1;
-          })
-          .finally(() => {
-            this.likeLoading_ = false;
-          });
+        FeedStore.dispatch('likePost', this.post.id).finally(() => {
+          this.likeLoading_ = false;
+        });
       }
     },
   },
