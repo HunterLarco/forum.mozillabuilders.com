@@ -87,6 +87,28 @@ export default createStore('FeedStore', {
       commit('prependComment', { postId, commentId, comment });
       return comment.id;
     },
+
+    async likeComment({ commit }, { postId, commentId }) {
+      commit('likeComment', { postId, commentId });
+
+      try {
+        await apiFetch('aurora/comments/like', { id: commentId });
+      } catch (error) {
+        commit('unlikeComment', { postId, commentId });
+        throw error;
+      }
+    },
+
+    async unlikeComment({ commit }, { postId, commentId }) {
+      commit('unlikeComment', { postId, commentId });
+
+      try {
+        await apiFetch('aurora/comments/unlike', { id: commentId });
+      } catch (error) {
+        commit('likeComment', { postId, commentId });
+        throw error;
+      }
+    },
   },
 
   mutations: {
@@ -152,6 +174,40 @@ export default createStore('FeedStore', {
 
     setPost(state, post) {
       Vue.set(state.posts, post.id, post);
+    },
+
+    likeComment(state, { postId, commentId }) {
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, commentId);
+      if (!comment) {
+        return;
+      }
+
+      comment.stats.likes += 1;
+      if (comment.personalization) {
+        comment.personalization.liked = true;
+      }
+    },
+
+    unlikeComment(state, { postId, commentId }) {
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, commentId);
+      if (!comment) {
+        return;
+      }
+
+      comment.stats.likes -= 1;
+      if (comment.personalization) {
+        comment.personalization.liked = false;
+      }
     },
 
     reset(state) {

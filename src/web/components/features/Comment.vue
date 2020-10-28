@@ -43,8 +43,7 @@ import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
-
-import apiFetch from '@/src/web/helpers/net/apiFetch';
+import FeedStore from '@/src/web/stores/Feed';
 
 export default {
   components: {
@@ -71,6 +70,7 @@ export default {
   data() {
     return {
       showReplyForm_: false,
+      likeLoading_: false,
     };
   },
 
@@ -118,15 +118,24 @@ export default {
         });
       }
 
+      if (this.likeLoading_) {
+        return;
+      }
+
+      this.likeLoading_ = true;
       if (this.comment.personalization.liked) {
-        apiFetch('aurora/comments/unlike', { id: this.comment.id }).then(() => {
-          this.comment.personalization.liked = false;
-          this.comment.stats.likes -= 1;
+        FeedStore.dispatch('unlikeComment', {
+          postId: this.post.id,
+          commentId: this.comment.id,
+        }).finally(() => {
+          this.likeLoading_ = false;
         });
       } else {
-        apiFetch('aurora/comments/like', { id: this.comment.id }).then(() => {
-          this.comment.personalization.liked = true;
-          this.comment.stats.likes += 1;
+        FeedStore.dispatch('likeComment', {
+          postId: this.post.id,
+          commentId: this.comment.id,
+        }).finally(() => {
+          this.likeLoading_ = false;
         });
       }
     },
