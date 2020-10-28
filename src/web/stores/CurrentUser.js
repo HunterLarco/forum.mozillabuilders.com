@@ -28,6 +28,10 @@ export default createStore('CurrentUserStore', {
       });
       commit('setAuthToken', authToken);
     },
+
+    logout({ commit }) {
+      commit('setAuthToken', null);
+    },
   },
 
   mutations: {

@@ -60,6 +60,15 @@ const router = new VueRouter({
     },
 
     {
+      path: '/logout',
+      beforeEnter(to, from, next) {
+        CurrentUserStore.dispatch('logout').then(() => {
+          next('/');
+        });
+      },
+    },
+
+    {
       path: '*',
       redirect: '/hot',
     },
