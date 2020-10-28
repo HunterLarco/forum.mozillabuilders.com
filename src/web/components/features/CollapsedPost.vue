@@ -58,6 +58,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      likeLoading_: false,
+    };
+  },
+
   computed: {
     title_() {
       if (!this.post) {
@@ -128,18 +134,36 @@ export default {
           path: '/signup',
           query: { info: 'You must be logged in to like posts.' },
         });
+        return;
       }
 
+      if (this.likeLoading_) {
+        return;
+      }
+
+      this.likeLoading_ = true;
       if (this.alreadyLiked_) {
-        apiFetch('aurora/posts/unlike', { id: this.post.id }).then(() => {
-          this.post.personalization.liked = false;
-          this.post.stats.likes -= 1;
-        });
+        this.post.personalization.liked = false;
+        this.post.stats.likes -= 1;
+        apiFetch('aurora/posts/unlike', { id: this.post.id })
+          .catch(() => {
+            this.post.personalization.liked = true;
+            this.post.stats.likes += 1;
+          })
+          .finally(() => {
+            this.likeLoading_ = false;
+          });
       } else {
-        apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
-          this.post.personalization.liked = true;
-          this.post.stats.likes += 1;
-        });
+        this.post.personalization.liked = true;
+        this.post.stats.likes += 1;
+        apiFetch('aurora/posts/like', { id: this.post.id })
+          .catch(() => {
+            this.post.personalization.liked = false;
+            this.post.stats.likes -= 1;
+          })
+          .finally(() => {
+            this.likeLoading_ = false;
+          });
       }
     },
   },
