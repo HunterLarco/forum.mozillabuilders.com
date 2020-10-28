@@ -13,6 +13,12 @@
             <span v-else>Post</span>
           </router-link>
         </template>
+
+        <template v-slot:icons>
+          <router-link to="/account">
+            <Avatar />
+          </router-link>
+        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -95,6 +101,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -107,6 +114,7 @@ import FeedStore from '@/src/web/stores/Feed';
 
 export default {
   components: {
+    Avatar,
     ElementInput,
     HorizontalLayout,
     PageFooter,

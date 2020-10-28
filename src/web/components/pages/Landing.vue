@@ -89,12 +89,12 @@ export default {
   components: {
     Avatar,
     CollapsedPost,
+    CollapsedPostSkeleton,
     ElementIcon,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
     PageRibbon,
-    CollapsedPostSkeleton,
   },
 
   data() {
