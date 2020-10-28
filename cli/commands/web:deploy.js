@@ -49,7 +49,7 @@ module.exports = {
 
     try {
       await firebase.deploy({
-        project: 'unfck-forum',
+        project: 'mozilla-builders-forum',
         force: true,
         cwd: workspace.resolve('build/production/web'),
         token: args['firebase-token'],
