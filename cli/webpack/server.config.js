@@ -55,7 +55,7 @@ module.exports = (env, flags) =>
     plugins: [
       new GeneratePackageJsonPlugin(
         {
-          name: 'unfck-forum-server',
+          name: 'mozilla-builders-forum-server',
           scripts: {
             start: 'node server.bundle.js',
           },

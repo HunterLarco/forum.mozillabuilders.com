@@ -1,6 +1,6 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
-const PARENT = 'projects/moz-unfck-forum';
+const PARENT = 'projects/mozilla-builders-forum';
 const secretService = new SecretManagerServiceClient();
 
 function fullyQualifiedName(shortName) {
