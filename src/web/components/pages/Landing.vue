@@ -1,65 +1,67 @@
 <template>
   <div :class="$style.Host">
-    <PageHeader>
-      <template v-slot:nav>
-        <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
-          >Hot</router-link
-        >
-        <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
-          >New</router-link
-        >
-      </template>
-
-      <template v-slot:buttons>
-        <router-link to="/submit">
-          <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-          <span v-else>Post</span>
-        </router-link>
-      </template>
-    </PageHeader>
-
-    <PageRibbon>
-      <div :class="$style.Posts">
-        <template v-if="!posts_.length">
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
-          <CollapsedPostSkeleton />
+    <div style="min-height: 80%;">
+      <PageHeader>
+        <template v-slot:nav>
+          <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
+            >Hot</router-link
+          >
+          <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
+            >New</router-link
+          >
         </template>
 
-        <CollapsedPost
-          :class="$style.Post"
-          v-for="post in posts_"
-          :key="post.id"
-          :post="post"
-        />
+        <template v-slot:buttons>
+          <router-link to="/submit">
+            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+            <span v-else>Post</span>
+          </router-link>
+        </template>
+      </PageHeader>
 
-        <div
-          :class="$style.NextPageButton"
-          v-if="hasNextPage_ && !loading_"
-          @click="loadNextPage_"
-        >
-          Next Page
+      <PageRibbon>
+        <div :class="$style.Posts">
+          <template v-if="!posts_.length">
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+            <CollapsedPostSkeleton />
+          </template>
+
+          <CollapsedPost
+            :class="$style.Post"
+            v-for="post in posts_"
+            :key="post.id"
+            :post="post"
+          />
+
+          <div
+            :class="$style.NextPageButton"
+            v-if="hasNextPage_ && !loading_"
+            @click="loadNextPage_"
+          >
+            Next Page
+          </div>
+          <IndeterminateProgressBar v-if="posts_.length && loading_" />
         </div>
-        <IndeterminateProgressBar v-if="posts_.length && loading_" />
-      </div>
-    </PageRibbon>
+      </PageRibbon>
+    </div>
 
     <PageFooter />
   </div>

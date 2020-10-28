@@ -20,9 +20,9 @@
         >{{ title_ }}</router-link
       >
       <div :class="$style.Metadata">
-        <template v-if="post.content.url">
+        <template v-if="post && post.content.link">
           <a
-            :href="post.content.url"
+            :href="post.content.link"
             target="blank"
             :class="[$style.Clickable, $style.UrlOutlink]"
             ><ElementIcon name="link" />{{ displayUrl_ }}</a
@@ -64,15 +64,7 @@ export default {
         return null;
       }
 
-      if (this.post.content.type == 'question') {
-        return this.post.content.question;
-      } else if (this.post.content.type == 'url') {
-        return this.post.content.summary;
-      } else if (this.post.content.type == 'opinion') {
-        return this.post.content.summary;
-      }
-
-      throw new Error(`Unknown post type: ${this.post.content.type}`);
+      return this.post.title;
     },
 
     author_() {
@@ -120,11 +112,11 @@ export default {
     },
 
     displayUrl_() {
-      if (!this.post || this.post.content.type != 'url') {
+      if (!this.post || !this.post.content.link) {
         return null;
       }
 
-      const url = new URL(this.post.content.url);
+      const url = new URL(this.post.content.link);
       return url.hostname;
     },
   },
@@ -225,6 +217,7 @@ export default {
 
 .UrlOutlink {
   color: #4799eb !important;
+  cursor: pointer;
   text-decoration: none;
 }
 </style>

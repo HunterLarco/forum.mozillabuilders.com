@@ -11,40 +11,17 @@ import * as LikeTable from '@/src/server/firestore/Like';
 
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
-const Content = Joi.alternatives().conditional('.type', {
-  switch: [
-    {
-      is: 'question',
-      then: Joi.object({
-        type: 'question',
-        question: Joi.string().required(),
-        details: AttributedText.required(),
-      }),
-    },
-    {
-      is: 'url',
-      then: Joi.object({
-        type: 'url',
-        summary: Joi.string().required(),
-        url: Joi.string().uri().required(),
-      }),
-    },
-    {
-      is: 'opinion',
-      then: Joi.object({
-        type: 'opinion',
-        summary: Joi.string().required(),
-        details: AttributedText.required(),
-      }),
-    },
-  ],
-});
-
 const Schema = Joi.object({
   id: Joi.string().required(),
 
   author: PublicAccount.required(),
-  content: Content.required(),
+
+  title: Joi.string(),
+  content: Joi.object({
+    text: AttributedText,
+    link: Joi.string(),
+  }).xor('link', 'text'),
+
   comments: Joi.array().items(Comment),
 
   stats: Joi.object({
@@ -74,6 +51,9 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
 
     author: PublicAccount.fromFirestoreAccount(post.author, author),
 
+    title: post.title,
+    content: {},
+
     stats: {
       // We add one because each user always likes their own posts by default.
       likes:
@@ -102,26 +82,14 @@ Schema.fromFirestorePost = async (environment, id, post, options) => {
     };
   }
 
-  if (post.content.type == 'question') {
-    apiPost.content = {
-      type: 'question',
-      question: post.content.question,
-      details: AttributedText.fromText(post.content.details),
-    };
-  } else if (post.content.type == 'url') {
-    apiPost.content = {
-      type: 'url',
-      summary: post.content.summary,
-      url: post.content.url,
-    };
-  } else if (post.content.type == 'opinion') {
-    apiPost.content = {
-      type: 'opinion',
-      summary: post.content.summary,
-      details: AttributedText.fromText(post.content.details),
-    };
+  if (post.content.link) {
+    apiPost.content.link = post.content.link;
+  } else if (post.content.text) {
+    apiPost.content.text = AttributedText.fromText(post.content.text);
   } else {
-    throw new Error(`Unknown post content type ${post.content.type}`);
+    throw new Error(
+      `Unknown post content format ${JSON.stringify(post.content)}`
+    );
   }
 
   if (includeComments) {

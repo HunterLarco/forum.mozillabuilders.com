@@ -19,85 +19,56 @@
         <div :class="$style.QuestionTypes">
           <TextCheckbox
             :class="$style.QuestionType"
-            :selected="questionType_ == 'opinion'"
-            @click="questionType_ = 'opinion'"
-            text="Post an opinion"
+            :selected="questionType_ == 'text'"
+            @click="questionType_ = 'text'"
+            text="Post text"
             :disabled="loading_"
           />
 
           <TextCheckbox
             :class="$style.QuestionType"
-            :selected="questionType_ == 'question'"
-            @click="questionType_ = 'question'"
-            text="Ask a question"
-            :disabled="loading_"
-          />
-
-          <TextCheckbox
-            :class="$style.QuestionType"
-            :selected="questionType_ == 'url'"
-            @click="questionType_ = 'url'"
+            :selected="questionType_ == 'link'"
+            @click="questionType_ = 'link'"
             text="Share a URL"
             :disabled="loading_"
           />
         </div>
 
-        <template v-if="questionType_ == 'opinion'">
-          <ElementInput
-            placeholder="What's the 80/20 of what you're thinking about?"
-            v-model="form_.opinion.summary"
-            :disabled="loading_"
-          >
-            <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Summary</span>
-            </template>
-          </ElementInput>
-          <div :class="$style.Spacer" />
-          <ElementInput
-            :class="$style.Textarea"
-            placeholder="Tell us more about it..."
-            type="textarea"
-            :disabled="loading_"
-            v-model="form_.opinion.details"
-            :autosize="{ minRows: 2 }"
-          />
-        </template>
-
-        <template v-if="questionType_ == 'question'">
+        <template v-if="questionType_ == 'text'">
           <ElementInput
             placeholder="What's on your mind?"
-            v-model="form_.question.question"
+            v-model="form_.text.title"
             :disabled="loading_"
           >
             <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Question</span>
+              <span :class="$style.InputPrepend">Title</span>
             </template>
           </ElementInput>
           <div :class="$style.Spacer" />
           <ElementInput
             :class="$style.Textarea"
             placeholder="Tell us more about it..."
-            :disabled="loading_"
             type="textarea"
-            v-model="form_.question.details"
+            :disabled="loading_"
+            v-model="form_.text.text"
             :autosize="{ minRows: 2 }"
           />
         </template>
 
-        <template v-if="questionType_ == 'url'">
+        <template v-if="questionType_ == 'link'">
           <ElementInput
             placeholder="What is this URL about?"
-            v-model="form_.url.summary"
+            v-model="form_.link.title"
             :disabled="loading_"
           >
             <template v-slot:prepend>
-              <span :class="$style.InputPrepend">Summary</span>
+              <span :class="$style.InputPrepend">Title</span>
             </template>
           </ElementInput>
           <div :class="$style.Spacer" />
           <ElementInput
             placeholder="https://..."
-            v-model="form_.url.url"
+            v-model="form_.link.link"
             :disabled="loading_"
           >
             <template v-slot:prepend>
@@ -149,22 +120,17 @@ export default {
 
   data() {
     return {
-      questionType_: 'opinion',
+      questionType_: 'text',
 
       form_: {
-        question: {
-          question: '',
-          details: '',
+        text: {
+          title: '',
+          text: '',
         },
 
-        url: {
-          summary: '',
-          url: '',
-        },
-
-        opinion: {
-          summary: '',
-          details: '',
+        link: {
+          title: '',
+          link: '',
         },
       },
 
@@ -176,18 +142,12 @@ export default {
   methods: {
     submit_() {
       const request = {};
-      if (this.questionType_ == 'question') {
-        request.type = 'question';
-        request.question = this.form_.question.question;
-        request.details = this.form_.question.details;
-      } else if (this.questionType_ == 'url') {
-        request.type = 'url';
-        request.summary = this.form_.url.summary;
-        request.url = this.form_.url.url;
-      } else if (this.questionType_ == 'opinion') {
-        request.type = 'opinion';
-        request.summary = this.form_.opinion.summary;
-        request.details = this.form_.opinion.details;
+      if (this.questionType_ == 'text') {
+        request.title = this.form_.text.title;
+        request.content = { text: this.form_.text.text };
+      } else if (this.questionType_ == 'link') {
+        request.title = this.form_.link.title;
+        request.content = { link: this.form_.link.link };
       }
 
       this.loading_ = true;
