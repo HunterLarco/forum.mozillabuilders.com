@@ -67,32 +67,23 @@ export default {
   data() {
     return {
       loading_: false,
-      error_: null,
-      post_: null,
     };
+  },
+
+  computed: {
+    post_() {
+      return FeedStore.state.posts[this.$route.params.id] || null;
+    },
   },
 
   watch: {
     'route$.params.id': {
       immediate: true,
       handler() {
-        const feedPost = FeedStore.state.posts[this.$route.params.id];
-        if (feedPost) {
-          this.post_ = feedPost;
-        }
-
         this.loading_ = true;
-        apiFetch('aurora/posts/get', { id: this.$route.params.id })
-          .then(({ post }) => {
-            this.post_ = post;
-            this.error_ = null;
-          })
-          .catch((error) => {
-            this.error_ = error.message;
-          })
-          .finally(() => {
-            this.loading_ = false;
-          });
+        FeedStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
+          this.loading_ = false;
+        });
       },
     },
   },

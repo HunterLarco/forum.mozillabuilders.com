@@ -98,7 +98,9 @@ export default {
   computed: {
     posts_() {
       const index = this.$route.path.slice(1);
-      return FeedStore.state.feeds[index].posts;
+      return FeedStore.state.feeds[index].ids.map(
+        (id) => FeedStore.state.posts[id]
+      );
     },
 
     hasNextPage_() {
@@ -123,7 +125,7 @@ export default {
       immediate: true,
       handler() {
         const index = this.$route.path.slice(1);
-        if (!FeedStore.state.feeds[index].posts.length) {
+        if (!FeedStore.state.feeds[index].ids.length) {
           this.loadNextPage_();
         }
       },

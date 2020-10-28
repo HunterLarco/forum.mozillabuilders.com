@@ -39,9 +39,10 @@ import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
-import apiFetch from '@/src/web/helpers/net/apiFetch';
-
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
+import FeedStore from '@/src/web/stores/Feed';
+
+import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: { AttributedText, ElementIcon, HorizontalLayout },
@@ -51,6 +52,12 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      likeLoading_: false,
+    };
   },
 
   computed: {
@@ -100,15 +107,18 @@ export default {
         });
       }
 
+      if (this.likeLoading_) {
+        return;
+      }
+
+      this.likeLoading_ = true;
       if (this.alreadyLiked_) {
-        apiFetch('aurora/posts/unlike', { id: this.post.id }).then(() => {
-          this.post.personalization.liked = false;
-          this.post.stats.likes -= 1;
+        FeedStore.dispatch('unlikePost', this.post.id).finally(() => {
+          this.likeLoading_ = false;
         });
       } else {
-        apiFetch('aurora/posts/like', { id: this.post.id }).then(() => {
-          this.post.personalization.liked = true;
-          this.post.stats.likes += 1;
+        FeedStore.dispatch('likePost', this.post.id).finally(() => {
+          this.likeLoading_ = false;
         });
       }
     },
