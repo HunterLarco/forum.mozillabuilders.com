@@ -17,6 +17,12 @@
             <span v-else>Post</span>
           </router-link>
         </template>
+
+        <template v-slot:icons>
+          <router-link to="/account">
+            <Avatar />
+          </router-link>
+        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -68,6 +74,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import CollapsedPostSkeleton from '@/src/web/components/features/CollapsedPostSkeleton';
 import ElementIcon from '@/vendor/element-ui/Icon';
@@ -80,6 +87,7 @@ import FeedStore from '@/src/web/stores/Feed';
 
 export default {
   components: {
+    Avatar,
     CollapsedPost,
     ElementIcon,
     IndeterminateProgressBar,
