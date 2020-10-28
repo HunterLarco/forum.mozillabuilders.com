@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "unfck-forum",
+    "site": "mozilla-builders-forum",
     "public": "./",
     "ignore": ["firebase.json"],
     "rewrites": [

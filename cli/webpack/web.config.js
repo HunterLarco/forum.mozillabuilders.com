@@ -28,7 +28,7 @@ module.exports = (env, flags) =>
           {
             name: 'description',
             content:
-              "We love it, we need it, and we can all feel the ways it’s fcked. Together we can unfck it. Let's talk about how.",
+              'Help Mozilla build a new generation of startups, products, services, and projects that deliver on the full promise of the internet.',
           },
           {
             name: 'viewport',

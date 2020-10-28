@@ -6,7 +6,7 @@ export default async function apiFetch(path, body) {
     body: JSON.stringify(body || {}),
     headers: {
       'Content-Type': 'application/json',
-      'x-unfck-auth': CurrentUserStore.state.authToken || undefined,
+      'x-mozilla-builders-auth': CurrentUserStore.state.authToken || undefined,
     },
   }).then(async (response) => {
     let json;

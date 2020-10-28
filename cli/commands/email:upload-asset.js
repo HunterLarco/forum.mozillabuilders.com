@@ -44,12 +44,12 @@ module.exports = {
     const destination = checksum + path.extname(absolutePath);
     await cloudStorage.uploadFileToBucket(
       path.resolve(process.cwd(), file),
-      'moz-unfck-forum-email-assets',
+      'mozilla-builders-forum-email-assets',
       { destination, verbose: args.verbose }
     );
 
     console.log(
-      `Serving URL: https://storage.googleapis.com/moz-unfck-forum-email-assets/${destination}`
+      `Serving URL: https://storage.googleapis.com/mozilla-builders-forum-email-assets/${destination}`
     );
 
     return 'Asset uploaded.';

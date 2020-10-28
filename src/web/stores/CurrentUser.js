@@ -8,7 +8,7 @@ import FeedStore from '@/src/web/stores/Feed';
 
 export default createStore('CurrentUserStore', {
   state: {
-    authToken: Cookie.get('x-unfck-auth'),
+    authToken: Cookie.get('x-mozilla-builders-auth'),
   },
 
   actions: {
@@ -33,10 +33,10 @@ export default createStore('CurrentUserStore', {
   mutations: {
     setAuthToken(state, token) {
       if (token) {
-        Cookie.set('x-unfck-auth', token, { expires: 365 });
+        Cookie.set('x-mozilla-builders-auth', token, { expires: 365 });
         Vue.set(state, 'authToken', token);
       } else {
-        Cookie.remove('x-unfck-auth');
+        Cookie.remove('x-mozilla-builders-auth');
         Vue.set(state, 'authToken', null);
       }
 

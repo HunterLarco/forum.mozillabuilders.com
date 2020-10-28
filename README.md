@@ -55,7 +55,7 @@ Firestore server manually using the below config + invocation:
 
 ```sh
 PORT=4000 BROWSER=none firebase emulators:exec \
-    --project moz-unfck-forum
+    --project mozilla-builders-forum
     --only firestore \
     'npm start'
 ```

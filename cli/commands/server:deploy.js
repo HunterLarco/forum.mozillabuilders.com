@@ -48,13 +48,13 @@ module.exports = {
 
     if (!args['cron-only']) {
       await appengine.deployApplication({
-        project: 'moz-unfck-forum',
+        project: 'mozilla-builders-forum',
         directory: workspace.resolve('build/production/server'),
       });
     }
 
     return appengine.deployCronFile({
-      project: 'moz-unfck-forum',
+      project: 'mozilla-builders-forum',
       cron: workspace.resolve('build/production/server/cron.yaml'),
     });
   },
