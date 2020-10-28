@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import * as commentHelpers from '@/src/web/helpers/data/Comment';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
@@ -70,6 +71,15 @@ export default createStore('FeedStore', {
       const { post } = await apiFetch('aurora/posts/get', { id });
       commit('setPost', post);
     },
+
+    async comment({ commit }, { postId, commentId, content }) {
+      const { comment } = await apiFetch('aurora/comments/create', {
+        postId: commentId ? undefined : postId,
+        commentId,
+        content,
+      });
+      commit('prependComment', { postId, commentId, comment });
+    },
   },
 
   mutations: {
@@ -92,6 +102,20 @@ export default createStore('FeedStore', {
       if (state.feeds.new.ids.length) {
         Vue.set(state.posts, post.id, post);
         state.feeds.new.ids.unshift(post.id);
+      }
+    },
+
+    prependComment(state, { postId, commentId, comment }) {
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      post.stats.comments += 1;
+      if (!commentId) {
+        post.comments.unshift(comment);
+      } else {
+        commentHelpers.find(post, commentId).children.unshift(comment);
       }
     },
 

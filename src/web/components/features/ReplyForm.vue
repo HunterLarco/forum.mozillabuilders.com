@@ -21,6 +21,8 @@
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 
+import FeedStore from '@/src/web/stores/Feed';
+
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
@@ -52,19 +54,13 @@ export default {
 
     submit_() {
       this.loading_ = true;
-      apiFetch('aurora/comments/create', {
-        postId: this.comment ? undefined : this.post.id,
+      FeedStore.dispatch('comment', {
+        postId: this.post.id,
         commentId: this.comment ? this.comment.id : undefined,
         content: {
           text: this.content_,
         },
-      }).then(({ comment }) => {
-        ++this.post.stats.comments;
-        if (this.comment) {
-          this.comment.children.unshift(comment);
-        } else {
-          this.post.comments.unshift(comment);
-        }
+      }).then(() => {
         this.content_ = '';
         this.loading_ = false;
         this.$emit('submit');
