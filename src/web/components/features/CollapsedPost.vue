@@ -1,16 +1,12 @@
 <template>
   <HorizontalLayout :class="$style.Host" vertical-center>
     <template v-slot:left>
-      <div :class="$style.Likes" @click="like_" :liked="alreadyLiked_">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          :class="$style.LikeIcon"
-        >
-          <path d="M0 15.878 l12-11.878 12 11.878-4 4.122-8-8-8 8-4-4.122z" />
-        </svg>
-        <label>{{ likes_ }}</label>
-      </div>
+      <LikeButton
+        :class="$style.LikeButton"
+        :count="likes_"
+        :liked="alreadyLiked_"
+        @click.native="like_"
+      />
     </template>
 
     <div>
@@ -43,13 +39,14 @@ import friendlyTime from 'friendly-time';
 
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import LikeButton from '@/src/web/components/layout/LikeButton';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
-  components: { ElementIcon, HorizontalLayout },
+  components: { ElementIcon, HorizontalLayout, LikeButton },
 
   props: {
     post: {
@@ -95,7 +92,7 @@ export default {
 
     likes_() {
       if (!this.post) {
-        return null;
+        return 1;
       }
 
       return this.post.stats.likes;
@@ -182,36 +179,11 @@ export default {
   }
 }
 
-.Likes {
-  @include fonts-collapsed-post-likes;
+.LikeButton {
+  min-width: 50px;
 
-  color: #BBB;
-  cursor: pointer;
-  min-width: 42px;
-  padding: 0 4px;
-  text-align: center;
-  user-select: none;
-
-  &[liked] {
-    color: #E91E63;
-
-    .LikeIcon path {
-      fill: #E91E63;
-    }
-  }
-
-  & > * {
-    cursor: inherit;
-  }
-}
-
-.LikeIcon {
-  display: block;
-  margin: 0 auto;
-  width: 14px;
-
-  path {
-    fill: #BBB;
+  @include sizing-tablet {
+    min-width: 42px;
   }
 }
 
