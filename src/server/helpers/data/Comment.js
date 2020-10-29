@@ -43,3 +43,12 @@ export function count(comments) {
 export function postId(commentId) {
   return commentId.split('-')[0];
 }
+
+export function* iterate(comments) {
+  for (const comment of comments) {
+    yield comment;
+    for (const subcomment of iterate(comment.children)) {
+      yield subcomment;
+    }
+  }
+}

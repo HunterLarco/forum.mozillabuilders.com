@@ -7,6 +7,8 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as PostTable from '@/src/server/firestore/Post';
 import * as postHelpers from '@/src/server/helpers/data/Post';
 
+import Arena from '@/src/server/helpers/arena/Arena';
+
 const RequestSchema = Joi.object({
   title: Joi.string().required(),
   content: Joi.object({
@@ -20,20 +22,25 @@ const ResponseSchema = Joi.object({
 });
 
 async function handler(environment, request, headers) {
-  const { id: accountId } = await getCurrentUser(environment, headers, {
-    required: true,
-  });
+  const { id: actorId, account: actor } = await getCurrentUser(
+    environment,
+    headers,
+    { required: true }
+  );
 
   const { id, post } = await PostTable.create(
     environment,
     null,
-    postHelpers.create(request.title, request.content, accountId)
+    postHelpers.create(request.title, request.content, actorId)
   );
 
+  const arena = new Arena(environment);
+  arena.setActor(actorId, actor);
+  arena.addPost(id, post);
+  await arena.flush();
+
   return {
-    post: await ApiPostSchema.fromFirestorePost(environment, id, post, {
-      accountId,
-    }),
+    post: await ApiPostSchema.fromArena(arena, id),
   };
 }
 

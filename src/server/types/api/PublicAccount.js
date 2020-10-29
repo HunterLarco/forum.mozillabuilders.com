@@ -6,10 +6,19 @@ const Schema = Joi.object({
   dateCreated: Joi.date().required(),
 });
 
-Schema.fromFirestoreAccount = (id, account) => ({
-  id,
-  username: account.username,
-  dateCreated: account.dateCreated,
-});
+Schema.fromArena = (arena, id) => {
+  const account = arena.accounts[id];
+  if (!account) {
+    throw new Error(`Account ${id} not found in arena`);
+  } else if (!account.flushed) {
+    throw new Error(`Account ${id} not flushed in arena`);
+  }
+
+  return {
+    id: account.id,
+    username: account.firestore.username,
+    dateCreated: account.firestore.dateCreated,
+  };
+};
 
 export default Schema;

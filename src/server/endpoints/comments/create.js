@@ -7,6 +7,8 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as PostTable from '@/src/server/firestore/Post';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
+import Arena from '@/src/server/helpers/arena/Arena';
+
 const RequestSchema = Joi.object({
   postId: Joi.string(),
   commentId: Joi.string(),
@@ -21,7 +23,11 @@ const ResponseSchema = Joi.object({
 });
 
 async function handler(environment, request, headers) {
-  const { id: accountId } = await getCurrentUser(environment, headers);
+  const { id: actorId, account: actor } = await getCurrentUser(
+    environment,
+    headers,
+    { required: true }
+  );
 
   const postId = request.postId
     ? request.postId
@@ -43,7 +49,7 @@ async function handler(environment, request, headers) {
       const comment = commentHelpers.create(
         postId,
         request.content.text,
-        accountId
+        actorId
       );
 
       if (!commentId) {
@@ -66,10 +72,13 @@ async function handler(environment, request, headers) {
     }
   );
 
+  const arena = new Arena(environment);
+  arena.setActor(actorId, actor);
+  arena.addComment(comment);
+  await arena.flush();
+
   return {
-    comment: await ApiCommentSchema.fromFirestoreComment(environment, comment, {
-      accountId,
-    }),
+    comment: await ApiCommentSchema.fromArena(arena, comment.id),
   };
 }
 
