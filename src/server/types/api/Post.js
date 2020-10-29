@@ -39,12 +39,10 @@ const Schema = Joi.object({
 
 Schema.fromFirestorePost = async (environment, id, post, options) => {
   const { accountId = null, includeComments = false } = options || {};
-
-  const { account: author } = await AccountTable.get(
-    environment,
-    null,
-    post.author
-  );
+  const author =
+    options && options.author
+      ? options.author
+      : (await AccountTable.get(environment, null, post.author)).account;
 
   const apiPost = {
     id,
