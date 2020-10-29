@@ -16,6 +16,13 @@
         >{{ title_ }}</router-link
       >
       <div :class="$style.Metadata">
+        <ElementTooltip
+          placement="right"
+          v-if="post.personalization.shadowBanned"
+        >
+          <div slot="content">Your content is not visible to other users.</div>
+          <span :class="$style.Banned">Banned</span>
+        </ElementTooltip>
         <template v-if="post && post.content.link">
           <a
             :href="post.content.link"
@@ -38,6 +45,7 @@
 import friendlyTime from 'friendly-time';
 
 import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
 
@@ -47,7 +55,7 @@ import FeedStore from '@/src/web/stores/Feed';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { ElementIcon, HorizontalLayout, LikeButton },
+  components: { ElementIcon, ElementTooltip, HorizontalLayout, LikeButton },
 
   props: {
     post: {
@@ -196,6 +204,15 @@ export default {
   & a {
     color: inherit;
   }
+}
+
+.Banned {
+  background: #F44336;
+  border-radius: 5px;
+  color: #FFF;
+  display: inline-block;
+  padding: 0 4px;
+  user-select: none;
 }
 
 .UrlOutlink {

@@ -27,7 +27,16 @@
         }}</a>
       </div>
 
-      <div :class="$style.Metadata">Posted {{ author_ }} {{ age_ }}</div>
+      <div :class="$style.Metadata">
+        <ElementTooltip
+          placement="right"
+          v-if="post.personalization.shadowBanned"
+        >
+          <div slot="content">Your content is not visible to other users.</div>
+          <span :class="$style.Banned">Banned</span>
+        </ElementTooltip>
+        Posted {{ author_ }} {{ age_ }}
+      </div>
     </div>
   </HorizontalLayout>
 </template>
@@ -37,6 +46,7 @@ import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
@@ -45,7 +55,7 @@ import FeedStore from '@/src/web/stores/Feed';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { AttributedText, ElementIcon, HorizontalLayout },
+  components: { AttributedText, ElementIcon, ElementTooltip, HorizontalLayout },
 
   props: {
     post: {
@@ -200,6 +210,15 @@ export default {
   & a {
     color: inherit;
   }
+}
+
+.Banned {
+  background: #F44336;
+  border-radius: 5px;
+  color: #FFF;
+  display: inline-block;
+  padding: 0 4px;
+  user-select: none;
 }
 
 .LinkIcon {

@@ -26,6 +26,7 @@ const Schema = Joi.object({
   personalization: Joi.object({
     liked: Joi.boolean().required(),
     postedByYou: Joi.boolean().required(),
+    shadowBanned: Joi.boolean().required(),
   }),
 
   dateCreated: Joi.date().required(),
@@ -73,6 +74,7 @@ Schema.fromArena = (arena, id) => {
     personalization: {
       liked: post.liked,
       postedByYou: !!arena.actor && post.author.id == arena.actor.id,
+      shadowBanned: !!post.author.firestore.shadowBan,
     },
 
     dateCreated: post.firestore.dateCreated,
