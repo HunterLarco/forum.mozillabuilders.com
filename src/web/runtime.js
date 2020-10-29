@@ -1,10 +1,12 @@
 import 'intersection-observer';
 
 import Vue from 'vue';
+import VueAsyncComputed from 'vue-async-computed';
 import VueObserveVisibility from 'vue-observe-visibility';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
 
+Vue.use(VueAsyncComputed);
 Vue.use(VueObserveVisibility);
 Vue.use(VueRouter);
 Vue.use(Vuex);

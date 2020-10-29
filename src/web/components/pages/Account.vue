@@ -40,7 +40,9 @@
         </PageRibbon>
       </div>
 
-      <PageRibbon></PageRibbon>
+      <PageRibbon>
+        <CollapsedPost v-for="post in posts_" :key="post.id" :post="post" />
+      </PageRibbon>
     </div>
 
     <PageFooter />
@@ -51,6 +53,7 @@
 import friendlyTime from 'friendly-time';
 
 import Avatar from '@/src/web/components/layout/Avatar';
+import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
@@ -58,9 +61,12 @@ import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
+import apiFetch from '@/src/web/helpers/net/apiFetch';
+
 export default {
   components: {
     Avatar,
+    CollapsedPost,
     HorizontalLayout,
     PageFooter,
     PageHeader,
@@ -76,6 +82,25 @@ export default {
     age_() {
       const { account } = CurrentUserStore.state;
       return account ? friendlyTime(new Date(account.dateCreated)) : null;
+    },
+  },
+
+  asyncComputed: {
+    async posts_() {
+      const { account } = CurrentUserStore.state;
+
+      if (!account) {
+        return [];
+      }
+
+      const { posts } = await apiFetch('aurora/posts/query', {
+        index: 'new',
+        filters: {
+          author: account.id,
+        },
+      });
+
+      return posts;
     },
   },
 };
