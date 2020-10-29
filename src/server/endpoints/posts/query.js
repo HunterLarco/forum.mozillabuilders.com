@@ -5,7 +5,6 @@ import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
 import * as PostTable from '@/src/server/firestore/Post';
-import * as accountHelpers from '@/src/server/helpers/data/Account';
 
 import Arena from '@/src/server/helpers/arena/Arena';
 
