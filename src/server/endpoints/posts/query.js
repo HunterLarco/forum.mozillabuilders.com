@@ -106,7 +106,7 @@ async function handler(environment, request, headers) {
       renderedPosts.map(({ id, document }) =>
         ApiPostSchema.fromFirestorePost(environment, id, document, {
           accountId,
-          author: authors[document.author],
+          accountMap: authors,
         })
       )
     ),

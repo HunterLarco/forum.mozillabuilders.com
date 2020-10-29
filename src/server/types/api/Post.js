@@ -9,6 +9,7 @@ import * as AccountTable from '@/src/server/firestore/Account';
 import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 
+import * as accountHelpers from '@/src/server/helpers/data/Account';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 const Schema = Joi.object({
@@ -38,16 +39,22 @@ const Schema = Joi.object({
 });
 
 Schema.fromFirestorePost = async (environment, id, post, options) => {
-  const { accountId = null, includeComments = false } = options || {};
-  const author =
-    options && options.author
-      ? options.author
-      : (await AccountTable.get(environment, null, post.author)).account;
+  const { accountId = null, includeComments = false, accountMap = {} } =
+    options || {};
+
+  if (!accountMap[post.author]) {
+    await accountHelpers.populateAccountMap(environment, accountMap, [
+      post.author,
+    ]);
+  }
 
   const apiPost = {
     id,
 
-    author: PublicAccount.fromFirestoreAccount(post.author, author),
+    author: PublicAccount.fromFirestoreAccount(
+      post.author,
+      accountMap[post.author]
+    ),
 
     title: post.title,
     content: {},
