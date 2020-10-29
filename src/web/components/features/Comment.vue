@@ -9,7 +9,14 @@
       />
     </template>
 
-    <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
+    <div :class="$style.Meta">
+      <router-link
+        :to="`/user/${comment.author.id}`"
+        :class="$style.Clickable"
+        >{{ author_ }}</router-link
+      >
+      posted {{ age_ }}
+    </div>
     <AttributedText
       :class="$style.Content"
       :text="comment.content.text.text"
@@ -80,10 +87,10 @@ export default {
         this.comment.personalization &&
         this.comment.personalization.postedByYou
       ) {
-        return 'by you';
+        return 'you';
       }
 
-      return `by ${this.comment.author.username}`;
+      return this.comment.author.username;
     },
 
     age_() {
@@ -153,6 +160,16 @@ export default {
   @include fonts-collapsed-post-metadata;
 
   color: #828282;
+
+  & > a {
+    color: inherit;
+  }
+}
+
+.Clickable {
+  &:hover {
+    background: darken(#FFF, 7%);
+  }
 }
 
 .Content {

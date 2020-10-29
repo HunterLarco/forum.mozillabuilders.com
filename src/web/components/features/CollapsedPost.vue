@@ -25,7 +25,12 @@
           >
           &middot;
         </template>
-        {{ author_ }} posted {{ age_ }} &middot;
+        <router-link
+          :to="`/user/${post.author.id}`"
+          :class="$style.Clickable"
+          >{{ author_ }}</router-link
+        >
+        posted {{ age_ }} &middot;
         <router-link :to="`/post/${post.id}`" :class="$style.Clickable"
           >{{ comments_ }}&nbsp;comments</router-link
         >

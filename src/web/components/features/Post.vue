@@ -27,7 +27,14 @@
         }}</a>
       </div>
 
-      <div :class="$style.Metadata">Posted {{ author_ }} {{ age_ }}</div>
+      <div :class="$style.Metadata">
+        <router-link
+          :to="`/user/${post.author.id}`"
+          :class="$style.Clickable"
+          >{{ author_ }}</router-link
+        >
+        posted {{ age_ }}
+      </div>
     </div>
   </HorizontalLayout>
 </template>
@@ -67,10 +74,10 @@ export default {
       }
 
       if (this.post.personalization && this.post.personalization.postedByYou) {
-        return 'by you';
+        return 'you';
       }
 
-      return `by ${this.post.author.username}`;
+      return this.post.author.username;
     },
 
     age_() {
@@ -199,6 +206,12 @@ export default {
 
   & a {
     color: inherit;
+  }
+}
+
+.Clickable {
+  &:hover {
+    background: darken(#FFF, 7%);
   }
 }
 

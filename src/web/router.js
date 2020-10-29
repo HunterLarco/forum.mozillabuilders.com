@@ -21,6 +21,11 @@ const router = new VueRouter({
     },
 
     {
+      path: '/user/:id',
+      component: () => import('@/src/web/components/pages/User'),
+    },
+
+    {
       path: '/submit',
       component: () => import('@/src/web/components/pages/Submit'),
       meta: {
