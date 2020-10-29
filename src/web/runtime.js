@@ -17,3 +17,8 @@ if (process.fido.env == 'local') {
 
 const WindowSizeStore = require('@/src/web/stores/WindowSize').default;
 WindowSizeStore.dispatch('autoUpdateWidth');
+
+const CurrentUserStore = require('@/src/web/stores/CurrentUser').default;
+if (CurrentUserStore.state.authToken) {
+  CurrentUserStore.dispatch('getAccount');
+}

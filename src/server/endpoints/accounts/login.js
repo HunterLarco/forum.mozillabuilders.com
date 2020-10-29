@@ -1,12 +1,15 @@
 import Joi from 'joi';
 import normalizeEmail from 'normalize-email';
 
+import ApiPrivateAccountSchema from '@/src/server/types/api/PrivateAccount';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 
 import * as AccountIdentityTable from '@/src/server/firestore/AccountIdentity';
 import * as AccountTable from '@/src/server/firestore/Account';
 import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
 import FirestoreEmailSchema from '@/src/server/types/firestore/Email';
+
+import Arena from '@/src/server/helpers/arena/Arena';
 
 const RequestSchema = Joi.object({
   token: Joi.string(),
@@ -18,6 +21,7 @@ const RequestSchema = Joi.object({
 
 const ResponseSchema = Joi.object({
   token: Joi.string().required(),
+  account: ApiPrivateAccountSchema.required(),
 });
 
 async function signup(environment, { email, username }) {
@@ -44,13 +48,17 @@ async function signup(environment, { email, username }) {
     });
   }
 
-  const accountId = await environment.firestore.runTransaction(
+  const { id: accountId, account } = await environment.firestore.runTransaction(
     async (transaction) => {
-      const { id } = await AccountTable.create(environment, transaction, {
-        email,
-        username,
-        dateCreated: new Date(),
-      });
+      const { id, account } = await AccountTable.create(
+        environment,
+        transaction,
+        {
+          email,
+          username,
+          dateCreated: new Date(),
+        }
+      );
 
       await AccountIdentityTable.create(environment, transaction, {
         type: 'normalizedEmail',
@@ -66,11 +74,15 @@ async function signup(environment, { email, username }) {
         dateCreated: new Date(),
       });
 
-      return id;
+      return { id, account };
     }
   );
 
-  return await createAuthToken(environment, accountId);
+  return {
+    token: await createAuthToken(environment, accountId),
+    accountId,
+    account,
+  };
 }
 
 async function login(environment, accountId) {
@@ -84,7 +96,11 @@ async function login(environment, accountId) {
     });
   }
 
-  return await createAuthToken(environment, accountId);
+  return {
+    token: await createAuthToken(environment, accountId),
+    accountId,
+    account,
+  };
 }
 
 async function createAuthToken(environment, accountId) {
@@ -117,16 +133,40 @@ async function handler(environment, request) {
   }
 
   if (token.scopes.signup) {
-    const loginToken = await signup(environment, {
-      email: token.scopes.signup.email,
-      username: token.scopes.signup.username,
-    });
+    const { token: loginToken, accountId, account } = await signup(
+      environment,
+      {
+        email: token.scopes.signup.email,
+        username: token.scopes.signup.username,
+      }
+    );
     await AuthTokenTable.remove(environment, tokenId);
-    return { token: loginToken };
-  } else if (token.scopes.login) {
-    const loginToken = await login(environment, token.scopes.login.accountId);
+
+    const arena = new Arena(environment);
+    arena.addAccount(accountId, account);
+    await arena.flush();
+
+    return {
+      token: loginToken,
+      account: ApiPrivateAccountSchema.fromArena(arena, accountId),
+    };
+  }
+
+  if (token.scopes.login) {
+    const { token: loginToken, accountId, account } = await login(
+      environment,
+      token.scopes.login.accountId
+    );
     await AuthTokenTable.remove(environment, tokenId);
-    return { token: loginToken };
+
+    const arena = new Arena(environment);
+    arena.addAccount(accountId, account);
+    await arena.flush();
+
+    return {
+      token: loginToken,
+      account: ApiPrivateAccountSchema.fromArena(arena, accountId),
+    };
   }
 
   return Promise.reject({

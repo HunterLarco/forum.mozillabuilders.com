@@ -142,6 +142,7 @@ export default {
 }
 
 .Icons {
+  color: #FFF;
   margin-left: 10px;
 
   & > * {
@@ -150,6 +151,7 @@ export default {
   }
 
   & > a {
+    color: inherit;
     text-decoration: none;
   }
 }

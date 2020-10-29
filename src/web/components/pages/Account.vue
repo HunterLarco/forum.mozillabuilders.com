@@ -25,7 +25,22 @@
         </template>
       </PageHeader>
 
-      <PageRibbon> </PageRibbon>
+      <div :class="$style.Shadow">
+        <PageRibbon>
+          <HorizontalLayout vertical-center>
+            <template v-slot:left>
+              <Avatar :size="100" />
+            </template>
+
+            <div>
+              <div :class="$style.Username">@{{ username_ }}</div>
+              <div :class="$style.Age">Joined {{ age_ }}</div>
+            </div>
+          </HorizontalLayout>
+        </PageRibbon>
+      </div>
+
+      <PageRibbon></PageRibbon>
     </div>
 
     <PageFooter />
@@ -33,22 +48,41 @@
 </template>
 
 <script>
+import friendlyTime from 'friendly-time';
+
 import Avatar from '@/src/web/components/layout/Avatar';
+import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
 export default {
   components: {
     Avatar,
+    HorizontalLayout,
     PageFooter,
     PageHeader,
     PageRibbon,
+  },
+
+  computed: {
+    username_() {
+      const { account } = CurrentUserStore.state;
+      return account ? account.username : null;
+    },
+
+    age_() {
+      const { account } = CurrentUserStore.state;
+      return account ? friendlyTime(new Date(account.dateCreated)) : null;
+    },
   },
 };
 </script>
 
 <style module lang="sass">
+@import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
 
 .Host {
@@ -56,5 +90,19 @@ export default {
 
   overflow-x: hidden;
   overflow-y: scroll;
+}
+
+.Shadow {
+  box-shadow: 0 10px 20px rgba(#000, 0.1);
+}
+
+.Username {
+  @include fonts-body;
+
+  font-weight: 700;
+}
+
+.Age {
+  @include fonts-body;
 }
 </style>
