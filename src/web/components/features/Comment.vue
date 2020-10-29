@@ -9,7 +9,16 @@
       />
     </template>
 
-    <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
+    <div :class="$style.Meta">
+      <ElementTooltip
+        placement="right"
+        v-if="comment.personalization.shadowBanned"
+      >
+        <div slot="content">Your content is not visible to other users.</div>
+        <span :class="$style.Banned">Banned</span>
+      </ElementTooltip>
+      Posted {{ author_ }} {{ age_ }}
+    </div>
     <AttributedText
       :class="$style.Content"
       :text="comment.content.text.text"
@@ -38,6 +47,7 @@ import friendlyTime from 'friendly-time';
 import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/features/ReplyForm';
@@ -50,6 +60,7 @@ export default {
     AttributedText,
     ElementButton,
     ElementInput,
+    ElementTooltip,
     HorizontalLayout,
     LikeButton,
     ReplyForm,
@@ -153,6 +164,15 @@ export default {
   @include fonts-collapsed-post-metadata;
 
   color: #828282;
+}
+
+.Banned {
+  background: #F44336;
+  border-radius: 5px;
+  color: #FFF;
+  display: inline-block;
+  padding: 0 4px;
+  user-select: none;
 }
 
 .Content {
