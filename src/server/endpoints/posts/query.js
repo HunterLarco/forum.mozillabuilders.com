@@ -32,11 +32,9 @@ async function queryAndRemoveBannedUsers(arena, { index, cursor, limit }) {
 
   let safePosts = Object.values(arena.posts).filter((post) => !post.hidden);
   while (safePosts.length < limit) {
-    const appliedLimit = limit - safePosts.length;
-
     const { posts } = await queryMethod[index](arena.environment, {
       cursor: nextCursor,
-      limit: appliedLimit,
+      limit: limit - safePosts.length,
     });
 
     if (!posts.length) {
@@ -51,9 +49,10 @@ async function queryAndRemoveBannedUsers(arena, { index, cursor, limit }) {
     }
 
     await arena.flush();
-    safePosts = Object.values(arena.posts).filter((post) => !post.hidden);
 
-    if (posts.length < appliedLimit) {
+    const retrievedFullPage = posts.length == limit - safePosts.length;
+    safePosts = Object.values(arena.posts).filter((post) => !post.hidden);
+    if (!retrievedFullPage) {
       break;
     }
   }
@@ -80,12 +79,13 @@ const PAGE_SIZE = 20;
 async function handler(environment, request, headers) {
   const { id: actorId, account: actor } = await getCurrentUser(
     environment,
-    headers,
-    { required: true }
+    headers
   );
 
   const arena = new Arena(environment);
-  arena.setActor(actorId, actor);
+  if (actor) {
+    arena.setActor(actorId, actor);
+  }
 
   const { cursor } = await queryAndRemoveBannedUsers(arena, {
     index: request.index,

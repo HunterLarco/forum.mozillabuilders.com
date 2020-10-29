@@ -72,7 +72,7 @@ Schema.fromArena = (arena, id) => {
 
     personalization: {
       liked: post.liked,
-      postedByYou: post.author.id == arena.actor.id,
+      postedByYou: !!arena.actor && post.author.id == arena.actor.id,
     },
 
     dateCreated: post.firestore.dateCreated,

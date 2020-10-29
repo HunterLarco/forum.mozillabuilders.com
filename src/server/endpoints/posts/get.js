@@ -33,7 +33,9 @@ async function handler(environment, request, headers) {
   }
 
   const arena = new Arena(environment);
-  arena.setActor(actorId, actor);
+  if (actor) {
+    arena.setActor(actorId, actor);
+  }
   arena.addPost(request.id, post);
   await arena.flush();
 
