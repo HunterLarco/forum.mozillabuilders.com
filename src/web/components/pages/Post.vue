@@ -13,6 +13,12 @@
             <span v-else>Post</span>
           </router-link>
         </template>
+
+        <template v-slot:icons>
+          <router-link to="/account">
+            <Avatar />
+          </router-link>
+        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -41,6 +47,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import CommentThread from '@/src/web/components/features/CommentThread';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
@@ -55,6 +62,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
+    Avatar,
     CollapsedPost,
     CommentThread,
     IndeterminateProgressBar,
