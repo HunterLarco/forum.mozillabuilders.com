@@ -3,10 +3,6 @@ import Joi from 'joi';
 import AttributedText from '@/src/server/types/api/AttributedText';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
-import * as AccountTable from '@/src/server/firestore/Account';
-import * as CounterTable from '@/src/server/firestore/Counter';
-import * as LikeTable from '@/src/server/firestore/Like';
-
 const Schema = Joi.object({
   id: Joi.string().required(),
 
@@ -29,57 +25,37 @@ const Schema = Joi.object({
   dateCreated: Joi.date().required(),
 });
 
-Schema.fromFirestoreComment = async (environment, comment, options) => {
-  const { accountId = null } = options || {};
-
-  let personalization;
-  if (accountId) {
-    personalization = {
-      liked:
-        comment.author == accountId
-          ? true
-          : await LikeTable.exists(environment, null, {
-              commentId: comment.id,
-              accountId,
-            }),
-      postedByYou: comment.author == accountId,
-    };
+Schema.fromArena = (arena, id) => {
+  const comment = arena.comments[id];
+  if (!comment) {
+    throw new Error(`Comment ${id} not found in arena`);
+  } else if (!comment.flushed) {
+    throw new Error(`Comment ${id} not flushed in arena`);
   }
-
-  const { account: author } = await AccountTable.get(
-    environment,
-    null,
-    comment.author
-  );
 
   return {
     id: comment.id,
 
-    author: PublicAccount.fromFirestoreAccount(comment.author, author),
+    author: PublicAccount.fromArena(arena, comment.author.id),
+
     content: {
-      text: AttributedText.fromText(comment.content.text),
+      text: AttributedText.fromText(comment.firestore.content.text),
     },
 
-    children: await Promise.all(
-      comment.children.map((comment) =>
-        Schema.fromFirestoreComment(environment, comment, options)
-      )
-    ),
+    children: comment.firestore.children
+      .filter((comment) => !arena.comments[comment.id].hidden)
+      .map((comment) => Schema.fromArena(arena, comment.id)),
 
     stats: {
-      // We add one because each user always likes their own posts by default.
-      likes:
-        1 +
-        (await CounterTable.get(
-          environment,
-          null,
-          CounterTable.COUNTERS.commentLikes(comment.id)
-        )),
+      likes: comment.likes,
     },
 
-    personalization,
+    personalization: {
+      liked: comment.liked,
+      postedByYou: comment.author.id == arena.actor.id,
+    },
 
-    dateCreated: comment.dateCreated,
+    dateCreated: comment.firestore.dateCreated,
   };
 };
 

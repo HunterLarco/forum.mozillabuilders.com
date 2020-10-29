@@ -5,13 +5,6 @@ import AttributedText from '@/src/server/types/api/AttributedText';
 import Comment from '@/src/server/types/api/Comment';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
-import * as AccountTable from '@/src/server/firestore/Account';
-import * as CounterTable from '@/src/server/firestore/Counter';
-import * as LikeTable from '@/src/server/firestore/Like';
-
-import * as accountHelpers from '@/src/server/helpers/data/Account';
-import * as commentHelpers from '@/src/server/helpers/data/Comment';
-
 const Schema = Joi.object({
   id: Joi.string().required(),
 
@@ -38,75 +31,52 @@ const Schema = Joi.object({
   dateCreated: Joi.date().required(),
 });
 
-Schema.fromFirestorePost = async (environment, id, post, options) => {
-  const { accountId = null, includeComments = false, accountMap = {} } =
-    options || {};
-
-  if (!accountMap[post.author]) {
-    await accountHelpers.populateAccountMap(environment, accountMap, [
-      post.author,
-    ]);
+Schema.fromArena = (arena, id) => {
+  const post = arena.posts[id];
+  if (!post) {
+    throw new Error(`Post ${id} not found in arena`);
+  } else if (!post.flushed) {
+    throw new Error(`Post ${id} not flushed in arena`);
   }
 
-  const apiPost = {
-    id,
-
-    author: PublicAccount.fromFirestoreAccount(
-      post.author,
-      accountMap[post.author]
-    ),
-
-    title: post.title,
-    content: {},
-
-    stats: {
-      // We add one because each user always likes their own posts by default.
-      likes:
-        1 +
-        (await CounterTable.get(
-          environment,
-          null,
-          CounterTable.COUNTERS.likes(id)
-        )),
-      comments: commentHelpers.count(post.comments),
-    },
-
-    dateCreated: post.dateCreated,
-  };
-
-  if (accountId) {
-    apiPost.personalization = {
-      liked:
-        post.author == accountId
-          ? true
-          : await LikeTable.exists(environment, null, {
-              postId: id,
-              accountId,
-            }),
-      postedByYou: post.author == accountId,
-    };
-  }
-
-  if (post.content.link) {
-    apiPost.content.link = post.content.link;
-  } else if (post.content.text) {
-    apiPost.content.text = AttributedText.fromText(post.content.text);
+  const content = {};
+  if (post.firestore.content.link) {
+    content.link = post.firestore.content.link;
+  } else if (post.firestore.content.text) {
+    content.text = AttributedText.fromText(post.firestore.content.text);
   } else {
     throw new Error(
-      `Unknown post content format ${JSON.stringify(post.content)}`
+      `Unknown post content format ${JSON.stringify(post.firestore.content)}`
     );
   }
 
-  if (includeComments) {
-    apiPost.comments = await Promise.all(
-      post.comments.map((comment) =>
-        Comment.fromFirestoreComment(environment, comment, { accountId })
-      )
-    );
-    reorderComments(apiPost.comments);
-  }
+  const comments = post.firestore.comments
+    .filter((comment) => !arena.comments[comment.id].hidden)
+    .map((comment) => Comment.fromArena(arena, comment.id));
+  reorderComments(comments);
 
-  return apiPost;
+  return {
+    id: post.id,
+
+    author: PublicAccount.fromArena(arena, post.author.id),
+
+    title: post.firestore.title,
+    content,
+
+    comments,
+
+    stats: {
+      likes: post.likes,
+      comments: post.comments,
+    },
+
+    personalization: {
+      liked: post.liked,
+      postedByYou: post.author.id == arena.actor.id,
+    },
+
+    dateCreated: post.firestore.dateCreated,
+  };
 };
 
 function reorderComments(comments) {

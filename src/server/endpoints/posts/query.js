@@ -7,6 +7,8 @@ import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 import * as PostTable from '@/src/server/firestore/Post';
 import * as accountHelpers from '@/src/server/helpers/data/Account';
 
+import Arena from '@/src/server/helpers/arena/Arena';
+
 const RequestSchema = Joi.object({
   index: Joi.string().valid('new', 'hot').required(),
   cursor: Joi.string().allow(null),
@@ -20,25 +22,20 @@ const ResponseSchema = Joi.object({
   }),
 });
 
-async function queryAndRemoveBannedUsers(
-  environment,
-  { index, cursor, limit, actor }
-) {
+async function queryAndRemoveBannedUsers(arena, { index, cursor, limit }) {
   const queryMethod = {
     new: PostTable.queryByAge,
     hot: PostTable.queryByHotness,
   };
 
-  const bannedPosts = [];
-  const safePosts = [];
-  const authors = {};
-
+  const cursors = {};
   let nextCursor = cursor;
 
+  let safePosts = Object.values(arena.posts).filter((post) => !post.hidden);
   while (safePosts.length < limit) {
     const appliedLimit = limit - safePosts.length;
 
-    const { posts } = await queryMethod[index](environment, {
+    const { posts } = await queryMethod[index](arena.environment, {
       cursor: nextCursor,
       limit: appliedLimit,
     });
@@ -49,36 +46,32 @@ async function queryAndRemoveBannedUsers(
 
     nextCursor = posts[posts.length - 1].cursor.next;
 
-    await accountHelpers.populateAccountMap(
-      environment,
-      authors,
-      posts.map((post) => post.document.author)
-    );
-
     for (const post of posts) {
-      if (
-        authors[post.document.author].shadowBan &&
-        post.document.author != actor
-      ) {
-        bannedPosts.push(post);
-      } else {
-        safePosts.push(post);
-      }
+      cursors[post.id] = post.cursor;
+      arena.addPost(post.id, post.document);
     }
+
+    await arena.flush();
+    safePosts = Object.values(arena.posts).filter((post) => !post.hidden);
 
     if (posts.length < appliedLimit) {
       break;
     }
   }
 
+  if (!safePosts.length) {
+    return {
+      cursor: {
+        current: null,
+        next: null,
+      },
+    };
+  }
+
   return {
-    posts: safePosts,
-    authors,
     cursor: {
-      current: safePosts.length ? safePosts[0].cursor.current : null,
-      next: safePosts.length
-        ? safePosts[safePosts.length - 1].cursor.next
-        : null,
+      current: cursors[safePosts[0].id].current,
+      next: cursors[safePosts[safePosts.length - 1].id].next,
     },
   };
 }
@@ -86,30 +79,28 @@ async function queryAndRemoveBannedUsers(
 const PAGE_SIZE = 20;
 
 async function handler(environment, request, headers) {
-  const { id: accountId } = await getCurrentUser(environment, headers);
-
-  const { posts, authors, cursor } = await queryAndRemoveBannedUsers(
+  const { id: actorId, account: actor } = await getCurrentUser(
     environment,
-    {
-      index: request.index,
-      cursor: request.cursor,
-      limit: PAGE_SIZE + 1,
-      actor: accountId,
-    }
+    headers,
+    { required: true }
   );
+
+  const arena = new Arena(environment);
+  arena.setActor(actorId, actor);
+
+  const { cursor } = await queryAndRemoveBannedUsers(arena, {
+    index: request.index,
+    cursor: request.cursor,
+    limit: PAGE_SIZE + 1,
+  });
+
+  const posts = Object.values(arena.posts).filter((post) => !post.hidden);
 
   const hasNextPage = posts.length == PAGE_SIZE + 1;
   const renderedPosts = hasNextPage ? posts.slice(0, -1) : posts;
 
   return {
-    posts: await Promise.all(
-      renderedPosts.map(({ id, document }) =>
-        ApiPostSchema.fromFirestorePost(environment, id, document, {
-          accountId,
-          accountMap: authors,
-        })
-      )
-    ),
+    posts: renderedPosts.map((post) => ApiPostSchema.fromArena(arena, post.id)),
 
     cursor: {
       current: cursor.current || request.cursor || null,
