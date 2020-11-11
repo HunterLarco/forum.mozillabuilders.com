@@ -183,7 +183,7 @@ export default {
 
     login_() {
       const email = this.form_.data.email;
-      const password = this.form_.data.password;
+      const password = this.form_.data.password.trim();
 
       const passwordError = this.validatePassword_(password);
       this.form_.errors.password = passwordError;
