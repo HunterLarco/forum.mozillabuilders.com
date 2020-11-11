@@ -104,6 +104,7 @@ import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import FeedStore from '@/src/web/stores/Feed';
 import PostStore from '@/src/web/stores/Post';
 
@@ -154,7 +155,21 @@ export default {
       this.loading_ = true;
       PostStore.dispatch('createPost', request)
         .then((post) => {
-          FeedStore.commit('prependPost', post.id);
+          FeedStore.commit('prependPost', {
+            postId: post.id,
+            feed: {
+              index: 'new',
+            },
+          });
+          FeedStore.commit('prependPost', {
+            postId: post.id,
+            feed: {
+              index: 'new',
+              filters: {
+                author: CurrentUserStore.state.account.id,
+              },
+            },
+          });
           this.error_ = null;
           this.$router.push(`/post/${post.id}`);
         })

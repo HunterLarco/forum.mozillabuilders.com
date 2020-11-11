@@ -81,9 +81,10 @@ export default createStore('FeedStore', {
       feed.cursor.next = cursor.next || null;
     },
 
-    prependPost(state, postId) {
-      if (state.feeds.new.ids.length) {
-        state.feeds.new.ids.unshift(postId);
+    prependPost(state, { feed, postId }) {
+      const feedKey = stableStringify(feed);
+      if (state.feeds[feedKey].ids.length) {
+        state.feeds[feedKey].ids.unshift(postId);
       }
     },
 
