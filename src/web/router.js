@@ -21,6 +21,11 @@ const router = new VueRouter({
     },
 
     {
+      path: '/user/:id',
+      component: () => import('@/src/web/components/pages/User'),
+    },
+
+    {
       path: '/submit',
       component: () => import('@/src/web/components/pages/Submit'),
       meta: {
@@ -45,6 +50,15 @@ const router = new VueRouter({
     {
       path: '/signup',
       component: () => import('@/src/web/components/pages/Signup'),
+    },
+
+    {
+      path: '/logout',
+      beforeEnter(to, from, next) {
+        CurrentUserStore.dispatch('logout').then(() => {
+          next('/');
+        });
+      },
     },
 
     {

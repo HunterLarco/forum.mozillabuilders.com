@@ -27,7 +27,14 @@
         }}</a>
       </div>
 
-      <div :class="$style.Metadata">Posted {{ author_ }} {{ age_ }}</div>
+      <div :class="$style.Metadata">
+        <router-link
+          :to="`/user/${post.author.id}`"
+          :class="$style.Clickable"
+          >{{ author_ }}</router-link
+        >
+        posted {{ age_ }}
+      </div>
     </div>
   </HorizontalLayout>
 </template>
@@ -40,7 +47,7 @@ import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -67,10 +74,10 @@ export default {
       }
 
       if (this.post.personalization && this.post.personalization.postedByYou) {
-        return 'by you';
+        return 'you';
       }
 
-      return `by ${this.post.author.username}`;
+      return this.post.author.username;
     },
 
     age_() {
@@ -113,11 +120,11 @@ export default {
 
       this.likeLoading_ = true;
       if (this.alreadyLiked_) {
-        FeedStore.dispatch('unlikePost', this.post.id).finally(() => {
+        PostStore.dispatch('unlikePost', this.post.id).finally(() => {
           this.likeLoading_ = false;
         });
       } else {
-        FeedStore.dispatch('likePost', this.post.id).finally(() => {
+        PostStore.dispatch('likePost', this.post.id).finally(() => {
           this.likeLoading_ = false;
         });
       }
@@ -199,6 +206,12 @@ export default {
 
   & a {
     color: inherit;
+  }
+}
+
+.Clickable {
+  &:hover {
+    background: darken(#FFF, 7%);
   }
 }
 

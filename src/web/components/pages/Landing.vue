@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import CollapsedPostSkeleton from '@/src/web/components/features/CollapsedPostSkeleton';
 import ElementIcon from '@/vendor/element-ui/Icon';
@@ -77,16 +78,18 @@ import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
 import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
+    Avatar,
     CollapsedPost,
+    CollapsedPostSkeleton,
     ElementIcon,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
     PageRibbon,
-    CollapsedPostSkeleton,
   },
 
   data() {
@@ -98,14 +101,12 @@ export default {
   computed: {
     posts_() {
       const index = this.$route.path.slice(1);
-      return FeedStore.state.feeds[index].ids.map(
-        (id) => FeedStore.state.posts[id]
-      );
+      return FeedStore.getters.posts({ index });
     },
 
     hasNextPage_() {
       const index = this.$route.path.slice(1);
-      return !!FeedStore.state.feeds[index].cursor.next;
+      return FeedStore.getters.hasNextPage({ index });
     },
   },
 
@@ -114,7 +115,7 @@ export default {
       const index = this.$route.path.slice(1);
 
       this.loading_ = true;
-      FeedStore.dispatch('loadNextPage', index).then(() => {
+      FeedStore.dispatch('loadNextPage', { index }).then(() => {
         this.loading_ = false;
       });
     },
@@ -125,7 +126,7 @@ export default {
       immediate: true,
       handler() {
         const index = this.$route.path.slice(1);
-        if (!FeedStore.state.feeds[index].ids.length) {
+        if (!FeedStore.getters.posts({ index }).length) {
           this.loadNextPage_();
         }
       },

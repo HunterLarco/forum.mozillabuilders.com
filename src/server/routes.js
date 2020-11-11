@@ -1,4 +1,6 @@
 import accounts_create from '@/src/server/endpoints/accounts/create';
+import accounts_get from '@/src/server/endpoints/accounts/get';
+import accounts_getMe from '@/src/server/endpoints/accounts/getMe';
 import accounts_login from '@/src/server/endpoints/accounts/login';
 import accounts_sendMagicLink from '@/src/server/endpoints/accounts/sendMagicLink';
 import comments_create from '@/src/server/endpoints/comments/create';
@@ -15,6 +17,8 @@ export function install(environment, app) {
   const ROUTES = [
     ['get', '/aurora/cron/rankHotPosts', cron_rankHotPosts],
     ['post', '/aurora/accounts/create', accounts_create],
+    ['post', '/aurora/accounts/get', accounts_get],
+    ['post', '/aurora/accounts/getMe', accounts_getMe],
     ['post', '/aurora/accounts/login', accounts_login],
     ['post', '/aurora/accounts/sendMagicLink', accounts_sendMagicLink],
     ['post', '/aurora/comments/create', comments_create],

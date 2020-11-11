@@ -78,15 +78,19 @@ export async function replace(environment, transaction, postId, post) {
 export async function queryByAge(environment, options) {
   const limit = options && options.limit ? options.limit : 20;
   const cursor = options && options.cursor ? options.cursor : null;
+  const filters = options && options.filters ? options.filters : {};
+
+  let query = environment.firestore.collection('Post');
+  if (filters.author) {
+    query = query.where('author', '==', filters.author);
+  }
+  query = query.orderBy('dateCreated', 'desc').limit(limit);
 
   const {
     documents,
     cursor: documentsCursor,
   } = await cursorHelpers.executeQuery({
-    query: environment.firestore
-      .collection('Post')
-      .orderBy('dateCreated', 'desc')
-      .limit(limit),
+    query,
     cursor,
     createCursor: (post) => [post.dateCreated],
   });
@@ -100,16 +104,22 @@ export async function queryByAge(environment, options) {
 export async function queryByHotness(environment, options) {
   const limit = options && options.limit ? options.limit : 20;
   const cursor = options && options.cursor ? options.cursor : null;
+  const filters = options && options.filters ? options.filters : {};
+
+  let query = environment.firestore.collection('Post');
+  if (filters.author) {
+    query = query.where('author', '==', filters.author);
+  }
+  query = query
+    .orderBy('stats.hotness', 'desc')
+    .orderBy('dateCreated', 'desc')
+    .limit(limit);
 
   const {
     documents,
     cursor: documentsCursor,
   } = await cursorHelpers.executeQuery({
-    query: environment.firestore
-      .collection('Post')
-      .orderBy('stats.hotness', 'desc')
-      .orderBy('dateCreated', 'desc')
-      .limit(limit),
+    query,
     cursor,
     createCursor: (post) => [post.stats.hotness, post.dateCreated],
   });

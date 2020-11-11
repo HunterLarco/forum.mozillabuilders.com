@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import CommentThread from '@/src/web/components/features/CommentThread';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
@@ -49,12 +50,13 @@ import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import Post from '@/src/web/components/features/Post';
 
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
+    Avatar,
     CollapsedPost,
     CommentThread,
     IndeterminateProgressBar,
@@ -72,7 +74,7 @@ export default {
 
   computed: {
     post_() {
-      return FeedStore.state.posts[this.$route.params.id] || null;
+      return PostStore.state.posts[this.$route.params.id] || null;
     },
   },
 
@@ -81,7 +83,7 @@ export default {
       immediate: true,
       handler() {
         this.loading_ = true;
-        FeedStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
+        PostStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
           this.loading_ = false;
         });
       },

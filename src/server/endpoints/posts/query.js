@@ -11,6 +11,9 @@ import Arena from '@/src/server/helpers/arena/Arena';
 const RequestSchema = Joi.object({
   index: Joi.string().valid('new', 'hot').required(),
   cursor: Joi.string().allow(null),
+  filters: Joi.object({
+    author: Joi.string(),
+  }),
 });
 
 const ResponseSchema = Joi.object({
@@ -21,7 +24,10 @@ const ResponseSchema = Joi.object({
   }),
 });
 
-async function queryAndRemoveBannedUsers(arena, { index, cursor, limit }) {
+async function queryAndRemoveBannedUsers(
+  arena,
+  { index, cursor, limit, filters }
+) {
   const queryMethod = {
     new: PostTable.queryByAge,
     hot: PostTable.queryByHotness,
@@ -35,6 +41,7 @@ async function queryAndRemoveBannedUsers(arena, { index, cursor, limit }) {
     const { posts } = await queryMethod[index](arena.environment, {
       cursor: nextCursor,
       limit: limit - safePosts.length,
+      filters,
     });
 
     if (!posts.length) {
@@ -91,6 +98,12 @@ async function handler(environment, request, headers) {
     index: request.index,
     cursor: request.cursor,
     limit: PAGE_SIZE + 1,
+    filters: {
+      author:
+        request.filters && request.filters.author
+          ? request.filters.author
+          : null,
+    },
   });
 
   const posts = Object.values(arena.posts).filter((post) => !post.hidden);

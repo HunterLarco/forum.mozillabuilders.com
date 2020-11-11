@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import Avatar from '@/src/web/components/layout/Avatar';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -103,10 +104,13 @@ import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
+    Avatar,
     ElementInput,
     HorizontalLayout,
     PageFooter,
@@ -149,10 +153,25 @@ export default {
       }
 
       this.loading_ = true;
-      FeedStore.dispatch('create', request)
-        .then((postId) => {
+      PostStore.dispatch('createPost', request)
+        .then((post) => {
+          FeedStore.commit('prependPost', {
+            postId: post.id,
+            feed: {
+              index: 'new',
+            },
+          });
+          FeedStore.commit('prependPost', {
+            postId: post.id,
+            feed: {
+              index: 'new',
+              filters: {
+                author: CurrentUserStore.state.account.id,
+              },
+            },
+          });
           this.error_ = null;
-          this.$router.push(`/post/${postId}`);
+          this.$router.push(`/post/${post.id}`);
         })
         .catch((error) => {
           this.error_ = error.message;

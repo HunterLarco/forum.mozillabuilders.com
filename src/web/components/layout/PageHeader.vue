@@ -5,7 +5,6 @@
         :class="$style.NavBar"
         :left-class="$style.Logo"
         :middle-class="$style.Nav"
-        :right-class="$style.Buttons"
         vertical-center
       >
         <template v-slot:left>
@@ -17,7 +16,12 @@
         <slot name="nav"></slot>
 
         <template v-slot:right>
-          <slot name="buttons"></slot>
+          <div :class="$style.Buttons">
+            <slot name="buttons"></slot>
+          </div>
+          <div :class="$style.Icons">
+            <slot name="icons"></slot>
+          </div>
         </template>
       </HorizontalLayout>
     </PageRibbon>
@@ -134,6 +138,21 @@ export default {
     @include sizing-mobile {
       padding: 4px 8px;
     }
+  }
+}
+
+.Icons {
+  color: #FFF;
+  margin-left: 10px;
+
+  & > * {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  & > a {
+    color: inherit;
+    text-decoration: none;
   }
 }
 </style>

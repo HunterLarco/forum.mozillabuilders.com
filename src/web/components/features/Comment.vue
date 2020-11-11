@@ -9,7 +9,14 @@
       />
     </template>
 
-    <div :class="$style.Meta">Posted {{ author_ }} {{ age_ }}</div>
+    <div :class="$style.Meta">
+      <router-link
+        :to="`/user/${comment.author.id}`"
+        :class="$style.Clickable"
+        >{{ author_ }}</router-link
+      >
+      posted {{ age_ }}
+    </div>
     <AttributedText
       :class="$style.Content"
       :text="comment.content.text.text"
@@ -43,7 +50,7 @@ import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
@@ -80,10 +87,10 @@ export default {
         this.comment.personalization &&
         this.comment.personalization.postedByYou
       ) {
-        return 'by you';
+        return 'you';
       }
 
-      return `by ${this.comment.author.username}`;
+      return this.comment.author.username;
     },
 
     age_() {
@@ -124,14 +131,14 @@ export default {
 
       this.likeLoading_ = true;
       if (this.comment.personalization.liked) {
-        FeedStore.dispatch('unlikeComment', {
+        PostStore.dispatch('unlikeComment', {
           postId: this.post.id,
           commentId: this.comment.id,
         }).finally(() => {
           this.likeLoading_ = false;
         });
       } else {
-        FeedStore.dispatch('likeComment', {
+        PostStore.dispatch('likeComment', {
           postId: this.post.id,
           commentId: this.comment.id,
         }).finally(() => {
@@ -153,6 +160,16 @@ export default {
   @include fonts-collapsed-post-metadata;
 
   color: #828282;
+
+  & > a {
+    color: inherit;
+  }
+}
+
+.Clickable {
+  &:hover {
+    background: darken(#FFF, 7%);
+  }
 }
 
 .Content {
