@@ -67,6 +67,7 @@
     "element-ui": "2.13.2",
     "email-validator": "2.0.4",
     "express": "4.17.1",
+    "fast-json-stable-stringify": "2.1.0",
     "friendly-time": "1.1.1",
     "helmet": "4.1.1",
     "intersection-observer": "0.11.0",

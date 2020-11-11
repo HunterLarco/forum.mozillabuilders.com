@@ -101,14 +101,12 @@ export default {
   computed: {
     posts_() {
       const index = this.$route.path.slice(1);
-      return FeedStore.state.feeds[index].ids.map(
-        (id) => PostStore.state.posts[id]
-      );
+      return FeedStore.getters.posts({ index });
     },
 
     hasNextPage_() {
       const index = this.$route.path.slice(1);
-      return !!FeedStore.state.feeds[index].cursor.next;
+      return FeedStore.getters.hasNextPage({ index });
     },
   },
 
@@ -117,7 +115,7 @@ export default {
       const index = this.$route.path.slice(1);
 
       this.loading_ = true;
-      FeedStore.dispatch('loadNextPage', index).then(() => {
+      FeedStore.dispatch('loadNextPage', { index }).then(() => {
         this.loading_ = false;
       });
     },
@@ -128,7 +126,7 @@ export default {
       immediate: true,
       handler() {
         const index = this.$route.path.slice(1);
-        if (!FeedStore.state.feeds[index].ids.length) {
+        if (!FeedStore.getters.posts({ index }).length) {
           this.loadNextPage_();
         }
       },

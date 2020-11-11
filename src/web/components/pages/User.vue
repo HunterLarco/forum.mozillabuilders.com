@@ -52,6 +52,7 @@ import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
+import FeedStore from '@/src/web/stores/Feed';
 import PostStore from '@/src/web/stores/Post';
 import PublicUserStore from '@/src/web/stores/PublicUser';
 
@@ -72,7 +73,6 @@ export default {
     return {
       loading_: false,
       account_: null,
-      posts_: [],
     };
   },
 
@@ -85,6 +85,19 @@ export default {
       return this.account_
         ? friendlyTime(new Date(this.account_.dateCreated))
         : null;
+    },
+
+    posts_() {
+      if (!this.account_) {
+        return [];
+      }
+
+      return FeedStore.getters.posts({
+        index: 'new',
+        filters: {
+          author: this.account_.id,
+        },
+      });
     },
   },
 
@@ -110,18 +123,16 @@ export default {
 
       this.account_ = await PublicUserStore.dispatch('getAccount', id);
 
-      const { posts } = await apiFetch('aurora/posts/query', {
+      const query = {
         index: 'new',
         filters: {
           author: this.account_.id,
         },
-      });
+      };
 
-      for (const post of posts) {
-        PostStore.commit('setPost', post);
+      if (!FeedStore.getters.posts(query).length) {
+        await FeedStore.dispatch('loadNextPage', query);
       }
-
-      this.posts_ = posts;
     },
   },
 };
