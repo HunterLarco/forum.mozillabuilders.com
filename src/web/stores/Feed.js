@@ -4,6 +4,8 @@ import * as commentHelpers from '@/src/web/helpers/data/Comment';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
+import PublicUsersStore from '@/src/web/stores/PublicUsers';
+
 export default createStore('FeedStore', {
   state: {
     feeds: {
@@ -118,6 +120,11 @@ export default createStore('FeedStore', {
       for (const post of posts) {
         Vue.set(state.posts, post.id, post);
         feed.ids.push(post.id);
+
+        PublicUsersStore.commit('setAccount', post.author);
+        for (const comment of commentHelpers.iterate(post.comments)) {
+          PublicUsersStore.commit('setAccount', comment.author);
+        }
       }
 
       if (!feed.cursor.first) {

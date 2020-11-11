@@ -16,3 +16,12 @@ export function find(post, commentId) {
 
   return searchChildren(post.comments);
 }
+
+export function* iterate(comments) {
+  for (const comment of comments) {
+    yield comment;
+    for (const subcomment of iterate(comment.children)) {
+      yield subcomment;
+    }
+  }
+}

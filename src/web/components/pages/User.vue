@@ -3,12 +3,8 @@
     <div style="min-height: 80%;">
       <PageHeader>
         <template v-slot:nav>
-          <router-link to="/hot" :selected="$route.path.slice(1) == 'hot'"
-            >Hot</router-link
-          >
-          <router-link to="/new" :selected="$route.path.slice(1) == 'new'"
-            >New</router-link
-          >
+          <router-link to="/hot">Hot</router-link>
+          <router-link to="/new">New</router-link>
         </template>
 
         <template v-slot:buttons>
@@ -62,6 +58,9 @@ import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
+import FeedStore from '@/src/web/stores/Feed';
+import PublicUsersStore from '@/src/web/stores/PublicUsers';
+
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
@@ -109,11 +108,13 @@ export default {
 
   methods: {
     async load_() {
-      const { account } = await apiFetch('aurora/accounts/get', {
-        id: this.$route.params.id,
-      });
+      const id = this.$route.params.id;
 
-      this.account_ = account;
+      if (PublicUsersStore.state.accounts[id]) {
+        this.account_ = PublicUsersStore.state.accounts[id];
+      }
+
+      this.account_ = await PublicUsersStore.dispatch('getAccount', id);
 
       const { posts } = await apiFetch('aurora/posts/query', {
         index: 'new',
@@ -121,6 +122,10 @@ export default {
           author: this.account_.id,
         },
       });
+
+      for (const post of posts) {
+        FeedStore.commit('setPost', post);
+      }
 
       this.posts_ = posts;
     },
