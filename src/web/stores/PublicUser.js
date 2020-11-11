@@ -3,7 +3,7 @@ import Vue from 'vue';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
-export default createStore('AccountStore', {
+export default createStore('PublicUserStore', {
   state: {
     accounts: {},
   },
@@ -19,6 +19,10 @@ export default createStore('AccountStore', {
   mutations: {
     setAccount(state, account) {
       Vue.set(state.accounts, account.id, account);
+    },
+
+    reset(state) {
+      Vue.set(state, 'accounts', {});
     },
   },
 });

@@ -47,7 +47,7 @@ import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -146,11 +146,11 @@ export default {
 
       this.likeLoading_ = true;
       if (this.alreadyLiked_) {
-        FeedStore.dispatch('unlikePost', this.post.id).finally(() => {
+        PostStore.dispatch('unlikePost', this.post.id).finally(() => {
           this.likeLoading_ = false;
         });
       } else {
-        FeedStore.dispatch('likePost', this.post.id).finally(() => {
+        PostStore.dispatch('likePost', this.post.id).finally(() => {
           this.likeLoading_ = false;
         });
       }

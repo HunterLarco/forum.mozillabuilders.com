@@ -21,7 +21,7 @@
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -54,7 +54,7 @@ export default {
 
     submit_() {
       this.loading_ = true;
-      FeedStore.dispatch('comment', {
+      PostStore.dispatch('createComment', {
         postId: this.post.id,
         commentId: this.comment ? this.comment.id : undefined,
         content: {

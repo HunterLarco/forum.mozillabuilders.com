@@ -13,12 +13,6 @@
             <span v-else>Post</span>
           </router-link>
         </template>
-
-        <template v-slot:icons>
-          <router-link to="/account">
-            <Avatar />
-          </router-link>
-        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -111,6 +105,7 @@ import SubmitButton from '@/src/web/components/input/SubmitButton';
 import TextCheckbox from '@/src/web/components/input/TextCheckbox';
 
 import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
@@ -157,10 +152,11 @@ export default {
       }
 
       this.loading_ = true;
-      FeedStore.dispatch('create', request)
-        .then((postId) => {
+      PostStore.dispatch('createPost', request)
+        .then((post) => {
+          FeedStore.commit('prependPost', post.id);
           this.error_ = null;
-          this.$router.push(`/post/${postId}`);
+          this.$router.push(`/post/${post.id}`);
         })
         .catch((error) => {
           this.error_ = error.message;

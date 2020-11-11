@@ -5,6 +5,8 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
 import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 export default createStore('CurrentUserStore', {
   state: {
@@ -57,9 +59,10 @@ export default createStore('CurrentUserStore', {
         Vue.set(state, 'authToken', null);
       }
 
-      // Whenever we change the current user, the feed (which is personalized)
-      // must be reset.
+      // Whenever we change the current user, all personalized must be reset.
       FeedStore.commit('reset');
+      PostStore.commit('reset');
+      PublicUserStore.commit('reset');
     },
 
     setAccount(state, account) {

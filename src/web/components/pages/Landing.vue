@@ -17,12 +17,6 @@
             <span v-else>Post</span>
           </router-link>
         </template>
-
-        <template v-slot:icons>
-          <router-link to="/account">
-            <Avatar />
-          </router-link>
-        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -84,6 +78,7 @@ import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
 import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
@@ -107,7 +102,7 @@ export default {
     posts_() {
       const index = this.$route.path.slice(1);
       return FeedStore.state.feeds[index].ids.map(
-        (id) => FeedStore.state.posts[id]
+        (id) => PostStore.state.posts[id]
       );
     },
 

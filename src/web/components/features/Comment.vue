@@ -50,7 +50,7 @@ import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
@@ -131,14 +131,14 @@ export default {
 
       this.likeLoading_ = true;
       if (this.comment.personalization.liked) {
-        FeedStore.dispatch('unlikeComment', {
+        PostStore.dispatch('unlikeComment', {
           postId: this.post.id,
           commentId: this.comment.id,
         }).finally(() => {
           this.likeLoading_ = false;
         });
       } else {
-        FeedStore.dispatch('likeComment', {
+        PostStore.dispatch('likeComment', {
           postId: this.post.id,
           commentId: this.comment.id,
         }).finally(() => {

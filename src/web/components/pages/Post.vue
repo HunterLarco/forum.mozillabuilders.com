@@ -13,12 +13,6 @@
             <span v-else>Post</span>
           </router-link>
         </template>
-
-        <template v-slot:icons>
-          <router-link to="/account">
-            <Avatar />
-          </router-link>
-        </template>
       </PageHeader>
 
       <PageRibbon>
@@ -56,7 +50,7 @@ import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import Post from '@/src/web/components/features/Post';
 
-import FeedStore from '@/src/web/stores/Feed';
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -80,7 +74,7 @@ export default {
 
   computed: {
     post_() {
-      return FeedStore.state.posts[this.$route.params.id] || null;
+      return PostStore.state.posts[this.$route.params.id] || null;
     },
   },
 
@@ -89,7 +83,7 @@ export default {
       immediate: true,
       handler() {
         this.loading_ = true;
-        FeedStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
+        PostStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
           this.loading_ = false;
         });
       },

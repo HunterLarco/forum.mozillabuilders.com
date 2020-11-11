@@ -38,18 +38,6 @@ const router = new VueRouter({
     },
 
     {
-      path: '/account',
-      component: () => import('@/src/web/components/pages/Account'),
-      meta: {
-        auth: {
-          required: true,
-          redirect: '/signup',
-          message: 'You must be logged in to manage your account.',
-        },
-      },
-    },
-
-    {
       path: '/login',
       component: () => import('@/src/web/components/pages/Login'),
     },

@@ -13,12 +13,6 @@
             <span v-else>Post</span>
           </router-link>
         </template>
-
-        <template v-slot:icons>
-          <router-link to="/account">
-            <Avatar />
-          </router-link>
-        </template>
       </PageHeader>
 
       <div :class="$style.Shadow">
@@ -58,8 +52,8 @@ import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
-import FeedStore from '@/src/web/stores/Feed';
-import PublicUsersStore from '@/src/web/stores/PublicUsers';
+import PostStore from '@/src/web/stores/Post';
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -110,11 +104,11 @@ export default {
     async load_() {
       const id = this.$route.params.id;
 
-      if (PublicUsersStore.state.accounts[id]) {
-        this.account_ = PublicUsersStore.state.accounts[id];
+      if (PublicUserStore.state.accounts[id]) {
+        this.account_ = PublicUserStore.state.accounts[id];
       }
 
-      this.account_ = await PublicUsersStore.dispatch('getAccount', id);
+      this.account_ = await PublicUserStore.dispatch('getAccount', id);
 
       const { posts } = await apiFetch('aurora/posts/query', {
         index: 'new',
@@ -124,7 +118,7 @@ export default {
       });
 
       for (const post of posts) {
-        FeedStore.commit('setPost', post);
+        PostStore.commit('setPost', post);
       }
 
       this.posts_ = posts;
