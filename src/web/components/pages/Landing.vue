@@ -20,46 +20,7 @@
       </PageHeader>
 
       <PageRibbon>
-        <div :class="$style.Posts">
-          <template v-if="!posts_.length">
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-            <CollapsedPostSkeleton />
-          </template>
-
-          <CollapsedPost
-            :class="$style.Post"
-            v-for="post in posts_"
-            :key="post.id"
-            :post="post"
-          />
-
-          <div
-            :class="$style.NextPageButton"
-            v-if="hasNextPage_ && !loading_"
-            @click="loadNextPage_"
-          >
-            Next Page
-          </div>
-          <IndeterminateProgressBar v-if="posts_.length && loading_" />
-        </div>
+        <PostFeed :class="$style.Posts" :index="this.$route.path.slice(1)" />
       </PageRibbon>
     </div>
 
@@ -69,13 +30,11 @@
 
 <script>
 import Avatar from '@/src/web/components/layout/Avatar';
-import CollapsedPost from '@/src/web/components/features/CollapsedPost';
-import CollapsedPostSkeleton from '@/src/web/components/features/CollapsedPostSkeleton';
 import ElementIcon from '@/vendor/element-ui/Icon';
-import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
+import PostFeed from '@/src/web/components/features/PostFeed';
 
 import FeedStore from '@/src/web/stores/Feed';
 import PostStore from '@/src/web/stores/Post';
@@ -83,54 +42,11 @@ import PostStore from '@/src/web/stores/Post';
 export default {
   components: {
     Avatar,
-    CollapsedPost,
-    CollapsedPostSkeleton,
     ElementIcon,
-    IndeterminateProgressBar,
     PageFooter,
     PageHeader,
     PageRibbon,
-  },
-
-  data() {
-    return {
-      loading_: false,
-    };
-  },
-
-  computed: {
-    posts_() {
-      const index = this.$route.path.slice(1);
-      return FeedStore.getters.posts({ index });
-    },
-
-    hasNextPage_() {
-      const index = this.$route.path.slice(1);
-      return FeedStore.getters.hasNextPage({ index });
-    },
-  },
-
-  methods: {
-    loadNextPage_() {
-      const index = this.$route.path.slice(1);
-
-      this.loading_ = true;
-      FeedStore.dispatch('loadNextPage', { index }).then(() => {
-        this.loading_ = false;
-      });
-    },
-  },
-
-  watch: {
-    '$route.path': {
-      immediate: true,
-      handler() {
-        const index = this.$route.path.slice(1);
-        if (!FeedStore.getters.posts({ index }).length) {
-          this.loadNextPage_();
-        }
-      },
-    },
+    PostFeed,
   },
 };
 </script>
@@ -145,17 +61,6 @@ export default {
 
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.LoadingIndicator {
-  @include fonts-body;
-
-  padding: 30px;
-  text-align: center;
-
-  & > * {
-    vertical-align: middle;
-  }
 }
 
 .Posts {
