@@ -19,11 +19,7 @@
         </template>
 
         <template v-slot:icons>
-          <ElementPopover placement="bottom" trigger="hover">
-            <ElementBadge :value="33" :max="99" slot="reference">
-              <ElementIcon name="message-solid" style="font-size: 24px;" />
-            </ElementBadge>
-          </ElementPopover>
+          <NotificationBadge />
         </template>
       </PageHeader>
 
@@ -38,9 +34,7 @@
 
 <script>
 import Avatar from '@/src/web/components/layout/Avatar';
-import ElementBadge from '@/vendor/element-ui/Badge';
-import ElementIcon from '@/vendor/element-ui/Icon';
-import ElementPopover from '@/vendor/element-ui/Popover';
+import NotificationBadge from '@/src/web/components/features/NotificationBadge';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
@@ -52,9 +46,7 @@ import PostStore from '@/src/web/stores/Post';
 export default {
   components: {
     Avatar,
-    ElementBadge,
-    ElementIcon,
-    ElementPopover,
+    NotificationBadge,
     PageFooter,
     PageHeader,
     PageRibbon,

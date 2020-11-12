@@ -79,7 +79,7 @@ export default {
   },
 
   watch: {
-    'route$.params.id': {
+    '$route.params.id': {
       immediate: true,
       handler() {
         this.loading_ = true;

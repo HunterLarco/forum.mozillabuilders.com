@@ -25,3 +25,7 @@ export function* iterate(comments) {
     }
   }
 }
+
+export function postId(commentId) {
+  return commentId.split('-')[0];
+}
