@@ -4,16 +4,16 @@ import Comment from '@/src/server/types/api/Comment';
 import Post from '@/src/server/types/api/Post';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
+import * as commentHelpers from '@/src/server/helpers/data/Comment';
+
 const CommentNotification = Joi.object({
   author: PublicAccount.required(),
   comment: Comment.required(),
 
   parent: Joi.object({
-    post: Post,
+    post: Post.required(),
     comment: Comment,
-  })
-    .xor('post', 'comment')
-    .required(),
+  }),
 });
 
 const Schema = Joi.object({
@@ -42,6 +42,10 @@ Schema.fromArena = (arena, id) => {
     if (firestoreDetails.comment.parent.post) {
       parent.post = Post.fromArena(arena, firestoreDetails.comment.parent.post);
     } else {
+      parent.post = Post.fromArena(
+        arena,
+        commentHelpers.postId(firestoreDetails.comment.parent.comment)
+      );
       parent.comment = Comment.fromArena(
         arena,
         firestoreDetails.comment.parent.comment

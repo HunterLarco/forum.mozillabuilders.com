@@ -37,10 +37,10 @@ export default {
           },
 
           parent: {
-            type: comment.parent.post ? 'post' : 'comment',
-            url: comment.parent.post
-              ? `/post/${comment.parent.post.id}`
-              : `/comment/${comment.parent.comment.id}`,
+            type: comment.parent.comment ? 'comment' : 'post',
+            url: comment.parent.comment
+              ? `/comment/${comment.parent.comment.id}`
+              : `/post/${comment.parent.post.id}`,
           },
         };
       }

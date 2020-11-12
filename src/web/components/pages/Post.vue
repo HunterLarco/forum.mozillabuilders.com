@@ -52,6 +52,7 @@ import Post from '@/src/web/components/features/Post';
 
 import PostStore from '@/src/web/stores/Post';
 
+import * as commentHelpers from '@/src/web/helpers/data/Comment';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
@@ -74,7 +75,11 @@ export default {
 
   computed: {
     post_() {
-      return PostStore.state.posts[this.$route.params.id] || null;
+      const postId = this.$route.path.startsWith('/comment')
+        ? commentHelpers.postId(this.$route.params.id)
+        : this.$route.params.id;
+
+      return PostStore.state.posts[postId] || null;
     },
   },
 
@@ -82,8 +87,12 @@ export default {
     '$route.params.id': {
       immediate: true,
       handler() {
+        const postId = this.$route.path.startsWith('/comment')
+          ? commentHelpers.postId(this.$route.params.id)
+          : this.$route.params.id;
+
         this.loading_ = true;
-        PostStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
+        PostStore.dispatch('refreshPost', postId).finally(() => {
           this.loading_ = false;
         });
       },

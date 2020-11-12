@@ -3,6 +3,8 @@ import Vue from 'vue';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
+import PostStore from '@/src/web/stores/Post';
+
 export default createStore('NotificationStore', {
   state: {
     notifications: [],
@@ -35,6 +37,9 @@ export default createStore('NotificationStore', {
     extendFeed(state, { notifications, cursor }) {
       for (const notification of notifications) {
         state.notifications.push(notification);
+        if (notification.details.comment) {
+          PostStore.commit('setPost', notification.details.comment.parent.post);
+        }
       }
 
       if (!state.cursor.first) {
