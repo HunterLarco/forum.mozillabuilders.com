@@ -42,7 +42,7 @@ Schema.fromArena = (arena, id) => {
     if (firestoreDetails.comment.parent.post) {
       parent.post = Post.fromArena(arena, firestoreDetails.comment.parent.post);
     } else {
-      parent.comment = Post.fromArena(
+      parent.comment = Comment.fromArena(
         arena,
         firestoreDetails.comment.parent.comment
       );
