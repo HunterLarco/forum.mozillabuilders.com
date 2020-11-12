@@ -1,6 +1,18 @@
-import flushAccount from '@/src/server/helpers/arena/flushAccount';
-import flushComment from '@/src/server/helpers/arena/flushComment';
-import flushPost from '@/src/server/helpers/arena/flushPost';
+import pLimit from 'p-limit';
+
+import {
+  prepareAccount,
+  flushAccount,
+} from '@/src/server/helpers/arena/flushAccount';
+import {
+  prepareComment,
+  flushComment,
+} from '@/src/server/helpers/arena/flushComment';
+import {
+  prepareNotification,
+  flushNotification,
+} from '@/src/server/helpers/arena/flushNotification';
+import { preparePost, flushPost } from '@/src/server/helpers/arena/flushPost';
 
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
@@ -11,6 +23,7 @@ export default class Arena {
     this.accounts = {};
     this.posts = {};
     this.comments = {};
+    this.notifications = {};
   }
 
   setActor(id, account) {
@@ -18,21 +31,17 @@ export default class Arena {
     this.addAccount(id, account);
   }
 
-  addPost(id, firestore) {
+  addPost(id, opt_firestore) {
     if (this.posts[id]) {
       return this.posts[id];
     }
 
     const post = {
       id,
+      prepared: false,
       flushed: false,
-      firestore,
-      author: this.addAccount(firestore.author),
+      firestore: opt_firestore || null,
     };
-
-    for (const comment of commentHelpers.iterate(firestore.comments)) {
-      this.addComment(comment);
-    }
 
     this.posts[id] = post;
     return post;
@@ -45,31 +54,86 @@ export default class Arena {
 
     const account = {
       id,
+      prepared: false,
       flushed: false,
-      firestore: opt_firestore,
+      firestore: opt_firestore || null,
     };
 
     this.accounts[id] = account;
     return account;
   }
 
-  addComment(firestore) {
-    if (this.comments[firestore.id]) {
-      return this.comments[firestore.id];
+  addComment(id, opt_firestore) {
+    if (this.comments[id]) {
+      return this.comments[id];
     }
 
     const comment = {
-      id: firestore.id,
+      id,
+      prepared: false,
       flushed: false,
-      firestore,
-      author: this.addAccount(firestore.author),
+      firestore: opt_firestore || null,
     };
 
-    this.comments[firestore.id] = comment;
+    this.comments[id] = comment;
     return comment;
   }
 
+  addNotification(id, opt_firestore) {
+    if (this.notifications[id]) {
+      return this.notifications[id];
+    }
+
+    const notification = {
+      id,
+      prepared: false,
+      flushed: false,
+      firestore: opt_firestore || null,
+    };
+
+    this.notifications[id] = notification;
+    return notification;
+  }
+
   async flush() {
+    const limit = pLimit(20);
+    let tasks = [];
+
+    do {
+      await Promise.all(tasks.map((task) => limit(task)));
+      tasks = [];
+
+      for (const notification of Object.values(this.notifications)) {
+        if (!notification.prepared) {
+          tasks.push(() => prepareNotification(this, notification));
+        }
+      }
+
+      for (const account of Object.values(this.accounts)) {
+        if (!account.prepared) {
+          tasks.push(() => prepareAccount(this, account));
+        }
+      }
+
+      for (const comment of Object.values(this.comments)) {
+        if (!comment.prepared) {
+          tasks.push(() => prepareComment(this, comment));
+        }
+      }
+
+      for (const post of Object.values(this.posts)) {
+        if (!post.prepared) {
+          tasks.push(() => preparePost(this, post));
+        }
+      }
+    } while (tasks.length);
+
+    await Promise.all(
+      Object.values(this.notifications).map((notification) =>
+        flushNotification(this, notification)
+      )
+    );
+
     await Promise.all(
       Object.values(this.accounts).map((account) => flushAccount(this, account))
     );
