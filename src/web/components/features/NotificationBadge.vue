@@ -1,13 +1,17 @@
 <template>
   <div :class="$style.Host">
-    <ElementPopover placement="bottom" trigger="hover">
+    <ElementPopover placement="bottom" trigger="click" v-model="open_">
       <ElementBadge
         :max="99"
         :value="notifications_.length"
         :hidden="notifications_.length == 0"
         slot="reference"
       >
-        <ElementIcon name="message-solid" style="font-size: 24px;" />
+        <ElementIcon
+          :class="$style.BellIcon"
+          :name="open_ ? 'message-solid' : 'bell'"
+          style="font-size: 24px;"
+        />
       </ElementBadge>
 
       <div :class="$style.Notifications">
@@ -39,6 +43,12 @@ export default {
     Notification,
   },
 
+  data() {
+    return {
+      open_: false,
+    };
+  },
+
   computed: {
     notifications_() {
       return NotificationStore.state.notifications;
@@ -52,6 +62,10 @@ export default {
 
 .Host {
   display: inline-block;
+}
+
+.BellIcon {
+  cursor: pointer;
 }
 
 .Notifications {
