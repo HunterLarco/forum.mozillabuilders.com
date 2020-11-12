@@ -17,10 +17,18 @@
             <span v-else>Post</span>
           </router-link>
         </template>
+
+        <template v-slot:icons>
+          <ElementPopover placement="bottom" trigger="hover">
+            <ElementBadge :value="33" :max="99" slot="reference">
+              <ElementIcon name="message-solid" style="font-size: 24px;" />
+            </ElementBadge>
+          </ElementPopover>
+        </template>
       </PageHeader>
 
       <PageRibbon>
-        <PostFeed :class="$style.Posts" :index="this.$route.path.slice(1)" />
+        <PostFeed :class="$style.Posts" :index="$route.path.slice(1)" />
       </PageRibbon>
     </div>
 
@@ -30,7 +38,9 @@
 
 <script>
 import Avatar from '@/src/web/components/layout/Avatar';
+import ElementBadge from '@/vendor/element-ui/Badge';
 import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementPopover from '@/vendor/element-ui/Popover';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
@@ -42,7 +52,9 @@ import PostStore from '@/src/web/stores/Post';
 export default {
   components: {
     Avatar,
+    ElementBadge,
     ElementIcon,
+    ElementPopover,
     PageFooter,
     PageHeader,
     PageRibbon,
