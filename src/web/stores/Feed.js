@@ -52,6 +52,14 @@ export default createStore('FeedStore', {
         return feed && !!feed.cursor.next;
       };
     },
+
+    loaded(state) {
+      return ({ index, filters }) => {
+        const feedKey = stableStringify({ index, filters });
+        const feed = state.feeds[feedKey];
+        return !!feed;
+      };
+    },
   },
 
   mutations: {
@@ -83,7 +91,7 @@ export default createStore('FeedStore', {
 
     prependPost(state, { feed, postId }) {
       const feedKey = stableStringify(feed);
-      if (state.feeds[feedKey].ids.length) {
+      if (state.feeds[feedKey] && state.feeds[feedKey].ids.length) {
         state.feeds[feedKey].ids.unshift(postId);
       }
     },

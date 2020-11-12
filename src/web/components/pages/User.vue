@@ -33,7 +33,12 @@
       </div>
 
       <PageRibbon>
-        <CollapsedPost v-for="post in posts_" :key="post.id" :post="post" />
+        <PostFeed
+          :class="$style.Posts"
+          index="new"
+          :author="account_.id"
+          v-if="account_"
+        />
       </PageRibbon>
     </div>
 
@@ -45,12 +50,12 @@
 import friendlyTime from 'friendly-time';
 
 import Avatar from '@/src/web/components/layout/Avatar';
-import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
+import PostFeed from '@/src/web/components/features/PostFeed';
 
 import FeedStore from '@/src/web/stores/Feed';
 import PostStore from '@/src/web/stores/Post';
@@ -61,12 +66,12 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 export default {
   components: {
     Avatar,
-    CollapsedPost,
     HorizontalLayout,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
     PageRibbon,
+    PostFeed,
   },
 
   data() {
@@ -85,19 +90,6 @@ export default {
       return this.account_
         ? friendlyTime(new Date(this.account_.dateCreated))
         : null;
-    },
-
-    posts_() {
-      if (!this.account_) {
-        return [];
-      }
-
-      return FeedStore.getters.posts({
-        index: 'new',
-        filters: {
-          author: this.account_.id,
-        },
-      });
     },
   },
 
@@ -122,17 +114,6 @@ export default {
       }
 
       this.account_ = await PublicUserStore.dispatch('getAccount', id);
-
-      const query = {
-        index: 'new',
-        filters: {
-          author: this.account_.id,
-        },
-      };
-
-      if (!FeedStore.getters.posts(query).length) {
-        await FeedStore.dispatch('loadNextPage', query);
-      }
     },
   },
 };
@@ -141,6 +122,7 @@ export default {
 <style module lang="sass">
 @import '@/src/web/sass/fonts';
 @import '@/src/web/sass/layout';
+@import '@/src/web/sass/sizing';
 
 .Host {
   @include layout-fill;
@@ -161,5 +143,13 @@ export default {
 
 .Age {
   @include fonts-body;
+}
+
+.Posts {
+  margin: 30px;
+
+  @include sizing-mobile {
+    margin: 15px;
+  }
 }
 </style>

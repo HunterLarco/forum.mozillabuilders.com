@@ -68,6 +68,7 @@ async function queryAndRemoveBannedUsers(
     return {
       cursor: {
         current: null,
+        last: null,
         next: null,
       },
     };
@@ -76,6 +77,7 @@ async function queryAndRemoveBannedUsers(
   return {
     cursor: {
       current: cursors[safePosts[0].id].current,
+      last: cursors[safePosts[safePosts.length - 1].id].current,
       next: cursors[safePosts[safePosts.length - 1].id].next,
     },
   };
@@ -116,7 +118,7 @@ async function handler(environment, request, headers) {
 
     cursor: {
       current: cursor.current || request.cursor || null,
-      next: hasNextPage ? posts[PAGE_SIZE].cursor.current : null,
+      next: hasNextPage ? cursor.last : null,
     },
   };
 }
