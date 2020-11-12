@@ -23,4 +23,7 @@ WindowSizeStore.dispatch('autoUpdateWidth');
 const CurrentUserStore = require('@/src/web/stores/CurrentUser').default;
 if (CurrentUserStore.state.authToken) {
   CurrentUserStore.dispatch('getAccount');
+
+  const NotificationStore = require('@/src/web/stores/Notification').default;
+  NotificationStore.dispatch('loadNextPage');
 }
