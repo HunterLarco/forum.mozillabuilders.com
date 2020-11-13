@@ -92,6 +92,31 @@ export default createStore('PostStore', {
         throw error;
       }
     },
+
+    async banComment({ commit }, id) {
+      await apiFetch('aurora/comments/ban', { id });
+      commit('banComment', id);
+    },
+
+    async unbanComment({ commit }, id) {
+      await apiFetch('aurora/comments/unban', { id });
+      commit('unbanComment', id);
+    },
+  },
+
+  getters: {
+    comment(state) {
+      return (commentId) => {
+        const postId = commentHelpers.postId(commentId);
+        const post = state.posts[postId];
+
+        if (!post) {
+          return null;
+        }
+
+        return commentHelpers.find(post, commentId);
+      };
+    },
   },
 
   mutations: {
@@ -196,6 +221,38 @@ export default createStore('PostStore', {
       if (comment.personalization) {
         comment.personalization.liked = false;
       }
+    },
+
+    banComment(state, id) {
+      const postId = commentHelpers.postId(id);
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, id);
+      if (!comment) {
+        return;
+      }
+
+      Vue.set(comment.moderation, 'shadowBan', {
+        dateBanned: new Date(),
+      });
+    },
+
+    unbanComment(state, id) {
+      const postId = commentHelpers.postId(id);
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, id);
+      if (!comment) {
+        return;
+      }
+
+      Vue.delete(comment.moderation, 'shadowBan');
     },
 
     reset(state) {

@@ -11,5 +11,9 @@ export default Joi.object({
 
   children: Joi.array().items(Joi.link('...')).required(),
 
+  shadowBan: Joi.object({
+    dateBanned: Joi.date().required(),
+  }),
+
   dateCreated: Joi.date().required(),
 });

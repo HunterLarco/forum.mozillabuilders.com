@@ -3,6 +3,8 @@ import Joi from 'joi';
 import AttributedText from '@/src/server/types/api/AttributedText';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
+import * as accountHelpers from '@/src/server/helpers/data/Account';
+
 const Schema = Joi.object({
   id: Joi.string().required(),
 
@@ -22,6 +24,12 @@ const Schema = Joi.object({
     postedByYou: Joi.boolean().required(),
   }),
 
+  moderation: Joi.object({
+    shadowBan: Joi.object({
+      dateBanned: Joi.date().required(),
+    }),
+  }),
+
   dateCreated: Joi.date().required(),
 });
 
@@ -31,6 +39,19 @@ Schema.fromArena = (arena, id) => {
     throw new Error(`Comment ${id} not found in arena`);
   } else if (!comment.flushed) {
     throw new Error(`Comment ${id} not flushed in arena`);
+  }
+
+  let moderation;
+  if (
+    arena.actor &&
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator')
+  ) {
+    moderation = {};
+    if (comment.firestore.shadowBan) {
+      moderation.shadowBan = {
+        dateBanned: comment.firestore.shadowBan.dateBanned,
+      };
+    }
   }
 
   return {
@@ -54,6 +75,8 @@ Schema.fromArena = (arena, id) => {
       liked: comment.liked,
       postedByYou: !!arena.actor && comment.author.id == arena.actor.id,
     },
+
+    moderation,
 
     dateCreated: comment.firestore.dateCreated,
   };

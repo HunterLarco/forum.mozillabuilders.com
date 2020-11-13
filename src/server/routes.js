@@ -5,8 +5,10 @@ import accounts_getMe from '@/src/server/endpoints/accounts/getMe';
 import accounts_login from '@/src/server/endpoints/accounts/login';
 import accounts_sendMagicLink from '@/src/server/endpoints/accounts/sendMagicLink';
 import accounts_unban from '@/src/server/endpoints/accounts/unban';
+import comments_ban from '@/src/server/endpoints/comments/ban';
 import comments_create from '@/src/server/endpoints/comments/create';
 import comments_like from '@/src/server/endpoints/comments/like';
+import comments_unban from '@/src/server/endpoints/comments/unban';
 import comments_unlike from '@/src/server/endpoints/comments/unlike';
 import cron_rankHotPosts from '@/src/server/endpoints/cron/rankHotPosts';
 import notifications_queryMine from '@/src/server/endpoints/notifications/queryMine';
@@ -29,8 +31,10 @@ export function install(environment, app) {
     ['post', '/aurora/accounts/login', accounts_login],
     ['post', '/aurora/accounts/sendMagicLink', accounts_sendMagicLink],
     ['post', '/aurora/accounts/unban', accounts_unban],
+    ['post', '/aurora/comments/ban', comments_ban],
     ['post', '/aurora/comments/create', comments_create],
     ['post', '/aurora/comments/like', comments_like],
+    ['post', '/aurora/comments/unban', comments_unban],
     ['post', '/aurora/comments/unlike', comments_unlike],
     ['post', '/aurora/notifications/queryMine', notifications_queryMine],
     ['post', '/aurora/notifications/read', notifications_read],

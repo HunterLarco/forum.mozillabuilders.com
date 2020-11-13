@@ -2,6 +2,7 @@ import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
 
+import * as accountHelpers from '@/src/server/helpers/data/Account';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 export async function prepareComment(arena, comment) {
@@ -76,7 +77,11 @@ async function flushComment_Liked(arena, comment) {
 }
 
 function flushComment_Hidden(arena, comment) {
-  const banned = !!comment.author.firestore.shadowBan;
-  comment.hidden =
-    banned && (!arena.actor || comment.author.id != arena.actor.id);
+  const banned =
+    comment.firestore.shadowBan || comment.author.firestore.shadowBan;
+  const actorIsAuthor = arena.actor && comment.author.id == arena.actor.id;
+  const actorIsModerator =
+    arena.actor &&
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator');
+  comment.hidden = banned && !actorIsAuthor && !actorIsModerator;
 }

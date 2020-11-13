@@ -16,6 +16,13 @@
         >{{ author_ }}</router-link
       >
       posted {{ age_ }}
+
+      <CommentModerationPopover type="globalModerator" :comment="comment">
+        <span slot="label">
+          &middot;
+          <u :class="$style.Clickable">Moderation Options</u>
+        </span>
+      </CommentModerationPopover>
     </div>
     <AttributedText
       :class="$style.Content"
@@ -43,6 +50,7 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
+import CommentModerationPopover from '@/src/web/components/features/CommentModerationPopover';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
@@ -55,6 +63,7 @@ import PostStore from '@/src/web/stores/Post';
 export default {
   components: {
     AttributedText,
+    CommentModerationPopover,
     ElementButton,
     ElementInput,
     HorizontalLayout,
