@@ -4,7 +4,7 @@ const Schema = Joi.object({
   id: Joi.string().required(),
   username: Joi.string().required(),
 
-  permissions: Joi.array()
+  roles: Joi.array()
     .items(
       Joi.object({
         type: Joi.string().required(),
@@ -27,8 +27,8 @@ Schema.fromArena = (arena, id) => {
     id: account.id,
     username: account.firestore.username,
 
-    permissions: (account.firestore.permissions || []).map((permission) => ({
-      type: permission.type,
+    roles: (account.firestore.roles || []).map((role) => ({
+      type: role.type,
     })),
 
     dateCreated: account.firestore.dateCreated,

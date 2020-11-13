@@ -20,7 +20,7 @@ async function handler(environment, request, headers) {
     { required: true }
   );
 
-  accountHelpers.assertPermissions(actor, 'globalModerator');
+  accountHelpers.assertRole(actor, 'globalModerator');
 
   await environment.firestore.runTransaction(async (transaction) => {
     const { account } = await AccountTable.get(

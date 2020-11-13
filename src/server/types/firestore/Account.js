@@ -6,7 +6,7 @@ export default Joi.object({
   email: Email.required(),
   username: Joi.string().required(),
 
-  permissions: Joi.array().items(
+  roles: Joi.array().items(
     Joi.object({
       type: Joi.string().required(),
     })

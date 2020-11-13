@@ -79,7 +79,7 @@ function flushPost_Hidden(arena, post) {
   const actorIsAuthor = arena.actor && post.author.id == arena.actor.id;
   const actorIsModerator =
     arena.actor &&
-    accountHelpers.hasPermission(arena.actor.account, 'globalModerator');
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator');
   post.hidden = banned && !actorIsAuthor && !actorIsModerator;
 }
 

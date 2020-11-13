@@ -66,7 +66,7 @@ Schema.fromArena = (arena, id) => {
   let moderation;
   if (
     arena.actor &&
-    accountHelpers.hasPermission(arena.actor.account, 'globalModerator')
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator')
   ) {
     moderation = {};
     if (post.firestore.shadowBan) {

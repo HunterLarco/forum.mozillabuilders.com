@@ -32,10 +32,7 @@ export default {
   computed: {
     enabled_() {
       const account = CurrentUserStore.state.account;
-      return (
-        account &&
-        account.permissions.some((permission) => permission.type == this.type)
-      );
+      return account && account.roles.some((role) => role.type == this.type);
     },
   },
 };
