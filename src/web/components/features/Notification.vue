@@ -1,35 +1,35 @@
 <template>
-  <a
+  <router-link
     :class="$style.Host"
-    :href="url_"
+    :to="url_"
     v-observe-visibility="onVisibilityChange_"
   >
     <div :class="$style.Title">
       <template v-if="notification.type == 'reply'">
-        <a
+        <router-link
           :class="$style.Clickable"
-          :href="`/user/${notification.details.author.id}`"
-          >{{ notification.details.author.username }}</a
+          :to="`/user/${notification.details.author.id}`"
+          >{{ notification.details.author.username }}</router-link
         >
         replied to your
         <template v-if="notification.details.target.post">
-          <a
+          <router-link
             :class="$style.Clickable"
-            :href="`/post/${notification.details.target.post.id}`"
-            >post</a
+            :to="`/post/${notification.details.target.post.id}`"
+            >post</router-link
           >
         </template>
         <template v-if="notification.details.target.comment">
-          <a
+          <router-link
             :class="$style.Clickable"
-            :href="`/comment/${notification.details.content.comment.id}`"
-            >comment</a
+            :to="`/comment/${notification.details.content.comment.id}`"
+            >comment</router-link
           >
         </template>
       </template>
     </div>
     <div :class="$style.Age">{{ age_ }}</div>
-  </a>
+  </router-link>
 </template>
 
 <script>
