@@ -2,7 +2,7 @@
   <div :class="$style.Host">
     <ElementPopover placement="bottom" trigger="click" v-model="open_">
       <ElementBadge
-        :max="99"
+        :max="10"
         :value="unread_.length"
         :hidden="unread_.length == 0"
         slot="reference"

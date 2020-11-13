@@ -29,7 +29,7 @@
           </div>
 
           <div :class="$style.Icons">
-            <NotificationBadge />
+            <NotificationBadge v-if="loggedIn_" />
           </div>
         </template>
       </HorizontalLayout>
@@ -45,12 +45,18 @@ import PageRibbon from '@/src/web/components/layout/PageRibbon';
 import MozillaBuildersLogo from '@/src/web/assets/logos/MozillaBuilders.png';
 import MozillaLogo from '@/src/web/assets/logos/Mozilla.png';
 
+import CurrentUserStore from '@/src/web/stores/CurrentUser';
+
 export default {
   components: { HorizontalLayout, NotificationBadge, PageRibbon },
 
   computed: {
     logo_() {
       return this.$sizing(MozillaBuildersLogo, { mobile: MozillaLogo });
+    },
+
+    loggedIn_() {
+      return !!CurrentUserStore.state.authToken;
     },
   },
 };

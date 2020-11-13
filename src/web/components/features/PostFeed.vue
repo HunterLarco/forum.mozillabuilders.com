@@ -31,6 +31,10 @@
       :post="post"
     />
 
+    <div v-if="!loading_ && !posts_.length" :class="$style.Empty">
+      No posts found!
+    </div>
+
     <div
       :class="$style.NextPageButton"
       v-if="hasNextPage_ && !loading_"
@@ -133,6 +137,13 @@ export default {
   & ~ .Post {
     border-top: 1px solid #EEE;
   }
+}
+
+.Empty {
+  @include fonts-body;
+
+  margin: 20px;
+  text-align: center;
 }
 
 .NextPageButton {

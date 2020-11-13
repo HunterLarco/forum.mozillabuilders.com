@@ -73,5 +73,12 @@ export default createStore('NotificationStore', {
         }
       }
     },
+
+    reset(state) {
+      state.notifications = [];
+      state.cursor.first = null;
+      state.cursor.last = null;
+      state.cursor.next = null;
+    },
   },
 });

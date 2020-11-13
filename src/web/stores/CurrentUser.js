@@ -5,6 +5,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 import createStore from '@/src/web/helpers/store/createStore';
 
 import FeedStore from '@/src/web/stores/Feed';
+import NotificationStore from '@/src/web/stores/Notification';
 import PostStore from '@/src/web/stores/Post';
 import PublicUserStore from '@/src/web/stores/PublicUser';
 
@@ -61,6 +62,7 @@ export default createStore('CurrentUserStore', {
 
       // Whenever we change the current user, all personalized must be reset.
       FeedStore.commit('reset');
+      NotificationStore.commit('reset');
       PostStore.commit('reset');
       PublicUserStore.commit('reset');
     },
