@@ -34,6 +34,13 @@
           >{{ author_ }}</router-link
         >
         posted {{ age_ }}
+
+        <PostModerationPopover type="globalModerator" :post="post">
+          <span slot="label">
+            &middot;
+            <u :class="$style.Clickable">Moderation Options</u>
+          </span>
+        </PostModerationPopover>
       </div>
     </div>
   </HorizontalLayout>
@@ -45,6 +52,7 @@ import friendlyTime from 'friendly-time';
 import AttributedText from '@/src/web/components/layout/AttributedText';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
@@ -52,7 +60,12 @@ import PostStore from '@/src/web/stores/Post';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { AttributedText, ElementIcon, HorizontalLayout },
+  components: {
+    AttributedText,
+    ElementIcon,
+    HorizontalLayout,
+    PostModerationPopover,
+  },
 
   props: {
     post: {
