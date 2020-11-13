@@ -37,6 +37,7 @@
 <script>
 import friendlyTime from 'friendly-time';
 
+import Avatar from '@/src/web/components/layout/Avatar';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -52,6 +53,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
+    Avatar,
     HorizontalLayout,
     IndeterminateProgressBar,
     PageFooter,
