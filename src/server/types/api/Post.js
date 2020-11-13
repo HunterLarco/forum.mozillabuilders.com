@@ -5,6 +5,8 @@ import AttributedText from '@/src/server/types/api/AttributedText';
 import Comment from '@/src/server/types/api/Comment';
 import PublicAccount from '@/src/server/types/api/PublicAccount';
 
+import * as accountHelpers from '@/src/server/helpers/data/Account';
+
 const Schema = Joi.object({
   id: Joi.string().required(),
 
@@ -26,6 +28,12 @@ const Schema = Joi.object({
   personalization: Joi.object({
     liked: Joi.boolean().required(),
     postedByYou: Joi.boolean().required(),
+  }),
+
+  moderation: Joi.object({
+    shadowBan: Joi.object({
+      dateBanned: Joi.date().required(),
+    }),
   }),
 
   dateCreated: Joi.date().required(),
@@ -55,6 +63,19 @@ Schema.fromArena = (arena, id) => {
     .map((comment) => Comment.fromArena(arena, comment.id));
   reorderComments(comments);
 
+  let moderation;
+  if (
+    arena.actor &&
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator')
+  ) {
+    moderation = {};
+    if (post.firestore.shadowBan) {
+      moderation.shadowBan = {
+        dateBanned: post.firestore.shadowBan.dateBanned,
+      };
+    }
+  }
+
   return {
     id: post.id,
 
@@ -74,6 +95,8 @@ Schema.fromArena = (arena, id) => {
       liked: post.liked,
       postedByYou: !!arena.actor && post.author.id == arena.actor.id,
     },
+
+    moderation,
 
     dateCreated: post.firestore.dateCreated,
   };

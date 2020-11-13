@@ -44,6 +44,7 @@ async function handler(environment, request, headers) {
     : notifications;
 
   const arena = new Arena(environment);
+  arena.setActor(actorId, actor);
   for (const notification of renderedNotifications) {
     arena.addNotification(notification.id, notification.document);
   }

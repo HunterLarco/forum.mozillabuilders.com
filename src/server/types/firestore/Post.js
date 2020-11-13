@@ -13,6 +13,10 @@ export default Joi.object({
 
   comments: Joi.array().items(Comment).required(),
 
+  shadowBan: Joi.object({
+    dateBanned: Joi.date().required(),
+  }),
+
   stats: Joi.object({
     likes: Joi.number().min(1).default(1),
     hotness: Joi.number().min(0).default(0),

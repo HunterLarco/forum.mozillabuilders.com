@@ -28,12 +28,25 @@
       </div>
 
       <div :class="$style.Metadata">
-        <router-link
-          :to="`/user/${post.author.id}`"
-          :class="$style.Clickable"
-          >{{ author_ }}</router-link
-        >
+        <router-link :to="`/user/${post.authorId}`" :class="$style.Clickable">{{
+          author_
+        }}</router-link>
         posted {{ age_ }}
+
+        <PostModerationPopover type="globalModerator" :post="post">
+          <span slot="label">
+            &middot;
+            <u :class="$style.Clickable">Moderation Options</u>
+          </span>
+        </PostModerationPopover>
+
+        <ElementTooltip placement="bottom" v-if="banned_">
+          <div slot="content">
+            This post is banned. It is only visible to the post's author and
+            moderators.
+          </div>
+          <div :class="$style.BannedTag">Banned</div>
+        </ElementTooltip>
       </div>
     </div>
   </HorizontalLayout>
@@ -43,16 +56,23 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
-import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { AttributedText, ElementIcon, HorizontalLayout },
+  components: {
+    AttributedText,
+    ElementTooltip,
+    HorizontalLayout,
+    PostModerationPopover,
+  },
 
   props: {
     post: {
@@ -77,7 +97,8 @@ export default {
         return 'you';
       }
 
-      return this.post.author.username;
+      const author = PublicUserStore.state.accounts[this.post.authorId];
+      return author.username;
     },
 
     age_() {
@@ -102,6 +123,23 @@ export default {
       }
 
       return this.post.personalization.liked;
+    },
+
+    banned_() {
+      if (!this.post) {
+        return false;
+      }
+
+      if (this.post.moderation && this.post.moderation.shadowBan) {
+        return true;
+      }
+
+      const author = PublicUserStore.state.accounts[this.post.authorId];
+      if (author.moderation && author.moderation.shadowBan) {
+        return true;
+      }
+
+      return false;
     },
   },
 
@@ -215,9 +253,14 @@ export default {
   }
 }
 
-.LinkIcon {
-  @include fonts-post-likes;
-
-  color: #828282;
+.BannedTag {
+  background: #E91E63;
+  border-radius: 2px;
+  color: #FFF;
+  display: inline-block;
+  font-weight: bold;
+  margin: 0 4px;
+  padding: 0 3px;
+  vertical-align: middle;
 }
 </style>

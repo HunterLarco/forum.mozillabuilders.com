@@ -46,6 +46,16 @@ export default createStore('PostStore', {
       }
     },
 
+    async banPost({ commit }, id) {
+      await apiFetch('aurora/posts/ban', { id });
+      commit('banPost', id);
+    },
+
+    async unbanPost({ commit }, id) {
+      await apiFetch('aurora/posts/unban', { id });
+      commit('unbanPost', id);
+    },
+
     async refreshPost({ commit }, id) {
       const { post } = await apiFetch('aurora/posts/get', { id });
       commit('setPost', post);
@@ -82,6 +92,31 @@ export default createStore('PostStore', {
         throw error;
       }
     },
+
+    async banComment({ commit }, id) {
+      await apiFetch('aurora/comments/ban', { id });
+      commit('banComment', id);
+    },
+
+    async unbanComment({ commit }, id) {
+      await apiFetch('aurora/comments/unban', { id });
+      commit('unbanComment', id);
+    },
+  },
+
+  getters: {
+    comment(state) {
+      return (commentId) => {
+        const postId = commentHelpers.postId(commentId);
+        const post = state.posts[postId];
+
+        if (!post) {
+          return null;
+        }
+
+        return commentHelpers.find(post, commentId);
+      };
+    },
   },
 
   mutations: {
@@ -89,9 +124,14 @@ export default createStore('PostStore', {
       Vue.set(state.posts, post.id, post);
 
       PublicUserStore.commit('setAccount', post.author);
+      post.authorId = post.author.id;
+      delete post.author;
+
       if (post.comments) {
         for (const comment of commentHelpers.iterate(post.comments)) {
           PublicUserStore.commit('setAccount', comment.author);
+          comment.authorId = comment.author.id;
+          delete comment.author;
         }
       }
     },
@@ -120,11 +160,34 @@ export default createStore('PostStore', {
       }
     },
 
+    banPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      Vue.set(post.moderation, 'shadowBan', {
+        dateBanned: new Date(),
+      });
+    },
+
+    unbanPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      Vue.delete(post.moderation, 'shadowBan');
+    },
+
     prependComment(state, { postId, commentId, comment }) {
       const post = state.posts[postId];
       if (!post) {
         return;
       }
+
+      comment.authorId = comment.author.id;
+      delete comment.author;
 
       post.stats.comments += 1;
       if (!commentId) {
@@ -166,6 +229,38 @@ export default createStore('PostStore', {
       if (comment.personalization) {
         comment.personalization.liked = false;
       }
+    },
+
+    banComment(state, id) {
+      const postId = commentHelpers.postId(id);
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, id);
+      if (!comment) {
+        return;
+      }
+
+      Vue.set(comment.moderation, 'shadowBan', {
+        dateBanned: new Date(),
+      });
+    },
+
+    unbanComment(state, id) {
+      const postId = commentHelpers.postId(id);
+      const post = state.posts[postId];
+      if (!post) {
+        return;
+      }
+
+      const comment = commentHelpers.find(post, id);
+      if (!comment) {
+        return;
+      }
+
+      Vue.delete(comment.moderation, 'shadowBan');
     },
 
     reset(state) {

@@ -2,6 +2,7 @@ import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
 import * as PostTable from '@/src/server/firestore/Post';
 
+import * as accountHelpers from '@/src/server/helpers/data/Account';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 export async function preparePost(arena, post) {
@@ -74,13 +75,30 @@ async function flushPost_Liked(arena, post) {
 }
 
 function flushPost_Hidden(arena, post) {
-  const banned = !!post.author.firestore.shadowBan;
-  post.hidden = banned && (!arena.actor || post.author.id != arena.actor.id);
+  const banned = post.firestore.shadowBan || post.author.firestore.shadowBan;
+  const actorIsAuthor = arena.actor && post.author.id == arena.actor.id;
+  const actorIsModerator =
+    arena.actor &&
+    accountHelpers.hasRole(arena.actor.account, 'globalModerator');
+  post.hidden = banned && !actorIsAuthor && !actorIsModerator;
 }
 
 function flushPost_Comments(arena, post) {
-  const comments = Array.from(commentHelpers.iterate(post.firestore.comments));
-  post.comments = comments.filter(
-    (comment) => !arena.comments[comment.id].hidden
-  ).length;
+  function* iterateNonHiddenComments(firestoreComments) {
+    for (const firestoreComment of firestoreComments) {
+      if (!arena.comments[firestoreComment.id].hidden) {
+        yield firestoreComment;
+        for (const subFirestoreComment of iterateNonHiddenComments(
+          firestoreComment.children
+        )) {
+          yield subFirestoreComment;
+        }
+      }
+    }
+  }
+
+  const comments = Array.from(
+    iterateNonHiddenComments(post.firestore.comments)
+  );
+  post.comments = comments.length;
 }
