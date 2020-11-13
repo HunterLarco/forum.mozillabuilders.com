@@ -13,13 +13,15 @@
 
           <IndeterminateProgressBar v-if="loading_" />
 
-          <CommentThread
-            :class="$style.Comments"
-            :post="post_"
-            :comments="post_.comments"
-            v-if="post_.comments"
-          >
-          </CommentThread>
+          <div :class="$style.Comments">
+            <template v-for="comment in comments_">
+              <Comment
+                :class="$style.Comment"
+                :post="post_"
+                :comment="comment"
+              />
+            </template>
+          </div>
         </template>
       </PageRibbon>
     </div>
@@ -30,7 +32,7 @@
 
 <script>
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
-import CommentThread from '@/src/web/components/features/CommentThread';
+import Comment from '@/src/web/components/features/Comment';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
 import PageHeader from '@/src/web/components/layout/PageHeader';
@@ -45,7 +47,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 export default {
   components: {
     CollapsedPost,
-    CommentThread,
+    Comment,
     IndeterminateProgressBar,
     PageFooter,
     PageHeader,
@@ -61,7 +63,16 @@ export default {
 
   computed: {
     post_() {
-      return PostStore.state.posts[this.$route.params.id] || null;
+      const postId = commentHelpers.postId(this.$route.params.id);
+      return PostStore.state.posts[postId] || null;
+    },
+
+    comments_() {
+      if (!this.post_) {
+        return [];
+      }
+
+      return commentHelpers.path(this.post_.comments, this.$route.params.id);
     },
   },
 
@@ -69,8 +80,10 @@ export default {
     '$route.params.id': {
       immediate: true,
       handler() {
+        const postId = commentHelpers.postId(this.$route.params.id);
+
         this.loading_ = true;
-        PostStore.dispatch('refreshPost', this.$route.params.id).finally(() => {
+        PostStore.dispatch('refreshPost', postId).finally(() => {
           this.loading_ = false;
         });
       },
@@ -102,6 +115,12 @@ export default {
 
   @include sizing-mobile {
     padding: 20px;
+  }
+}
+
+.Comment {
+  & ~ .Comment {
+    margin-top: 20px;
   }
 }
 </style>

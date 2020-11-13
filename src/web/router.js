@@ -21,6 +21,11 @@ const router = new VueRouter({
     },
 
     {
+      path: '/comment/:id',
+      component: () => import('@/src/web/components/pages/Comment'),
+    },
+
+    {
       path: '/user/:id',
       component: () => import('@/src/web/components/pages/User'),
     },

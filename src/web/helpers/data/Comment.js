@@ -25,3 +25,22 @@ export function* iterate(comments) {
     }
   }
 }
+
+export function postId(commentId) {
+  return commentId.split('-')[0];
+}
+
+export function path(comments, commentId) {
+  for (const comment of comments) {
+    if (comment.id == commentId) {
+      return [comment];
+    }
+
+    const subPath = path(comment.children, commentId);
+    if (subPath.length) {
+      return [comment, ...subPath];
+    }
+  }
+
+  return [];
+}

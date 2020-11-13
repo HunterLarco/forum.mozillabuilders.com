@@ -1,9 +1,34 @@
 import * as CounterTable from '@/src/server/firestore/Counter';
 import * as LikeTable from '@/src/server/firestore/Like';
+import * as PostTable from '@/src/server/firestore/Post';
 
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
-export default async function flushPost(arena, post) {
+export async function preparePost(arena, post) {
+  if (post.prepared) {
+    return false;
+  }
+
+  if (!post.firestore) {
+    post.firestore = (
+      await PostTable.get(arena.environment, null, post.id)
+    ).post;
+  }
+
+  post.author = arena.addAccount(post.firestore.author);
+  for (const comment of commentHelpers.iterate(post.firestore.comments)) {
+    arena.addComment(comment.id, comment);
+  }
+
+  post.prepared = true;
+  return true;
+}
+
+export async function flushPost(arena, post) {
+  if (!post.prepared) {
+    throw new Error('Post must be prepared before flushed');
+  }
+
   if (post.flushed) {
     return false;
   }

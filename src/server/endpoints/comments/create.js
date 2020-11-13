@@ -4,6 +4,7 @@ import ApiCommentSchema from '@/src/server/types/api/Comment';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
 
+import * as NotificationTable from '@/src/server/firestore/Notification';
 import * as PostTable from '@/src/server/firestore/Post';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
@@ -21,6 +22,30 @@ const RequestSchema = Joi.object({
 const ResponseSchema = Joi.object({
   comment: ApiCommentSchema.required(),
 });
+
+async function sendCommentNotification(
+  environment,
+  transaction,
+  { recipient, actorId, comment, target }
+) {
+  if (recipient == actorId) {
+    return;
+  }
+
+  await NotificationTable.create(environment, transaction, {
+    recipient,
+    type: 'reply',
+    details: {
+      author: actorId,
+      content: {
+        comment: comment.id,
+      },
+      target,
+    },
+    read: false,
+    dateCreated: new Date(),
+  });
+}
 
 async function handler(environment, request, headers) {
   const { id: actorId, account: actor } = await getCurrentUser(
@@ -54,6 +79,12 @@ async function handler(environment, request, headers) {
 
       if (!commentId) {
         post.comments.push(comment);
+        await sendCommentNotification(environment, transaction, {
+          recipient: post.author,
+          actorId,
+          comment,
+          target: { post: postId },
+        });
       } else {
         const parentComment = commentHelpers.find(post, commentId);
         if (!parentComment) {
@@ -64,6 +95,12 @@ async function handler(environment, request, headers) {
           });
         }
         parentComment.children.push(comment);
+        await sendCommentNotification(environment, transaction, {
+          recipient: parentComment.author,
+          actorId,
+          comment,
+          target: { comment: commentId },
+        });
       }
 
       await PostTable.replace(environment, transaction, postId, post);
@@ -74,7 +111,7 @@ async function handler(environment, request, headers) {
 
   const arena = new Arena(environment);
   arena.setActor(actorId, actor);
-  arena.addComment(comment);
+  arena.addComment(comment.id, comment);
   await arena.flush();
 
   return {
