@@ -4,6 +4,7 @@ import accounts_get from '@/src/server/endpoints/accounts/get';
 import accounts_getMe from '@/src/server/endpoints/accounts/getMe';
 import accounts_login from '@/src/server/endpoints/accounts/login';
 import accounts_sendMagicLink from '@/src/server/endpoints/accounts/sendMagicLink';
+import accounts_unban from '@/src/server/endpoints/accounts/unban';
 import comments_create from '@/src/server/endpoints/comments/create';
 import comments_like from '@/src/server/endpoints/comments/like';
 import comments_unlike from '@/src/server/endpoints/comments/unlike';
@@ -15,6 +16,7 @@ import posts_create from '@/src/server/endpoints/posts/create';
 import posts_get from '@/src/server/endpoints/posts/get';
 import posts_like from '@/src/server/endpoints/posts/like';
 import posts_query from '@/src/server/endpoints/posts/query';
+import posts_unban from '@/src/server/endpoints/posts/unban';
 import posts_unlike from '@/src/server/endpoints/posts/unlike';
 
 export function install(environment, app) {
@@ -26,6 +28,7 @@ export function install(environment, app) {
     ['post', '/aurora/accounts/getMe', accounts_getMe],
     ['post', '/aurora/accounts/login', accounts_login],
     ['post', '/aurora/accounts/sendMagicLink', accounts_sendMagicLink],
+    ['post', '/aurora/accounts/unban', accounts_unban],
     ['post', '/aurora/comments/create', comments_create],
     ['post', '/aurora/comments/like', comments_like],
     ['post', '/aurora/comments/unlike', comments_unlike],
@@ -36,6 +39,7 @@ export function install(environment, app) {
     ['post', '/aurora/posts/get', posts_get],
     ['post', '/aurora/posts/like', posts_like],
     ['post', '/aurora/posts/query', posts_query],
+    ['post', '/aurora/posts/unban', posts_unban],
     ['post', '/aurora/posts/unlike', posts_unlike],
   ];
 

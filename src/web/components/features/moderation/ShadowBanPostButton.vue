@@ -1,11 +1,13 @@
 <template>
-  <ElementButton :loading="loading_" @click="shadowBanPost_"
-    >Shadow Ban Post</ElementButton
-  >
+  <ElementButton :loading="loading_" @click="shadowBanPost_">{{
+    buttonText_
+  }}</ElementButton>
 </template>
 
 <script>
 import ElementButton from '@/vendor/element-ui/Button';
+
+import PostStore from '@/src/web/stores/Post';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -25,6 +27,17 @@ export default {
     };
   },
 
+  computed: {
+    banned_() {
+      const post = PostStore.state.posts[this.postId];
+      return post && post.moderation.shadowBan;
+    },
+
+    buttonText_() {
+      return this.banned_ ? 'Un-Shadow Ban Post' : 'Shadow Ban Post';
+    },
+  },
+
   methods: {
     shadowBanPost_() {
       if (this.loading_) {
@@ -32,7 +45,9 @@ export default {
       }
 
       this.loading_ = true;
-      apiFetch('aurora/posts/ban', { id: this.postId }).then(() => {
+      apiFetch(this.banned_ ? 'aurora/posts/unban' : 'aurora/posts/ban', {
+        id: this.postId,
+      }).then(() => {
         this.loading_ = false;
       });
     },

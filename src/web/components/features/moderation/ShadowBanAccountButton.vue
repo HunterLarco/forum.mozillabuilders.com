@@ -1,11 +1,13 @@
 <template>
-  <ElementButton :loading="loading_" @click="shadowBanAccount_"
-    >Shadow Ban Account</ElementButton
-  >
+  <ElementButton :loading="loading_" @click="shadowBanAccount_">{{
+    buttonText_
+  }}</ElementButton>
 </template>
 
 <script>
 import ElementButton from '@/vendor/element-ui/Button';
+
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -25,6 +27,17 @@ export default {
     };
   },
 
+  computed: {
+    banned_() {
+      const account = PublicUserStore.state.accounts[this.accountId];
+      return account && account.moderation.shadowBan;
+    },
+
+    buttonText_() {
+      return this.banned_ ? 'Un-Shadow Ban Account' : 'Shadow Ban Account';
+    },
+  },
+
   methods: {
     shadowBanAccount_() {
       if (this.loading_) {
@@ -32,7 +45,9 @@ export default {
       }
 
       this.loading_ = true;
-      apiFetch('aurora/accounts/ban', { id: this.accountId }).then(() => {
+      apiFetch(this.banned_ ? 'aurora/accounts/unban' : 'aurora/accounts/ban', {
+        id: this.accountId,
+      }).then(() => {
         this.loading_ = false;
       });
     },
