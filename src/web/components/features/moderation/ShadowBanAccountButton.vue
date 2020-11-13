@@ -52,9 +52,10 @@ export default {
       }
 
       this.loading_ = true;
-      apiFetch(this.banned_ ? 'aurora/accounts/unban' : 'aurora/accounts/ban', {
-        id: this.accountId,
-      }).then(() => {
+      PublicUserStore.dispatch(
+        this.banned_ ? 'unbanAccount' : 'banAccount',
+        this.accountId
+      ).then(() => {
         this.loading_ = false;
       });
     },

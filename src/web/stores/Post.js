@@ -46,6 +46,16 @@ export default createStore('PostStore', {
       }
     },
 
+    async banPost({ commit }, id) {
+      await apiFetch('aurora/posts/ban', { id });
+      commit('banPost', id);
+    },
+
+    async unbanPost({ commit }, id) {
+      await apiFetch('aurora/posts/ban', { id });
+      commit('unbanPost', id);
+    },
+
     async refreshPost({ commit }, id) {
       const { post } = await apiFetch('aurora/posts/get', { id });
       commit('setPost', post);
@@ -118,6 +128,26 @@ export default createStore('PostStore', {
       if (post.personalization) {
         post.personalization.liked = false;
       }
+    },
+
+    banPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      Vue.set(post.moderation, 'shadowBan', {
+        dateBanned: new Date(),
+      });
+    },
+
+    unbanPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      Vue.delete(post.moderation, 'shadowBan');
     },
 
     prependComment(state, { postId, commentId, comment }) {

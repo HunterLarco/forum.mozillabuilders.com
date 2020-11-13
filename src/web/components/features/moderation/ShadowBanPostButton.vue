@@ -52,9 +52,10 @@ export default {
       }
 
       this.loading_ = true;
-      apiFetch(this.banned_ ? 'aurora/posts/unban' : 'aurora/posts/ban', {
-        id: this.postId,
-      }).then(() => {
+      PostStore.dispatch(
+        this.banned_ ? 'unbanPost' : 'banPost',
+        this.postId
+      ).then(() => {
         this.loading_ = false;
       });
     },
