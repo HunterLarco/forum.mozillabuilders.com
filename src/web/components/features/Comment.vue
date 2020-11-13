@@ -23,6 +23,14 @@
           <u :class="$style.Clickable">Moderation Options</u>
         </span>
       </CommentModerationPopover>
+
+      <ElementTooltip placement="bottom" v-if="banned_">
+        <div slot="content">
+          This post is banned. It is only visible to the post's author and
+          moderators.
+        </div>
+        <div :class="$style.BannedTag">Banned</div>
+      </ElementTooltip>
     </div>
     <AttributedText
       :class="$style.Content"
@@ -50,6 +58,7 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import CommentModerationPopover from '@/src/web/components/features/CommentModerationPopover';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
@@ -64,6 +73,7 @@ import PublicUserStore from '@/src/web/stores/PublicUser';
 export default {
   components: {
     AttributedText,
+    ElementTooltip,
     CommentModerationPopover,
     ElementButton,
     ElementInput,
@@ -106,6 +116,23 @@ export default {
 
     age_() {
       return friendlyTime(new Date(this.comment.dateCreated));
+    },
+
+    banned_() {
+      if (!this.comment) {
+        return false;
+      }
+
+      if (this.comment.moderation && this.comment.moderation.shadowBan) {
+        return true;
+      }
+
+      const author = PublicUserStore.state.accounts[this.comment.authorId];
+      if (author.moderation && author.moderation.shadowBan) {
+        return true;
+      }
+
+      return false;
     },
   },
 
@@ -205,5 +232,16 @@ export default {
 
 .ReplyForm {
   margin-left: 30px;
+}
+
+.BannedTag {
+  background: #E91E63;
+  border-radius: 2px;
+  color: #FFF;
+  display: inline-block;
+  font-weight: bold;
+  margin: 0 4px;
+  padding: 0 3px;
+  vertical-align: middle;
 }
 </style>

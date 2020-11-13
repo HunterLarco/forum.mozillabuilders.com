@@ -39,6 +39,14 @@
             <u :class="$style.Clickable">Moderation Options</u>
           </span>
         </PostModerationPopover>
+
+        <ElementTooltip placement="bottom" v-if="banned_">
+          <div slot="content">
+            This post is banned. It is only visible to the post's author and
+            moderators.
+          </div>
+          <div :class="$style.BannedTag">Banned</div>
+        </ElementTooltip>
       </div>
     </div>
   </HorizontalLayout>
@@ -48,7 +56,7 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
-import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
 
@@ -61,7 +69,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 export default {
   components: {
     AttributedText,
-    ElementIcon,
+    ElementTooltip,
     HorizontalLayout,
     PostModerationPopover,
   },
@@ -115,6 +123,23 @@ export default {
       }
 
       return this.post.personalization.liked;
+    },
+
+    banned_() {
+      if (!this.post) {
+        return false;
+      }
+
+      if (this.post.moderation && this.post.moderation.shadowBan) {
+        return true;
+      }
+
+      const author = PublicUserStore.state.accounts[this.post.authorId];
+      if (author.moderation && author.moderation.shadowBan) {
+        return true;
+      }
+
+      return false;
     },
   },
 
@@ -228,9 +253,14 @@ export default {
   }
 }
 
-.LinkIcon {
-  @include fonts-post-likes;
-
-  color: #828282;
+.BannedTag {
+  background: #E91E63;
+  border-radius: 2px;
+  color: #FFF;
+  display: inline-block;
+  font-weight: bold;
+  margin: 0 4px;
+  padding: 0 3px;
+  vertical-align: middle;
 }
 </style>
