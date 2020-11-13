@@ -26,7 +26,7 @@
 
       <ElementTooltip placement="bottom" v-if="banned_">
         <div slot="content">
-          This post is banned. It is only visible to the post's author and
+          This comment is banned. It is only visible to the post's author and
           moderators.
         </div>
         <div :class="$style.BannedTag">Banned</div>
