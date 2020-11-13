@@ -50,8 +50,8 @@ export default createStore('NotificationStore', {
     extendFeed(state, { notifications, cursor }) {
       for (const notification of notifications) {
         state.notifications.push(notification);
-        if (notification.details.comment) {
-          PostStore.commit('setPost', notification.details.comment.parent.post);
+        if (notification.type == 'reply' && notification.details.target.post) {
+          PostStore.commit('setPost', notification.details.target.post);
         }
       }
 

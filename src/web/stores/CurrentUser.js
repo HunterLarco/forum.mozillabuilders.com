@@ -65,6 +65,11 @@ export default createStore('CurrentUserStore', {
       NotificationStore.commit('reset');
       PostStore.commit('reset');
       PublicUserStore.commit('reset');
+
+      if (token) {
+        // If we are logging in a new user, reload notifications.
+        NotificationStore.dispatch('loadNextPage');
+      }
     },
 
     setAccount(state, account) {

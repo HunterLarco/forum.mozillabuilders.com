@@ -5,13 +5,28 @@
     v-observe-visibility="onVisibilityChange_"
   >
     <div :class="$style.Title">
-      <a :class="$style.Clickable" :href="`/user/${details_.author.id}`">{{
-        details_.author.username
-      }}</a>
-      replied to your
-      <a :class="$style.Clickable" :href="details_.parent.url">{{
-        details_.parent.type
-      }}</a>
+      <template v-if="notification.type == 'reply'">
+        <a
+          :class="$style.Clickable"
+          :href="`/user/${notification.details.author.id}`"
+          >{{ notification.details.author.username }}</a
+        >
+        replied to your
+        <template v-if="notification.details.target.post">
+          <a
+            :class="$style.Clickable"
+            :href="`/post/${notification.details.target.post.id}`"
+            >post</a
+          >
+        </template>
+        <template v-if="notification.details.target.comment">
+          <a
+            :class="$style.Clickable"
+            :href="`/comment/${notification.details.content.comment.id}`"
+            >comment</a
+          >
+        </template>
+      </template>
     </div>
     <div :class="$style.Age">{{ age_ }}</div>
   </a>
@@ -33,31 +48,10 @@ export default {
   },
 
   computed: {
-    details_() {
-      if (this.notification.details.comment) {
-        const comment = this.notification.details.comment;
-        return {
-          author: {
-            id: comment.author.id,
-            username: comment.author.username,
-          },
-
-          parent: {
-            type: comment.parent.comment ? 'comment' : 'post',
-            url: comment.parent.comment
-              ? `/comment/${comment.parent.comment.id}`
-              : `/post/${comment.parent.post.id}`,
-          },
-        };
-      }
-
-      return null;
-    },
-
     url_() {
-      if (this.notification.details.comment) {
-        const comment = this.notification.details.comment;
-        return `/comment/${comment.comment.id}`;
+      if (this.notification.type == 'reply') {
+        const comment = this.notification.details.content.comment;
+        return `/comment/${comment.id}`;
       }
 
       return null;

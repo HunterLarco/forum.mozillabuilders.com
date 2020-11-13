@@ -1,10 +1,13 @@
 import Joi from 'joi';
 
-const CommentNotification = Joi.object({
+const Reply = Joi.object({
   author: Joi.string().required(),
-  comment: Joi.string().required(),
 
-  parent: Joi.object({
+  content: Joi.object({
+    comment: Joi.string().required(),
+  }).required(),
+
+  target: Joi.object({
     post: Joi.string(),
     comment: Joi.string(),
   })
@@ -15,11 +18,11 @@ const CommentNotification = Joi.object({
 export default Joi.object({
   recipient: Joi.string().required(),
 
-  details: Joi.object({
-    comment: CommentNotification,
-  })
-    .xor('comment')
-    .required(),
+  type: Joi.string().required(),
+  details: Joi.when('type', {
+    is: 'reply',
+    then: Reply.required(),
+  }),
 
   read: Joi.boolean().required(),
   dateCreated: Joi.date().required(),

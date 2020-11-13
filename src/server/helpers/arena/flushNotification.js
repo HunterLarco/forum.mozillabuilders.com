@@ -12,13 +12,13 @@ export async function prepareNotification(arena, notification) {
   }
 
   notification.recipient = arena.addAccount(notification.firestore.recipient);
-  if (notification.firestore.details.comment) {
-    arena.addAccount(notification.firestore.details.comment.author);
-    arena.addComment(notification.firestore.details.comment.comment);
-    if (notification.firestore.details.comment.parent.post) {
-      arena.addPost(notification.firestore.details.comment.parent.post);
+  if (notification.firestore.type == 'reply') {
+    arena.addAccount(notification.firestore.details.author);
+    arena.addComment(notification.firestore.details.content.comment);
+    if (notification.firestore.details.target.post) {
+      arena.addPost(notification.firestore.details.target.post);
     } else {
-      arena.addComment(notification.firestore.details.comment.parent.comment);
+      arena.addComment(notification.firestore.details.target.comment);
     }
   }
 

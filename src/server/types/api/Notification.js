@@ -6,28 +6,46 @@ import PublicAccount from '@/src/server/types/api/PublicAccount';
 
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
-const CommentNotification = Joi.object({
+const Reply = Joi.object({
   author: PublicAccount.required(),
-  comment: Comment.required(),
 
-  parent: Joi.object({
-    post: Post.required(),
+  content: Joi.object({
+    comment: Comment.required(),
+  }).required(),
+
+  target: Joi.object({
+    post: Post,
     comment: Comment,
-  }),
+  }).xor('post', 'comment'),
 });
 
 const Schema = Joi.object({
   id: Joi.string().required(),
 
-  details: Joi.object({
-    comment: CommentNotification,
-  })
-    .xor('comment')
-    .required(),
+  type: Joi.string().required(),
+  details: Joi.when('type', {
+    is: 'reply',
+    then: Reply.required(),
+  }),
 
   read: Joi.boolean().required(),
   dateCreated: Joi.date().required(),
 });
+
+function createReplyDetails(arena, notification) {
+  const authorId = notification.firestore.details.author;
+  const contentCommentId = notification.firestore.details.content.comment;
+  const targetPostId = notification.firestore.details.target.post;
+  const targetCommentId = notification.firestore.details.target.comment;
+
+  return {
+    author: PublicAccount.fromArena(arena, authorId),
+    content: { comment: Comment.fromArena(arena, contentCommentId) },
+    target: targetPostId
+      ? { post: Post.fromArena(arena, targetPostId) }
+      : { comment: Comment.fromArena(arena, targetCommentId) },
+  };
+}
 
 Schema.fromArena = (arena, id) => {
   const notification = arena.notifications[id];
@@ -37,34 +55,10 @@ Schema.fromArena = (arena, id) => {
     throw new Error(`Notification ${id} not flushed in arena`);
   }
 
-  const details = {};
-  const firestoreDetails = notification.firestore.details;
-
-  if (firestoreDetails.comment) {
-    const parent = {};
-    if (firestoreDetails.comment.parent.post) {
-      parent.post = Post.fromArena(arena, firestoreDetails.comment.parent.post);
-    } else {
-      parent.post = Post.fromArena(
-        arena,
-        commentHelpers.postId(firestoreDetails.comment.parent.comment)
-      );
-      parent.comment = Comment.fromArena(
-        arena,
-        firestoreDetails.comment.parent.comment
-      );
-    }
-
-    details.comment = {
-      author: PublicAccount.fromArena(arena, firestoreDetails.comment.author),
-      comment: Comment.fromArena(arena, firestoreDetails.comment.comment),
-      parent,
-    };
-  }
-
   return {
     id,
-    details,
+    type: notification.firestore.type,
+    details: createReplyDetails(arena, notification),
     read: notification.firestore.read,
     dateCreated: notification.firestore.dateCreated,
   };

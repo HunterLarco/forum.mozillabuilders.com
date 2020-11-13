@@ -26,7 +26,7 @@ const ResponseSchema = Joi.object({
 async function sendCommentNotification(
   environment,
   transaction,
-  { recipient, actorId, comment, parent }
+  { recipient, actorId, comment, target }
 ) {
   if (recipient == actorId) {
     return;
@@ -34,12 +34,13 @@ async function sendCommentNotification(
 
   await NotificationTable.create(environment, transaction, {
     recipient,
+    type: 'reply',
     details: {
-      comment: {
-        author: actorId,
+      author: actorId,
+      content: {
         comment: comment.id,
-        parent,
       },
+      target,
     },
     read: false,
     dateCreated: new Date(),
@@ -82,7 +83,7 @@ async function handler(environment, request, headers) {
           recipient: post.author,
           actorId,
           comment,
-          parent: { post: postId },
+          target: { post: postId },
         });
       } else {
         const parentComment = commentHelpers.find(post, commentId);
@@ -98,7 +99,7 @@ async function handler(environment, request, headers) {
           recipient: parentComment.author,
           actorId,
           comment,
-          parent: { comment: commentId },
+          target: { comment: commentId },
         });
       }
 
