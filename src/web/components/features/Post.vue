@@ -28,11 +28,9 @@
       </div>
 
       <div :class="$style.Metadata">
-        <router-link
-          :to="`/user/${post.author.id}`"
-          :class="$style.Clickable"
-          >{{ author_ }}</router-link
-        >
+        <router-link :to="`/user/${post.authorId}`" :class="$style.Clickable">{{
+          author_
+        }}</router-link>
         posted {{ age_ }}
 
         <PostModerationPopover type="globalModerator" :post="post">
@@ -56,6 +54,7 @@ import PostModerationPopover from '@/src/web/components/features/PostModerationP
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
@@ -90,7 +89,8 @@ export default {
         return 'you';
       }
 
-      return this.post.author.username;
+      const author = PublicUserStore.state.accounts[this.post.authorId];
+      return author.username;
     },
 
     age_() {

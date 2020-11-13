@@ -11,7 +11,7 @@
 
     <div :class="$style.Meta">
       <router-link
-        :to="`/user/${comment.author.id}`"
+        :to="`/user/${comment.authorId}`"
         :class="$style.Clickable"
         >{{ author_ }}</router-link
       >
@@ -59,6 +59,7 @@ import ReplyForm from '@/src/web/components/features/ReplyForm';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
+import PublicUserStore from '@/src/web/stores/PublicUser';
 
 export default {
   components: {
@@ -99,7 +100,8 @@ export default {
         return 'you';
       }
 
-      return this.comment.author.username;
+      const author = PublicUserStore.state.accounts[this.comment.authorId];
+      return author.username;
     },
 
     age_() {

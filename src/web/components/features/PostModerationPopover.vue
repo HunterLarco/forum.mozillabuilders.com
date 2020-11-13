@@ -8,7 +8,7 @@
       </div>
 
       <div :class="$style.Button">
-        <ShadowBanAccountButton :account-id="post.author.id" />
+        <ShadowBanAccountButton :account-id="post.authorId" />
       </div>
     </div>
   </ModerationPopover>

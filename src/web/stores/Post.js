@@ -124,9 +124,14 @@ export default createStore('PostStore', {
       Vue.set(state.posts, post.id, post);
 
       PublicUserStore.commit('setAccount', post.author);
+      post.authorId = post.author.id;
+      delete post.author;
+
       if (post.comments) {
         for (const comment of commentHelpers.iterate(post.comments)) {
           PublicUserStore.commit('setAccount', comment.author);
+          comment.authorId = comment.author.id;
+          delete comment.author;
         }
       }
     },
@@ -180,6 +185,9 @@ export default createStore('PostStore', {
       if (!post) {
         return;
       }
+
+      comment.authorId = comment.author.id;
+      delete comment.author;
 
       post.stats.comments += 1;
       if (!commentId) {
