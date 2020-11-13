@@ -16,12 +16,19 @@
 
       <div :class="$style.Notifications">
         <div :class="$style.Title">Notifications</div>
+
         <template v-for="notification in notifications_">
           <Notification
             :class="$style.Notification"
             :notification="notification"
           />
         </template>
+
+        <div v-if="!loading_ && !notifications_.length" :class="$style.Empty">
+          You have no notifications
+        </div>
+
+        <IndeterminateProgressBar v-if="loading_" />
       </div>
     </ElementPopover>
   </div>
@@ -31,6 +38,7 @@
 import ElementBadge from '@/vendor/element-ui/Badge';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import ElementPopover from '@/vendor/element-ui/Popover';
+import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import Notification from '@/src/web/components/features/Notification';
 
 import NotificationStore from '@/src/web/stores/Notification';
@@ -40,6 +48,7 @@ export default {
     ElementBadge,
     ElementIcon,
     ElementPopover,
+    IndeterminateProgressBar,
     Notification,
   },
 
@@ -50,6 +59,10 @@ export default {
   },
 
   computed: {
+    loading_() {
+      return NotificationStore.state.loadingNextPage;
+    },
+
     notifications_() {
       return NotificationStore.state.notifications;
     },
@@ -86,5 +99,12 @@ export default {
   & ~ .Notification {
     border-top: 1px solid #EEE;
   }
+}
+
+.Empty {
+  @include fonts-caption;
+
+  margin: 20px;
+  text-align: center;
 }
 </style>

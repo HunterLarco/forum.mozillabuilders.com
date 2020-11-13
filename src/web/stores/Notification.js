@@ -9,6 +9,8 @@ export default createStore('NotificationStore', {
   state: {
     notifications: [],
 
+    loadingNextPage: false,
+
     cursor: {
       first: null,
       last: null,
@@ -20,8 +22,11 @@ export default createStore('NotificationStore', {
     async loadNextPage({ state, commit }) {
       if (state.cursor.first && !state.cursor.next) {
         return;
+      } else if (state.loadingNextPage) {
+        return;
       }
 
+      commit('startLoading');
       const { notifications, cursor } = await apiFetch(
         'aurora/notifications/queryMine',
         {
@@ -30,6 +35,7 @@ export default createStore('NotificationStore', {
       );
 
       commit('extendFeed', { notifications, cursor });
+      commit('endLoading');
     },
 
     read({ state, commit }, id) {
@@ -54,6 +60,14 @@ export default createStore('NotificationStore', {
       }
       state.cursor.last = cursor.current;
       state.cursor.next = cursor.next || null;
+    },
+
+    startLoading(state) {
+      state.loadingNextPage = true;
+    },
+
+    endLoading(state) {
+      state.loadingNextPage = false;
     },
 
     read(state, id) {
