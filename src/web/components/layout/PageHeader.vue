@@ -13,14 +13,23 @@
           </router-link>
         </template>
 
-        <slot name="nav"></slot>
+        <router-link to="/hot" :selected="$route.path.startsWith('/hot')"
+          >Hot</router-link
+        >
+        <router-link to="/new" :selected="$route.path.startsWith('/new')"
+          >New</router-link
+        >
 
         <template v-slot:right>
           <div :class="$style.Buttons">
-            <slot name="buttons"></slot>
+            <router-link to="/submit">
+              <span v-if="$sizing.gt('mobile')">Post a new topic</span>
+              <span v-else>Post</span>
+            </router-link>
           </div>
+
           <div :class="$style.Icons">
-            <slot name="icons"></slot>
+            <NotificationBadge />
           </div>
         </template>
       </HorizontalLayout>
@@ -30,13 +39,14 @@
 
 <script>
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
+import NotificationBadge from '@/src/web/components/features/NotificationBadge';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
 
 import MozillaBuildersLogo from '@/src/web/assets/logos/MozillaBuilders.png';
 import MozillaLogo from '@/src/web/assets/logos/Mozilla.png';
 
 export default {
-  components: { HorizontalLayout, PageRibbon },
+  components: { HorizontalLayout, NotificationBadge, PageRibbon },
 
   computed: {
     logo_() {

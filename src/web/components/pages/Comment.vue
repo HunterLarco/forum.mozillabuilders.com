@@ -1,19 +1,7 @@
 <template>
   <div :class="$style.Host">
     <div style="min-height: 80%;">
-      <PageHeader>
-        <template v-slot:nav>
-          <router-link to="/hot">Hot</router-link>
-          <router-link to="/new">New</router-link>
-        </template>
-
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
+      <PageHeader />
 
       <PageRibbon>
         <template v-if="!post_">
@@ -43,7 +31,6 @@
 </template>
 
 <script>
-import Avatar from '@/src/web/components/layout/Avatar';
 import CollapsedPost from '@/src/web/components/features/CollapsedPost';
 import Comment from '@/src/web/components/features/Comment';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
@@ -59,7 +46,6 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Avatar,
     CollapsedPost,
     Comment,
     IndeterminateProgressBar,

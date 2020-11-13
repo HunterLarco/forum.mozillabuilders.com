@@ -1,19 +1,7 @@
 <template>
   <div :class="$style.Host">
     <div style="min-height: 80%;">
-      <PageHeader>
-        <template v-slot:nav>
-          <router-link to="/hot">Hot</router-link>
-          <router-link to="/new">New</router-link>
-        </template>
-
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
+      <PageHeader />
 
       <div :class="$style.Shadow">
         <PageRibbon>
@@ -49,7 +37,6 @@
 <script>
 import friendlyTime from 'friendly-time';
 
-import Avatar from '@/src/web/components/layout/Avatar';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import IndeterminateProgressBar from '@/src/web/components/layout/IndeterminateProgressBar';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -65,7 +52,6 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
-    Avatar,
     HorizontalLayout,
     IndeterminateProgressBar,
     PageFooter,

@@ -1,19 +1,7 @@
 <template>
   <div :class="$style.Host">
     <div style="min-height: 80%;">
-      <PageHeader>
-        <template v-slot:nav>
-          <router-link to="/hot">Hot</router-link>
-          <router-link to="/new">New</router-link>
-        </template>
-
-        <template v-slot:buttons>
-          <router-link to="/submit">
-            <span v-if="$sizing.gt('mobile')">Post a new topic</span>
-            <span v-else>Post</span>
-          </router-link>
-        </template>
-      </PageHeader>
+      <PageHeader />
 
       <PageRibbon>
         <div :class="$style.QuestionTypes">
@@ -95,7 +83,6 @@
 </template>
 
 <script>
-import Avatar from '@/src/web/components/layout/Avatar';
 import ElementInput from '@/vendor/element-ui/Input';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PageFooter from '@/src/web/components/layout/PageFooter';
@@ -110,7 +97,6 @@ import PostStore from '@/src/web/stores/Post';
 
 export default {
   components: {
-    Avatar,
     ElementInput,
     HorizontalLayout,
     PageFooter,
