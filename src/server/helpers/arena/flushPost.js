@@ -84,8 +84,21 @@ function flushPost_Hidden(arena, post) {
 }
 
 function flushPost_Comments(arena, post) {
-  const comments = Array.from(commentHelpers.iterate(post.firestore.comments));
-  post.comments = comments.filter(
-    (comment) => !arena.comments[comment.id].hidden
-  ).length;
+  function* iterateNonHiddenComments(firestoreComments) {
+    for (const firestoreComment of firestoreComments) {
+      if (!arena.comments[firestoreComment.id].hidden) {
+        yield firestoreComment;
+        for (const subFirestoreComment of iterateNonHiddenComments(
+          firestoreComment.children
+        )) {
+          yield subFirestoreComment;
+        }
+      }
+    }
+  }
+
+  const comments = Array.from(
+    iterateNonHiddenComments(post.firestore.comments)
+  );
+  post.comments = comments.length;
 }
