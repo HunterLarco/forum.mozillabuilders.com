@@ -119,3 +119,11 @@
   font-size: 13px;
   line-height: 18px;
 }
+
+@mixin fonts-moderation-label {
+  @include _fonts-base;
+
+  font-family: Inter, X-LocaleSpecific, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}

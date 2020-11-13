@@ -34,6 +34,13 @@
         <router-link :to="`/post/${post.id}`" :class="$style.Clickable"
           >{{ comments_ }}&nbsp;comments</router-link
         >
+
+        <PostModerationPopover type="globalModerator" :post="post">
+          <span slot="label">
+            &middot;
+            <u :class="$style.Clickable">Moderation Options</u>
+          </span>
+        </PostModerationPopover>
       </div>
     </div>
   </HorizontalLayout>
@@ -45,6 +52,7 @@ import friendlyTime from 'friendly-time';
 import ElementIcon from '@/vendor/element-ui/Icon';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
+import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
 
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
@@ -52,7 +60,12 @@ import PostStore from '@/src/web/stores/Post';
 import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
-  components: { ElementIcon, HorizontalLayout, LikeButton },
+  components: {
+    ElementIcon,
+    HorizontalLayout,
+    LikeButton,
+    PostModerationPopover,
+  },
 
   props: {
     post: {
@@ -165,6 +178,7 @@ export default {
 
 .Host {
   padding: 20px 30px 20px 0;
+  position: relative;
 
   @include sizing-mobile {
     padding: 15px 25px 15px 0;

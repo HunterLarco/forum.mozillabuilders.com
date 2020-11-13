@@ -74,7 +74,8 @@ async function flushPost_Liked(arena, post) {
 }
 
 function flushPost_Hidden(arena, post) {
-  const banned = !!post.author.firestore.shadowBan;
+  const banned =
+    !!post.firestore.shadowBan || !!post.author.firestore.shadowBan;
   post.hidden = banned && (!arena.actor || post.author.id != arena.actor.id);
 }
 

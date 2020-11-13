@@ -6,8 +6,13 @@ export default Joi.object({
   email: Email.required(),
   username: Joi.string().required(),
 
+  permissions: Joi.array().items(
+    Joi.object({
+      type: Joi.string().required(),
+    })
+  ),
+
   shadowBan: Joi.object({
-    reason: Joi.string().required(),
     dateBanned: Joi.date().required(),
   }),
 
