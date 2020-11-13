@@ -46,6 +46,12 @@ export default createStore('NotificationStore', {
     },
   },
 
+  getters: {
+    hasNextPage(state) {
+      return state.cursor.first && state.cursor.next;
+    },
+  },
+
   mutations: {
     extendFeed(state, { notifications, cursor }) {
       for (const notification of notifications) {

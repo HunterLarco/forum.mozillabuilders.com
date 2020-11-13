@@ -24,6 +24,14 @@
           />
         </template>
 
+        <div
+          :class="$style.LoadMoreButton"
+          @click="loadNextPage_"
+          v-if="hasMoreNotifications_"
+        >
+          Load More
+        </div>
+
         <div v-if="!loading_ && !notifications_.length" :class="$style.Empty">
           You have no notifications
         </div>
@@ -67,8 +75,18 @@ export default {
       return NotificationStore.state.notifications;
     },
 
+    hasMoreNotifications_() {
+      return NotificationStore.getters.hasNextPage;
+    },
+
     unread_() {
       return this.notifications_.filter((notification) => !notification.read);
+    },
+  },
+
+  methods: {
+    loadNextPage_() {
+      NotificationStore.dispatch('loadNextPage');
     },
   },
 };
@@ -98,6 +116,20 @@ export default {
 .Notification {
   & ~ .Notification {
     border-top: 1px solid #EEE;
+  }
+}
+
+.LoadMoreButton {
+  @include fonts-nav-button;
+
+  color: #848484;
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+  text-decoration: underline;
+
+  &:hover {
+    color: #000;
   }
 }
 

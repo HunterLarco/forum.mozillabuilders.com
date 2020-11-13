@@ -38,7 +38,7 @@ async function handler(environment, request, headers) {
     }
   );
 
-  const hasNextPage = notifications.length == PAGE_SIZE;
+  const hasNextPage = notifications.length == PAGE_SIZE + 1;
   const renderedNotifications = hasNextPage
     ? notifications.slice(0, -1)
     : notifications;
