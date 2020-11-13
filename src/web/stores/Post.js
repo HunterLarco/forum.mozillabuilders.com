@@ -52,7 +52,7 @@ export default createStore('PostStore', {
     },
 
     async unbanPost({ commit }, id) {
-      await apiFetch('aurora/posts/ban', { id });
+      await apiFetch('aurora/posts/unban', { id });
       commit('unbanPost', id);
     },
 

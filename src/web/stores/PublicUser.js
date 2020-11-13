@@ -21,7 +21,7 @@ export default createStore('PublicUserStore', {
     },
 
     async unbanAccount({ commit }, id) {
-      await apiFetch('aurora/accounts/ban', { id });
+      await apiFetch('aurora/accounts/unban', { id });
       commit('unbanAccount', id);
     },
   },
