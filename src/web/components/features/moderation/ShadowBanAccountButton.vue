@@ -1,7 +1,10 @@
 <template>
-  <ElementButton :loading="loading_" @click="shadowBanAccount_">{{
-    buttonText_
-  }}</ElementButton>
+  <ElementButton
+    :loading="loading_"
+    @click="shadowBanAccount_"
+    :type="buttonType_"
+    >{{ buttonText_ }}</ElementButton
+  >
 </template>
 
 <script>
@@ -35,6 +38,10 @@ export default {
 
     buttonText_() {
       return this.banned_ ? 'Un-Shadow Ban Account' : 'Shadow Ban Account';
+    },
+
+    buttonType_() {
+      return this.banned_ ? 'success' : 'danger';
     },
   },
 
