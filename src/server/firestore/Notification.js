@@ -28,7 +28,7 @@ export async function create(environment, transaction, notification) {
 }
 
 export async function get(environment, transaction, id) {
-  const reference = environment.firestore.collection('Notifictaion').doc(id);
+  const reference = environment.firestore.collection('Notification').doc(id);
   const document = transaction
     ? await transaction.get(reference)
     : await reference.get();
@@ -39,6 +39,35 @@ export async function get(environment, transaction, id) {
 
   const notification = documentToJson(document);
   return { id, notification };
+}
+
+export async function replace(
+  environment,
+  transaction,
+  notificationId,
+  notification
+) {
+  const { value, error } = NotificationSchema.validate(notification);
+  if (error) {
+    console.error(`InvalidNotificationSchema: ${error.message}`, notification);
+    return Promise.reject({
+      httpErrorCode: 500,
+      name: 'InvalidNotificationSchema',
+      message: 'Invalid notification schema.',
+    });
+  }
+
+  const reference = environment.firestore
+    .collection('Notification')
+    .doc(notificationId);
+
+  if (transaction) {
+    await transaction.set(reference, value);
+  } else {
+    await reference.set(value);
+  }
+
+  return { id: reference.id, notification };
 }
 
 export async function queryByRecipient(environment, accountId, options) {

@@ -3,8 +3,8 @@
     <ElementPopover placement="bottom" trigger="click" v-model="open_">
       <ElementBadge
         :max="99"
-        :value="notifications_.length"
-        :hidden="notifications_.length == 0"
+        :value="unread_.length"
+        :hidden="unread_.length == 0"
         slot="reference"
       >
         <ElementIcon
@@ -52,6 +52,10 @@ export default {
   computed: {
     notifications_() {
       return NotificationStore.state.notifications;
+    },
+
+    unread_() {
+      return this.notifications_.filter((notification) => !notification.read);
     },
   },
 };

@@ -41,6 +41,7 @@ async function sendCommentNotification(
         parent,
       },
     },
+    read: false,
     dateCreated: new Date(),
   });
 }

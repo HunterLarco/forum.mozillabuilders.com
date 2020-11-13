@@ -21,5 +21,6 @@ export default Joi.object({
     .xor('comment')
     .required(),
 
+  read: Joi.boolean().required(),
   dateCreated: Joi.date().required(),
 });

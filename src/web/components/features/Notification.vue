@@ -1,5 +1,9 @@
 <template>
-  <a :class="$style.Host" :href="url_">
+  <a
+    :class="$style.Host"
+    :href="url_"
+    v-observe-visibility="onVisibilityChange_"
+  >
     <div :class="$style.Title">
       <a :class="$style.Clickable" :href="`/user/${details_.author.id}`">{{
         details_.author.username
@@ -15,6 +19,8 @@
 
 <script>
 import friendlyTime from 'friendly-time';
+
+import NotificationStore from '@/src/web/stores/Notification';
 
 import * as commentHelpers from '@/src/web/helpers/data/Comment';
 
@@ -59,6 +65,15 @@ export default {
 
     age_() {
       return friendlyTime(new Date(this.notification.dateCreated));
+    },
+  },
+
+  methods: {
+    onVisibilityChange_(visible) {
+      if (visible && !this.notification.read) {
+        console.log(this.notification);
+        NotificationStore.dispatch('read', this.notification.id);
+      }
     },
   },
 };

@@ -17,12 +17,15 @@ const CommentNotification = Joi.object({
 });
 
 const Schema = Joi.object({
+  id: Joi.string().required(),
+
   details: Joi.object({
     comment: CommentNotification,
   })
     .xor('comment')
     .required(),
 
+  read: Joi.boolean().required(),
   dateCreated: Joi.date().required(),
 });
 
@@ -60,7 +63,9 @@ Schema.fromArena = (arena, id) => {
   }
 
   return {
+    id,
     details,
+    read: notification.firestore.read,
     dateCreated: notification.firestore.dateCreated,
   };
 };

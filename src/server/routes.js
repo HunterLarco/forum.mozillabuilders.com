@@ -8,6 +8,7 @@ import comments_like from '@/src/server/endpoints/comments/like';
 import comments_unlike from '@/src/server/endpoints/comments/unlike';
 import cron_rankHotPosts from '@/src/server/endpoints/cron/rankHotPosts';
 import notifications_queryMine from '@/src/server/endpoints/notifications/queryMine';
+import notifications_read from '@/src/server/endpoints/notifications/read';
 import posts_create from '@/src/server/endpoints/posts/create';
 import posts_get from '@/src/server/endpoints/posts/get';
 import posts_like from '@/src/server/endpoints/posts/like';
@@ -26,6 +27,7 @@ export function install(environment, app) {
     ['post', '/aurora/comments/like', comments_like],
     ['post', '/aurora/comments/unlike', comments_unlike],
     ['post', '/aurora/notifications/queryMine', notifications_queryMine],
+    ['post', '/aurora/notifications/read', notifications_read],
     ['post', '/aurora/posts/create', posts_create],
     ['post', '/aurora/posts/get', posts_get],
     ['post', '/aurora/posts/like', posts_like],

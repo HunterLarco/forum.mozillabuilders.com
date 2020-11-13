@@ -31,6 +31,13 @@ export default createStore('NotificationStore', {
 
       commit('extendFeed', { notifications, cursor });
     },
+
+    read({ state, commit }, id) {
+      commit('read', id);
+      apiFetch('aurora/notifications/read', { id }).catch(() => {
+        commit('unread', id);
+      });
+    },
   },
 
   mutations: {
@@ -47,6 +54,24 @@ export default createStore('NotificationStore', {
       }
       state.cursor.last = cursor.current;
       state.cursor.next = cursor.next || null;
+    },
+
+    read(state, id) {
+      for (const notification of state.notifications) {
+        if (notification.id == id) {
+          notification.read = true;
+          return;
+        }
+      }
+    },
+
+    unread(state, id) {
+      for (const notification of state.notifications) {
+        if (notification.id == id) {
+          notification.read = false;
+          return;
+        }
+      }
     },
   },
 });
