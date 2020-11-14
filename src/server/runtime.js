@@ -16,3 +16,13 @@ if (process.fido.env != 'local') {
     },
   });
 }
+
+// https://cloud.google.com/profiler/docs/profiling-nodejs
+if (process.fido.env != 'local') {
+  require('@google-cloud/profiler').start();
+}
+
+// https://cloud.google.com/trace/docs/setup/nodejs
+if (process.fido.env != 'local') {
+  require('@google-cloud/trace-agent').start();
+}
