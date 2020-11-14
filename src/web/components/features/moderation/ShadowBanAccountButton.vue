@@ -47,10 +47,6 @@ export default {
 
   methods: {
     shadowBanAccount_() {
-      if (this.loading_) {
-        return;
-      }
-
       this.loading_ = true;
       PublicUserStore.dispatch(
         this.banned_ ? 'unbanAccount' : 'banAccount',

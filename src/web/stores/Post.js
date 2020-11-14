@@ -56,6 +56,16 @@ export default createStore('PostStore', {
       commit('unbanPost', id);
     },
 
+    async pinPost({ commit }, id) {
+      await apiFetch('aurora/posts/pin', { id });
+      commit('pinPost', id);
+    },
+
+    async unpinPost({ commit }, id) {
+      await apiFetch('aurora/posts/unpin', { id });
+      commit('unpinPost', id);
+    },
+
     async refreshPost({ commit }, id) {
       const { post } = await apiFetch('aurora/posts/get', { id });
       commit('setPost', post);
@@ -178,6 +188,24 @@ export default createStore('PostStore', {
       }
 
       Vue.delete(post.moderation, 'shadowBan');
+    },
+
+    pinPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      post.pinned = true;
+    },
+
+    unpinPost(state, id) {
+      const post = state.posts[id];
+      if (!post) {
+        return;
+      }
+
+      post.pinned = false;
     },
 
     prependComment(state, { postId, commentId, comment }) {

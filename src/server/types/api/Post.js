@@ -20,6 +20,8 @@ const Schema = Joi.object({
 
   comments: Joi.array().items(Comment),
 
+  pinned: Joi.boolean().required(),
+
   stats: Joi.object({
     likes: Joi.number().min(1).required(),
     comments: Joi.number().min(0).required(),
@@ -85,6 +87,8 @@ Schema.fromArena = (arena, id) => {
     content,
 
     comments,
+
+    pinned: !!post.firestore.pinned,
 
     stats: {
       likes: post.likes,

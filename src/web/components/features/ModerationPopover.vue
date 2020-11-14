@@ -48,6 +48,7 @@ export default {
 .Label {
   color: #E91E63;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .DefaultLabel {

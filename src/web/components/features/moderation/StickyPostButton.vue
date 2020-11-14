@@ -1,10 +1,7 @@
 <template>
-  <ElementButton
-    :loading="loading_"
-    @click="shadowBanComment_"
-    :type="buttonType_"
-    >{{ buttonText_ }}</ElementButton
-  >
+  <ElementButton :loading="loading_" type="info" @click="stickify_">{{
+    buttonText_
+  }}</ElementButton>
 </template>
 
 <script>
@@ -18,7 +15,7 @@ export default {
   components: { ElementButton },
 
   props: {
-    commentId: {
+    postId: {
       type: String,
       required: true,
     },
@@ -31,26 +28,20 @@ export default {
   },
 
   computed: {
-    banned_() {
-      const comment = PostStore.getters.comment(this.commentId);
-      return comment && comment.moderation.shadowBan;
-    },
-
     buttonText_() {
-      return this.banned_ ? 'Un-Shadow Ban Comment' : 'Shadow Ban Comment';
-    },
-
-    buttonType_() {
-      return this.banned_ ? 'success' : 'danger';
+      const post = PostStore.state.posts[this.postId];
+      return post.pinned ? 'Un-pin Post' : 'Pin Post';
     },
   },
 
   methods: {
-    shadowBanComment_() {
+    stickify_() {
+      const post = PostStore.state.posts[this.postId];
+
       this.loading_ = true;
       PostStore.dispatch(
-        this.banned_ ? 'unbanComment' : 'banComment',
-        this.commentId
+        post.pinned ? 'unpinPost' : 'pinPost',
+        this.postId
       ).then(() => {
         this.loading_ = false;
       });

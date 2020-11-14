@@ -4,6 +4,10 @@
 
     <div :class="$style.Popover">
       <div :class="$style.Button">
+        <StickyPostButton :post-id="post.id" />
+      </div>
+
+      <div :class="$style.Button">
         <ShadowBanPostButton :post-id="post.id" />
       </div>
 
@@ -19,6 +23,7 @@ import ElementButton from '@/vendor/element-ui/Button';
 import ModerationPopover from '@/src/web/components/features/ModerationPopover';
 import ShadowBanAccountButton from '@/src/web/components/features/moderation/ShadowBanAccountButton';
 import ShadowBanPostButton from '@/src/web/components/features/moderation/ShadowBanPostButton';
+import StickyPostButton from '@/src/web/components/features/moderation/StickyPostButton';
 
 export default {
   components: {
@@ -26,6 +31,7 @@ export default {
     ModerationPopover,
     ShadowBanAccountButton,
     ShadowBanPostButton,
+    StickyPostButton,
   },
 
   props: {

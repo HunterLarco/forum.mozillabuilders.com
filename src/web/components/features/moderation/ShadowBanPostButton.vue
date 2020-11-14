@@ -47,10 +47,6 @@ export default {
 
   methods: {
     shadowBanPost_() {
-      if (this.loading_) {
-        return;
-      }
-
       this.loading_ = true;
       PostStore.dispatch(
         this.banned_ ? 'unbanPost' : 'banPost',

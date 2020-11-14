@@ -13,6 +13,8 @@ export default Joi.object({
 
   comments: Joi.array().items(Comment).required(),
 
+  pinned: Joi.boolean().default(false),
+
   shadowBan: Joi.object({
     dateBanned: Joi.date().required(),
   }),
