@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import Mustache from 'mustache';
 
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
 import getCurrentUser from '@/src/server/helpers/net/getCurrentUser';
@@ -53,7 +54,7 @@ async function handler(environment, request, headers) {
   } else {
     await environment.sparkpost.send({
       to: 'builders-forum@mozilla.com',
-      subject: `@${username} reported content`,
+      subject: `${username} reported content`,
       text: Mustache.render(PlainTextReportedContentEmail, {
         username,
         contentUrl,
