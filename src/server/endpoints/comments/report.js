@@ -52,7 +52,7 @@ async function handler(environment, request, headers) {
     console.log(`    Content Url: ${contentUrl}`);
   } else {
     await environment.sparkpost.send({
-      to: 'builders@mozilla.com',
+      to: 'builders-forum@mozilla.com',
       subject: `@${username} reported content`,
       text: Mustache.render(PlainTextReportedContentEmail, {
         username,
