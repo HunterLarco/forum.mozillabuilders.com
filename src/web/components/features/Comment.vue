@@ -38,6 +38,12 @@
       :entities="comment.content.text.entities"
     />
 
+    <div :class="$style.Actions">
+      <ElementButton size="mini" @click="report_" :loading="reportLoading_"
+        >Report Comment</ElementButton
+      >
+    </div>
+
     <template v-if="!showReplyForm_">
       <div :class="$style.ReplyLink" @click="openReplyForm_">Reply</div>
     </template>
@@ -58,10 +64,10 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
-import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import CommentModerationPopover from '@/src/web/components/features/CommentModerationPopover';
 import ElementButton from '@/vendor/element-ui/Button';
 import ElementInput from '@/vendor/element-ui/Input';
+import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import LikeButton from '@/src/web/components/layout/LikeButton';
 import ReplyForm from '@/src/web/components/features/ReplyForm';
@@ -69,6 +75,8 @@ import ReplyForm from '@/src/web/components/features/ReplyForm';
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 import PostStore from '@/src/web/stores/Post';
 import PublicUserStore from '@/src/web/stores/PublicUser';
+
+import apiFetch from '@/src/web/helpers/net/apiFetch';
 
 export default {
   components: {
@@ -98,6 +106,7 @@ export default {
     return {
       showReplyForm_: false,
       likeLoading_: false,
+      reportLoading_: false,
     };
   },
 
@@ -184,6 +193,13 @@ export default {
         });
       }
     },
+
+    report_() {
+      this.reportLoading_ = true;
+      apiFetch('aurora/comments/report', { id: this.comment.id }).then(() => {
+        this.reportLoading_ = false;
+      });
+    },
   },
 };
 </script>
@@ -243,5 +259,9 @@ export default {
   margin: 0 4px;
   padding: 0 3px;
   vertical-align: middle;
+}
+
+.Actions {
+  margin: 4px 0 12px 0;
 }
 </style>
