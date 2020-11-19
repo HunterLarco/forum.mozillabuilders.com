@@ -50,7 +50,9 @@
       </div>
 
       <div :class="$style.Actions">
-        <div>Report Post</div>
+        <ElementButton size="mini" @click="report_" :loading="reportLoading_"
+          >Report Post</ElementButton
+        >
       </div>
     </div>
   </HorizontalLayout>
@@ -60,7 +62,7 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
-import ElementIcon from '@/vendor/element-ui/Icon';
+import ElementButton from '@/vendor/element-ui/Button';
 import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
@@ -74,7 +76,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 export default {
   components: {
     AttributedText,
-    ElementIcon,
+    ElementButton,
     ElementTooltip,
     HorizontalLayout,
     PostModerationPopover,
@@ -90,6 +92,7 @@ export default {
   data() {
     return {
       likeLoading_: false,
+      reportLoading_: false,
     };
   },
 
@@ -172,6 +175,13 @@ export default {
           this.likeLoading_ = false;
         });
       }
+    },
+
+    report_() {
+      this.reportLoading_ = true;
+      apiFetch('aurora/posts/report', { id: this.post.id }).then(() => {
+        this.reportLoading_ = false;
+      });
     },
   },
 };
@@ -273,26 +283,6 @@ export default {
 .Actions {
   @include fonts-post-metadata;
 
-  color: #828282;
   margin-top: 12px;
-
-  & > * {
-    border-radius: 8px;
-    border: 1px solid #828282;
-    cursor: pointer;
-    display: inline-block;
-    padding: 2px 6px;
-    user-select: none;
-
-    &:hover {
-      border-color: darken(#828282, 9%);
-      color: darken(#828282, 9%);
-    }
-
-    &:active {
-      border-color: darken(#828282, 25%);
-      color: darken(#828282, 25%);
-    }
-  }
 }
 </style>
