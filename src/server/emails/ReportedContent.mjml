@@ -1,0 +1,51 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{{ username }}} reported content</mj-title>
+    <mj-attributes>
+      <mj-all
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+      ></mj-all>
+      <mj-text
+        font-weight="400"
+        font-size="15px"
+        color="#000000"
+        line-height="22px"
+      ></mj-text>
+    </mj-attributes>
+    <mj-style inline="inline">
+      .text-link { color: #000000 }
+    </mj-style>
+    <mj-style>
+      .main-section { padding-left: 70px; padding-right: 70px; padding-top:
+      70px; padding-bottom: 40px; box-sizing: border-box; } @media (max-width:
+      480px) { .main-section { padding-left: 0px; padding-right: 0px;
+      padding-top: 0px; padding-bottom: 0px; } }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#FFFFFF">
+    <mj-section background-repeat="repeat" text-align="center">
+      <mj-column css-class="main-section">
+        <mj-text font-size="22px" font-weight="600"
+          >{{{ username }}} reported content</mj-text
+        >
+
+        <mj-text>
+          <p>
+            <a href="{{{ contentUrl }}}" class="text-link">
+              Click here to view the post/comment
+            </a>
+          </p>
+        </mj-text>
+
+        <mj-image
+          src="https://storage.googleapis.com/mozilla-builders-forum-email-assets/42eb4643d3e3ab3aaa05b554310fc09f.png"
+          alt="Mozilla Builders Forum"
+          href="https://forum.mozillabuilders.com"
+          width="200px"
+          padding-top="20px"
+        />
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

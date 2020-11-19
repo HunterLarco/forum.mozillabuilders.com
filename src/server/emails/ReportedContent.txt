@@ -1,0 +1,7 @@
+{{{ username }}} reported content
+
+Click here to view the post/comment:
+{{{ contentUrl }}}
+
+---
+Mozilla Builders Forum
