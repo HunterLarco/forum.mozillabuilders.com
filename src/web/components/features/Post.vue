@@ -48,6 +48,10 @@
           <div :class="$style.BannedTag">Banned</div>
         </ElementTooltip>
       </div>
+
+      <div :class="$style.Actions">
+        <div>Report Post</div>
+      </div>
     </div>
   </HorizontalLayout>
 </template>
@@ -56,6 +60,7 @@
 import friendlyTime from 'friendly-time';
 
 import AttributedText from '@/src/web/components/layout/AttributedText';
+import ElementIcon from '@/vendor/element-ui/Icon';
 import ElementTooltip from '@/vendor/element-ui/Tooltip';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import PostModerationPopover from '@/src/web/components/features/PostModerationPopover';
@@ -69,6 +74,7 @@ import apiFetch from '@/src/web/helpers/net/apiFetch';
 export default {
   components: {
     AttributedText,
+    ElementIcon,
     ElementTooltip,
     HorizontalLayout,
     PostModerationPopover,
@@ -262,5 +268,31 @@ export default {
   margin: 0 4px;
   padding: 0 3px;
   vertical-align: middle;
+}
+
+.Actions {
+  @include fonts-post-metadata;
+
+  color: #828282;
+  margin-top: 12px;
+
+  & > * {
+    border-radius: 8px;
+    border: 1px solid #828282;
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px 6px;
+    user-select: none;
+
+    &:hover {
+      border-color: darken(#828282, 9%);
+      color: darken(#828282, 9%);
+    }
+
+    &:active {
+      border-color: darken(#828282, 25%);
+      color: darken(#828282, 25%);
+    }
+  }
 }
 </style>
