@@ -8,6 +8,7 @@ import accounts_unban from '@/src/server/endpoints/accounts/unban';
 import comments_ban from '@/src/server/endpoints/comments/ban';
 import comments_create from '@/src/server/endpoints/comments/create';
 import comments_like from '@/src/server/endpoints/comments/like';
+import comments_report from '@/src/server/endpoints/comments/report';
 import comments_unban from '@/src/server/endpoints/comments/unban';
 import comments_unlike from '@/src/server/endpoints/comments/unlike';
 import cron_rankHotPosts from '@/src/server/endpoints/cron/rankHotPosts';
@@ -35,6 +36,7 @@ export function install(environment, app) {
     ['post', '/aurora/comments/ban', comments_ban],
     ['post', '/aurora/comments/create', comments_create],
     ['post', '/aurora/comments/like', comments_like],
+    ['post', '/aurora/comments/report', comments_report],
     ['post', '/aurora/comments/unban', comments_unban],
     ['post', '/aurora/comments/unlike', comments_unlike],
     ['post', '/aurora/notifications/queryMine', notifications_queryMine],

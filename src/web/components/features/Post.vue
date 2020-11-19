@@ -281,8 +281,6 @@ export default {
 }
 
 .Actions {
-  @include fonts-post-metadata;
-
   margin-top: 12px;
 }
 </style>
