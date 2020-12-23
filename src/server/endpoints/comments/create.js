@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import Mustache from 'mustache';
 
 import ApiCommentSchema from '@/src/server/types/api/Comment';
 import JsonEndpoint from '@/src/server/helpers/net/JsonEndpoint';
@@ -10,6 +11,9 @@ import * as PostTable from '@/src/server/firestore/Post';
 import * as commentHelpers from '@/src/server/helpers/data/Comment';
 
 import Arena from '@/src/server/helpers/arena/Arena';
+
+import HTMLCommentNotificationEmail from '@/src/server/emails/CommentNotification.mjml';
+import PlainTextCommentNotificationEmail from '@/src/server/emails/CommentNotification.txt';
 
 const RequestSchema = Joi.object({
   postId: Joi.string(),
@@ -73,7 +77,34 @@ async function sendCommentNotification(
     return;
   }
 
-  console.log('send email');
+  const contentType = parent.comment ? 'comment' : 'post';
+  const contentUrl = parent.comment
+    ? `https://forum.mozillabuilders.com/comment/${parent.commentId}`
+    : `https://forum.mozillabuilders.com/post/${parent.postId}`;
+  const subject = `${actor.username} responded to your ${contentType}`;
+
+  if (process.fido.env == 'local') {
+    console.log(`Emailing comment notification to ${recipient.email.raw}:`);
+    console.log(`    Subject: ${subject}`);
+    console.log(`    Content Url: ${contentUrl}`);
+  } else {
+    await environment.sparkpost.send({
+      to: recipient.email.raw,
+      subject,
+      text: Mustache.render(PlainTextCommentNotificationEmail, {
+        username: actor.username,
+        contentType,
+        contentUrl,
+        commentBody: comment.content.text,
+      }),
+      html: Mustache.render(HTMLCommentNotificationEmail, {
+        username: actor.username,
+        contentType,
+        contentUrl,
+        commentBody: comment.content.text,
+      }),
+    });
+  }
 }
 
 async function handler(environment, request, headers) {
@@ -115,7 +146,7 @@ async function handler(environment, request, headers) {
           comment,
           target: { post: postId },
         });
-        parent = { post };
+        parent = { post, postId };
       } else {
         const parentComment = commentHelpers.find(post, commentId);
         if (!parentComment) {
@@ -132,7 +163,7 @@ async function handler(environment, request, headers) {
           comment,
           target: { comment: commentId },
         });
-        parent = { comment: parentComment };
+        parent = { comment: parentComment, commentId };
       }
 
       await PostTable.replace(environment, transaction, postId, post);
