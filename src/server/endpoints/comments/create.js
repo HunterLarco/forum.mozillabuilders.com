@@ -78,9 +78,7 @@ async function sendCommentNotification(
   }
 
   const contentType = parent.comment ? 'comment' : 'post';
-  const contentUrl = parent.comment
-    ? `https://forum.mozillabuilders.com/comment/${parent.commentId}`
-    : `https://forum.mozillabuilders.com/post/${parent.postId}`;
+  const contentUrl = `https://forum.mozillabuilders.com/comment/${comment.id}`;
   const subject = `${actor.username} responded to your ${contentType}`;
 
   if (process.fido.env == 'local') {
