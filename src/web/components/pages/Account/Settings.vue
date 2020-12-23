@@ -89,6 +89,21 @@ export default {
       return CurrentUserStore.state.account;
     },
   },
+
+  watch: {
+    account_: {
+      immediate: true,
+      handler() {
+        if (!this.account_) {
+          return;
+        }
+
+        const { notificationSettings } = this.account_;
+        this.form_.data.digests = notificationSettings.email.digests;
+        this.form_.data.comments = notificationSettings.email.comments;
+      },
+    },
+  },
 };
 </script>
 

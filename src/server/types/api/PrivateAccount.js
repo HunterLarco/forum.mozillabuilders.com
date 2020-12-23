@@ -13,6 +13,13 @@ const Schema = Joi.object({
     )
     .required(),
 
+  notificationSettings: Joi.object({
+    email: Joi.object({
+      digests: Joi.boolean().required(),
+      comments: Joi.boolean().required(),
+    }).required(),
+  }).required(),
+
   dateCreated: Joi.date().required(),
 });
 
@@ -32,6 +39,17 @@ Schema.fromArena = (arena, id) => {
     roles: (account.firestore.roles || []).map((role) => ({
       type: role.type,
     })),
+
+    notificationSettings: {
+      email: {
+        digests: account.firestore.notificationSettings
+          ? account.firestore.notificationSettings.email.digests
+          : true,
+        comments: account.firestore.notificationSettings
+          ? account.firestore.notificationSettings.email.comments
+          : true,
+      },
+    },
 
     dateCreated: account.firestore.dateCreated,
   };
