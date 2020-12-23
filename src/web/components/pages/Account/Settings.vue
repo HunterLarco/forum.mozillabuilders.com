@@ -36,7 +36,7 @@
               <ElementSwitch v-model="form_.data.comments" />
             </ElementFormItem>
 
-            <ElementButton :class="$style.SubmitButton" disabled
+            <ElementButton :class="$style.SubmitButton" :disabled="!hasChanges_"
               >Save Changes</ElementButton
             >
           </ElementForm>
@@ -87,6 +87,18 @@ export default {
   computed: {
     account_() {
       return CurrentUserStore.state.account;
+    },
+
+    hasChanges_() {
+      if (!this.account_) {
+        return false;
+      }
+
+      const { notificationSettings } = this.account_;
+      return (
+        this.form_.data.digests != notificationSettings.email.digests ||
+        this.form_.data.comments != notificationSettings.email.comments
+      );
     },
   },
 
