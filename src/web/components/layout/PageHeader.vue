@@ -30,7 +30,7 @@
 
           <div :class="$style.Icons">
             <NotificationBadge v-if="loggedIn_" />
-            <AccountBadge v-if="loggedIn_" />
+            <AccountBadge />
           </div>
         </template>
       </HorizontalLayout>
