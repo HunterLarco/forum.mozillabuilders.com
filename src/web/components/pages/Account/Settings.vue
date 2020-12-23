@@ -22,12 +22,14 @@
           <div :class="$style.Title">Notification Settings</div>
 
           <ElementForm>
+            <!--
             <ElementFormItem
               label="Email me weekly summaries"
               :class="$style.FormItem"
             >
               <ElementSwitch v-model="form_.data.digests" />
             </ElementFormItem>
+            -->
 
             <ElementFormItem
               label="Email me when someone comments on my post"
