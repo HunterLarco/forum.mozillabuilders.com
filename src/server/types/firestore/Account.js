@@ -12,6 +12,13 @@ export default Joi.object({
     })
   ),
 
+  notificationSettings: Joi.object({
+    email: Joi.object({
+      digests: Joi.boolean().required(),
+      comments: Joi.boolean().required(),
+    }).required(),
+  }),
+
   shadowBan: Joi.object({
     dateBanned: Joi.date().required(),
   }),

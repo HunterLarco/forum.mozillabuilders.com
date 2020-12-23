@@ -30,6 +30,7 @@
 
           <div :class="$style.Icons">
             <NotificationBadge v-if="loggedIn_" />
+            <AccountBadge v-if="loggedIn_" />
           </div>
         </template>
       </HorizontalLayout>
@@ -38,6 +39,7 @@
 </template>
 
 <script>
+import AccountBadge from '@/src/web/components/features/AccountBadge';
 import HorizontalLayout from '@/src/web/components/layout/HorizontalLayout';
 import NotificationBadge from '@/src/web/components/features/NotificationBadge';
 import PageRibbon from '@/src/web/components/layout/PageRibbon';
@@ -48,7 +50,7 @@ import MozillaLogo from '@/src/web/assets/logos/Mozilla.png';
 import CurrentUserStore from '@/src/web/stores/CurrentUser';
 
 export default {
-  components: { HorizontalLayout, NotificationBadge, PageRibbon },
+  components: { AccountBadge, HorizontalLayout, NotificationBadge, PageRibbon },
 
   computed: {
     logo_() {
@@ -159,10 +161,10 @@ export default {
 
 .Icons {
   color: #FFF;
-  margin-left: 10px;
 
   & > * {
     display: inline-block;
+    margin-left: 10px;
     vertical-align: middle;
   }
 

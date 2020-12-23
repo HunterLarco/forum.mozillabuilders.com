@@ -2,8 +2,11 @@ import * as AccountTable from '@/src/server/firestore/Account';
 import * as AuthTokenTable from '@/src/server/firestore/AuthToken';
 
 export default async function getCurrentUser(environment, headers, options) {
-  const { required = false, header = 'x-mozilla-builders-auth' } =
-    options || {};
+  const {
+    required = false,
+    header = 'x-mozilla-builders-auth',
+    transaction = null,
+  } = options || {};
 
   const authTokenId = headers[header];
 
@@ -39,7 +42,7 @@ export default async function getCurrentUser(environment, headers, options) {
 
   const { account } = await AccountTable.get(
     environment,
-    null,
+    transaction,
     token.scopes.accountAuth.accountId
   );
 

@@ -12,6 +12,7 @@ import PublicUserStore from '@/src/web/stores/PublicUser';
 export default createStore('CurrentUserStore', {
   state: {
     authToken: Cookie.get('x-mozilla-builders-auth'),
+    loadingAccount: null,
     account: null,
   },
 
@@ -41,6 +42,14 @@ export default createStore('CurrentUserStore', {
 
     async getAccount({ commit }) {
       const { account } = await apiFetch('aurora/accounts/getMe');
+      commit('setAccount', account);
+    },
+
+    async setSettings({ commit }, request) {
+      const { account } = await apiFetch(
+        'aurora/accounts/setSettings',
+        request
+      );
       commit('setAccount', account);
     },
 

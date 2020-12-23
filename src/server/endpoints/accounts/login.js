@@ -56,6 +56,12 @@ async function signup(environment, { email, username }) {
         {
           email,
           username,
+          notificationSettings: {
+            email: {
+              digests: true,
+              comments: true,
+            },
+          },
           dateCreated: new Date(),
         }
       );

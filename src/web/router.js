@@ -43,6 +43,11 @@ const router = new VueRouter({
     },
 
     {
+      path: '/account/settings',
+      component: () => import('@/src/web/components/pages/Account/Settings'),
+    },
+
+    {
       path: '/login',
       component: () => import('@/src/web/components/pages/Login'),
     },

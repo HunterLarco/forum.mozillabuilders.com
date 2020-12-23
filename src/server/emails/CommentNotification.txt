@@ -1,0 +1,9 @@
+{{{ username }}} responded to your {{{ contentType }}}
+
+{{{ commentBody }}}
+
+Click here to view the comment:
+{{{ contentUrl }}}
+
+---
+Mozilla Builders Forum

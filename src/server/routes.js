@@ -1,9 +1,10 @@
-import accounts_create from '@/src/server/endpoints/accounts/create';
 import accounts_ban from '@/src/server/endpoints/accounts/ban';
+import accounts_create from '@/src/server/endpoints/accounts/create';
 import accounts_get from '@/src/server/endpoints/accounts/get';
 import accounts_getMe from '@/src/server/endpoints/accounts/getMe';
 import accounts_login from '@/src/server/endpoints/accounts/login';
 import accounts_sendMagicLink from '@/src/server/endpoints/accounts/sendMagicLink';
+import accounts_setSettings from '@/src/server/endpoints/accounts/setSettings';
 import accounts_unban from '@/src/server/endpoints/accounts/unban';
 import comments_ban from '@/src/server/endpoints/comments/ban';
 import comments_create from '@/src/server/endpoints/comments/create';
@@ -32,6 +33,7 @@ export function install(environment, app) {
     ['post', '/aurora/accounts/getMe', accounts_getMe],
     ['post', '/aurora/accounts/login', accounts_login],
     ['post', '/aurora/accounts/sendMagicLink', accounts_sendMagicLink],
+    ['post', '/aurora/accounts/setSettings', accounts_setSettings],
     ['post', '/aurora/accounts/unban', accounts_unban],
     ['post', '/aurora/comments/ban', comments_ban],
     ['post', '/aurora/comments/create', comments_create],

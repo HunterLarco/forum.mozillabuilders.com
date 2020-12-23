@@ -1,7 +1,9 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
 const PARENT = 'projects/mozilla-builders-forum';
-const secretService = new SecretManagerServiceClient();
+const secretService = new SecretManagerServiceClient({
+  projectId: 'mozilla-builders-forum',
+});
 
 function fullyQualifiedName(shortName) {
   return `${PARENT}/secrets/${shortName}`;
