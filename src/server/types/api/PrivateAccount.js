@@ -2,6 +2,7 @@ import Joi from 'joi';
 
 const Schema = Joi.object({
   id: Joi.string().required(),
+  email: Joi.string().required(),
   username: Joi.string().required(),
 
   roles: Joi.array()
@@ -25,6 +26,7 @@ Schema.fromArena = (arena, id) => {
 
   return {
     id: account.id,
+    email: account.firestore.email.raw,
     username: account.firestore.username,
 
     roles: (account.firestore.roles || []).map((role) => ({
