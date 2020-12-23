@@ -45,6 +45,14 @@ export default createStore('CurrentUserStore', {
       commit('setAccount', account);
     },
 
+    async setSettings({ commit }, request) {
+      const { account } = await apiFetch(
+        'aurora/accounts/setSettings',
+        request
+      );
+      commit('setAccount', account);
+    },
+
     logout({ commit }) {
       commit('setAuthToken', null);
       commit('setAccount', null);

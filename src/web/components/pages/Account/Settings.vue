@@ -36,7 +36,11 @@
               <ElementSwitch v-model="form_.data.comments" />
             </ElementFormItem>
 
-            <ElementButton :class="$style.SubmitButton" :disabled="!hasChanges_"
+            <ElementButton
+              :class="$style.SubmitButton"
+              :disabled="!hasChanges_"
+              :loading="loading_"
+              @click="submit_"
               >Save Changes</ElementButton
             >
           </ElementForm>
@@ -75,6 +79,7 @@ export default {
 
   data() {
     return {
+      loading_: false,
       form_: {
         data: {
           digests: false,
@@ -114,6 +119,26 @@ export default {
         this.form_.data.digests = notificationSettings.email.digests;
         this.form_.data.comments = notificationSettings.email.comments;
       },
+    },
+  },
+
+  methods: {
+    submit_() {
+      this.loading_ = true;
+      CurrentUserStore.dispatch('setSettings', {
+        notifications: {
+          email: {
+            digests: this.form_.data.digests,
+            comments: this.form_.data.comments,
+          },
+        },
+      })
+        .catch((error) => {
+          console.error('Failed to update account settings', error);
+        })
+        .finally(() => {
+          this.loading_ = false;
+        });
     },
   },
 };
