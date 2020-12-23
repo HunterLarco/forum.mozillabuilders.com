@@ -12,6 +12,7 @@ import PublicUserStore from '@/src/web/stores/PublicUser';
 export default createStore('CurrentUserStore', {
   state: {
     authToken: Cookie.get('x-mozilla-builders-auth'),
+    loadingAccount: null,
     account: null,
   },
 
